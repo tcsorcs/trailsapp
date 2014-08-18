@@ -20,12 +20,13 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_main); //SH? layout doesn't exist?
 		DisplayManager.getInstance().main_activity = this;
 		DisplayManager.getInstance().setButtonCallbacks();
 	}
 
-	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+
+public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		IntentResult scanResult = IntentIntegrator.parseActivityResult(
 				requestCode, resultCode, intent);
 		if (scanResult != null) {
