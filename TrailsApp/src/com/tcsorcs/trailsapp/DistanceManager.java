@@ -21,23 +21,29 @@ import android.widget.TextView;
 /* v0.0 - Demo only version
  *  Only Excellence trail codes available
  *  No database connection 
- *  Only works if adjacent markers are scanned in order: Exc -> L21 -> L18 -> Dep
+ *  Only works if codes are scanned in this order, either forward or backwards ExceEnt <-> L21 <-> L20 <-> L18 <-> DepeEnt
+ *   (no running back and forth scanning codes for bonus points ;)
  *  
  *  Doesn't display distance yet
  *  
- *  Need: marker names, distances, assistance with displaying items
+ *  Need: assistance with displaying items
  */
 
 class DistanceManager {
+	//boolean marks if we've scanned these locations/assumed we've passed these
+	boolean ExceEnt = false;
+	boolean L21 = false; 
+	boolean L20 = false;
+	boolean L18 = false;
+	boolean DepeEnt = false;
 
-	boolean seenExcEnt = false; //Excellence Entrance marker
-	boolean seenL21 = false; //marker 1 on Excellence trail (? check this)
-	boolean seenL18 = false; //marker 2 on Excellence trail (? check this)
-	boolean seenDepeEnt = false; //Dependability Entrance marker
+	//temporary Database Glorious entries
+	double ExceEnt_L21 = 380.0;
+	double L20_L21 = 349.0; 
+	double L18_L20 = 741.0; 
+	double DepeEnt_L18 = 66.0; 
+	
 	List<String> pathList = new ArrayList<String>(); //list of all the markers scanned in scanned order
-	double ExtoL21 = 100.0; //unknown
-	double L21toL18 = 100.0; //unknown
-	double L18toDep = 100.0; //unknown
 	double totalDistance = 0.0; 
 	
 	public static DistanceManager getInstance() {
@@ -48,52 +54,47 @@ class DistanceManager {
 	/* 
 	 * Handles QR input
 	 */
-	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-		if (scanResult != null) {
-			String thisLocation = scanResult.getContents();
-			
-			//Don't know official names of markers yet - change when known
-			if(c.endsWith("/marker/Excellence")){
-				pathList.add("/marker/Excellence");
-				seenExcEnt = true;
-				//Need: distance traveled displayed
-			}
-			else if (c.endsWith("/marker/L21")){
-				pathList.add("/marker/L21");
-				seenL21 = true;
-				if (seenExcEnt){
-					totalDistance += ExtoL21;
-					//Need: distance traveled displayed
-				}
-			}
-			else if (c.endsWith("/marker/L18")){
-				pathList.add("/marker/L18");
-				seenL18 = true;
-				if (seenL21){
-					totalDistance += L21toL18;
-					//Need: distance traveled displayed
-				}
-			}
-			else if (c.endsWith("/marker/Dependability")){
-				pathList.add("/marker/Dependability");
-				seenDepeEnt = true;
-				if (seenL18){
-					totalDistance += L18toDep;
-					//Need: distance traveled displayed
-				}
-			}
-			else {	
-				TextView t = new TextView(DisplayManager.getInstance().main_activity);
-				l.removeAllViews();
-				t.setText("Unknown barcode: "+scanResult.getContents());
-				l.addView(t);		
-			}
+	public void processQRCodes(String codeName) {
+		if(codeName.equals("ExceEnt")){
+			ExceEnt = true;
+			stupidPathFinder();
+			pathList.add("ExceEnt");
+			//Distance traveled displayed?
+		}
+		else if(codeName.equals("L21")){
+			L21 = true;
+			stupidPathFinder();
+			pathList.add("L21");
+			//Distance traveled displayed?
+		}
+		else if(codeName.equals("L20")){
+			L20 = true;
+			stupidPathFinder();
+			pathList.add("L20");
+			//Distance traveled displayed?
+		}
+		else if(codeName.equals("L18")){
+			L18 = true;
+			stupidPathFinder();
+			pathList.add("L18");
+			//Distance traveled displayed?
+		}
+		else if(codeName.equals("DepeEnt")){
+			DepeEnt = true;
+			stupidPathFinder();
+			pathList.add("DepeEnt");
+			//Distance traveled displayed?
+		}
 
-
-			if (seenExcEnt && seenL21 && seenL18 && seenDepeEnt){
-				//Need: communicate to Achievements manager that the Executive Achievement is complete
-			}
+		if (ExceEnt && L21 && L20 && L18 && DepeEnt){
+			//Need: communicate to Achievements manager that the Executive Achievement is complete
 		}
 	}
+	
+	//Checks off markers assuming we skipped some
+	private void stupidPathFinder(){
+		//is being stupid now. 
+		
+	}
 }
+
