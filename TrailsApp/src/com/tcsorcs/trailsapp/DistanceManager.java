@@ -31,24 +31,23 @@ import android.widget.TextView;
 
 class DistanceManager {
 	//boolean marks if we've scanned these locations/assumed we've passed these
-	boolean ExceEnt = false;
-	boolean L21 = false; 
-	boolean L20 = false;
-	boolean L18 = false;
-	boolean DepeEnt = false;
+	//listed in this order: ExceEnt, L21, L20, L18, DepeEnt
+	Boolean [] markers = {false, false, false, false, false};
 
-	//temporary Database Glorious entries
+	//temporary Database Glorious entries (in feet)
 	double ExceEnt_L21 = 380.0;
 	double L20_L21 = 349.0; 
 	double L18_L20 = 741.0; 
 	double DepeEnt_L18 = 66.0; 
 	
-	List<String> pathList = new ArrayList<String>(); //list of all the markers scanned in scanned order
 	double totalDistance = 0.0; 
+	
+	
 	
 	public static DistanceManager getInstance() {
 		return DistanceManager.instance;
 	}
+	
 	static DistanceManager instance = new DistanceManager();
 
 	/* 
@@ -56,45 +55,114 @@ class DistanceManager {
 	 */
 	public void processQRCodes(String codeName) {
 		if(codeName.equals("ExceEnt")){
-			ExceEnt = true;
-			stupidPathFinder();
-			pathList.add("ExceEnt");
+			this.markers[0] = true;
+			stupidPathFinder(0);
 			//Distance traveled displayed?
 		}
 		else if(codeName.equals("L21")){
-			L21 = true;
-			stupidPathFinder();
-			pathList.add("L21");
+			this.markers[1] = true;
+			stupidPathFinder(1);
 			//Distance traveled displayed?
 		}
 		else if(codeName.equals("L20")){
-			L20 = true;
-			stupidPathFinder();
-			pathList.add("L20");
+			this.markers[2] = true;
+			stupidPathFinder(2);
 			//Distance traveled displayed?
 		}
 		else if(codeName.equals("L18")){
-			L18 = true;
-			stupidPathFinder();
-			pathList.add("L18");
+			this.markers[3] = true;
+			stupidPathFinder(3);
 			//Distance traveled displayed?
 		}
 		else if(codeName.equals("DepeEnt")){
-			DepeEnt = true;
-			stupidPathFinder();
-			pathList.add("DepeEnt");
+			this.markers[4] = true;
+			stupidPathFinder(4);
 			//Distance traveled displayed?
 		}
 
-		if (ExceEnt && L21 && L20 && L18 && DepeEnt){
-			//Need: communicate to Achievements manager that the Executive Achievement is complete
+		//awards achievement
+		if (this.markers[0] && this.markers[1] && this.markers[2] && this.markers[3] && this.markers[4]){
+			AchievementManager.AwardAchievement("Executive Achievement", "You've walked the Executive trail!");
 		}
 	}
 	
-	//Checks off markers assuming we skipped some
-	private void stupidPathFinder(){
-		//is being stupid now. 
+	/*
+	 * Returns sections of path walked
+	 */
+	public ArrayList<String> getPathSegments(){
+		ArrayList<String> pathList = new ArrayList<String>();
 		
+		if (this.markers[0] && this.markers[1]){
+			pathList.add("ExceEnt_L21");
+		}
+		if (this.markers[1] && this.markers[2]){
+			pathList.add("L20_L21");
+		}
+		if (this.markers[2] && this.markers[3]){
+			pathList.add("L18_L20");
+		}
+		if (this.markers[3] && this.markers[4]){
+			pathList.add("DepeEnt_L18");
+		}
+		
+		return pathList;
 	}
+	
+	/*
+	 * Returns total distance walked
+	 */
+	public double getDistance(){
+		return this.totalDistance;
+	}
+	
+	//Checks off markers assuming we skipped some
+	private void stupidPathFinder(int currentScan){
+		int endPoint = 4;
+		int i;
+	
+		//find the entrance
+		for (i = 0; i < 5; i++){
+			if (this.markers[i] && i < currentScan){
+				endPoint = 0;
+			}
+			else if (this.markers[i] && i > currentScan){
+				endPoint = 4;
+			}
+		}
+		
+		//fill in spaces between + marks off current
+		if (endPoint < currentScan){
+			for (i = endPoint; i <= currentScan; i++){
+				this.markers[i] = true;
+			}
+		}
+		else {
+			for (i = currentScan; i <= endPoint; i++){
+				this.markers[i]= true;
+			}
+		}
+		stupidDistanceCalc();
+	}
+	
+	//calculates distance
+	private void stupidDistanceCalc(){
+		double calcDistance = 0.0;
+		
+		if (this.markers[0] && this.markers[1]){
+			calcDistance+=ExceEnt_L21;
+		}
+		if (this.markers[1] && this.markers[2]){
+			calcDistance+=L20_L21;
+		}
+		if (this.markers[2] && this.markers[3]){
+			calcDistance+=L18_L20;
+		}
+		if (this.markers[3] && this.markers[4]){
+			calcDistance+=DepeEnt_L18;
+		}
+		
+		this.totalDistance = calcDistance;
+	}
+	
 }
 
