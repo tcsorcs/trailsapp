@@ -1,15 +1,13 @@
 package com.tcsorcs.trailsapp;
 
-import android.R.string;
-
 class AchievementManager {
 	
-	private static string[] grantedAchievements;
+	private static String[] grantedAchievements;
 	private static int arrayLength = 20;
 	private static int currLoc;
 	
 	public AchievementManager(){
-		grantedAchievements = new string[arrayLength];
+		grantedAchievements = new String[arrayLength];
 		currLoc = 0;
 	}
 	
@@ -24,7 +22,7 @@ class AchievementManager {
 	/// achieveDesc: Description of awarded achievement
 	/// Returns a bool of whether the achievement was successfully awarded.
 	///  |-> False if achievement has already been granted.
-	public static boolean AwardAchievement(string achieveName, string achieveDesc){
+	public static boolean AwardAchievement(String achieveName, String achieveDesc){
 		// TODO: Display achievement through DisplayManager
 		// Check if we've pushed this cheevo in yet
 		for(int i = 0; i < currLoc; ++i){
