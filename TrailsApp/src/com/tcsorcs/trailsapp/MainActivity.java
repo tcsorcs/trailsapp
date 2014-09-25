@@ -20,17 +20,20 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_main); //SH? layout doesn't exist?
 		DisplayManager.getInstance().main_activity = this;
 		DisplayManager.getInstance().setButtonCallbacks();
 	}
 
-	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+
+public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		IntentResult scanResult = IntentIntegrator.parseActivityResult(
 				requestCode, resultCode, intent);
 		if (scanResult != null) {
 			String c = scanResult.getContents();
 			LinearLayout l = (LinearLayout) findViewById(R.id.MainLinearLayout);
+			InputManager.getInstance().inputQRC(c, l);
+			/*
 			if(c.endsWith("/achievements/executive")) {
 				ImageView i = new ImageView(DisplayManager.getInstance().main_activity);
 				i.setImageDrawable(getResources().getDrawable(R.drawable.achievement));
@@ -42,7 +45,7 @@ public class MainActivity extends Activity {
 				l.removeAllViews();
 				t.setText("Unknown barcode: "+scanResult.getContents());
 				l.addView(t);
-			}
+			}*/
 		}
 	}
 
