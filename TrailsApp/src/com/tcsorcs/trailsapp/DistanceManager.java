@@ -33,28 +33,29 @@ import android.widget.TextView;
 class DistanceManager {
 	//boolean marks if we've scanned these locations/assumed we've passed these
 	//listed in this order: ExceEnt, L21, L20, L18, DepeEnt
-	Boolean [] markers = {false, false, false, false, false};
-
-	//temporary Database Glorious entries (in feet)
-	double ExceEnt_L21 = 380.0;
-	double L20_L21 = 349.0; 
-	double L18_L20 = 741.0; 
-	double DepeEnt_L18 = 66.0; 
+	private Boolean [] markers = {false, false, false, false, false};
+	private String firstCodeScanned;
 	
-	double totalDistance = 0.0; 
+	//temporary Database Glorious entries (in feet)
+	private double ExceEnt_L21 = 380.0;
+	private double L20_L21 = 349.0; 
+	private double L18_L20 = 741.0; 
+	private double DepeEnt_L18 = 66.0; 
+	
+	private double totalDistance = 0.0; 
 	
 	//timey-wimey stuff
-	Boolean started = false; //flag so start time isn't reset
-	Calendar aCalendar = Calendar.getInstance(); //to get system time
-	int startHour = -1;
-	int startMinute = -1;
-	int startTimeInMinutes = -1;
+	private Boolean started = false; //flag so start time isn't reset
+	private Calendar aCalendar = Calendar.getInstance(); //to get system time
+	private int startHour = -1;
+	private int startMinute = -1;
+	private int startTimeInMinutes = -1;
 	
 	/*
 	 * Not using this for anything yet - but using this will let us correctly calculate
 	 * time if using this app for > 24 hours
 	 */
-	int startDate = 0; //counts back, so negative values are valid
+	private int startDate = 0; //counts back, so negative values are valid
 	
 	
 		
@@ -74,31 +75,32 @@ class DistanceManager {
 			startMinute = aCalendar.get(Calendar.MINUTE);
 			startTimeInMinutes = (startHour * 60) + startMinute;
 			startDate = aCalendar.get(Calendar.DAY_OF_WEEK_IN_MONTH);
+			firstCodeScanned = codeName;
 		}
 		if(codeName.equals("ExceEnt")){
 			this.markers[0] = true;
 			stupidPathFinder(0);
-			//Distance traveled displayed?
+			DisplayManager.updateTrailsMap(getPathSegments());
 		}
 		else if(codeName.equals("L21")){
 			this.markers[1] = true;
 			stupidPathFinder(1);
-			//Distance traveled displayed?
+			DisplayManager.updateTrailsMap(getPathSegments());
 		}
 		else if(codeName.equals("L20")){
 			this.markers[2] = true;
 			stupidPathFinder(2);
-			//Distance traveled displayed?
+			DisplayManager.updateTrailsMap(getPathSegments());
 		}
 		else if(codeName.equals("L18")){
 			this.markers[3] = true;
 			stupidPathFinder(3);
-			//Distance traveled displayed?
+			DisplayManager.updateTrailsMap(getPathSegments());
 		}
 		else if(codeName.equals("DepeEnt")){
 			this.markers[4] = true;
 			stupidPathFinder(4);
-			//Distance traveled displayed?
+			DisplayManager.updateTrailsMap(getPathSegments());
 		}
 
 		//awards achievement
@@ -109,9 +111,14 @@ class DistanceManager {
 	
 	/*
 	 * Returns sections of path walked
+	 * First value is the first code scanned, rest values are the segments 
+	 *   on the path walked (not in the order they were walked)
+	 * 
 	 */
 	public ArrayList<String> getPathSegments(){
 		ArrayList<String> pathList = new ArrayList<String>();
+		
+		pathList.add(firstCodeScanned);
 		
 		if (this.markers[0] && this.markers[1]){
 			pathList.add("ExceEnt_L21");
@@ -158,7 +165,7 @@ class DistanceManager {
 	/*
 	 * Returns average pace since start in feet per minutes
 	 */
-	public Double getPace(){
+	public double getPace(){
 		int minutes = getTimeOnTrail();
 		Double distance = getDistance();
 		Double pace = distance/minutes;
