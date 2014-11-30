@@ -174,18 +174,15 @@ class DistanceManager {
 	}
 	
 	//Checks off markers assuming we skipped some
+	//  default is start at ExeEnt
 	private void stupidPathFinder(int currentScan){
-		int endPoint = 4;
+		int endPoint = 0;
 		int i;
-	
-		//find the entrance
-		for (i = 0; i < 5; i++){
-			if (this.markers[i] && i < currentScan){
-				endPoint = 0;
-			}
-			else if (this.markers[i] && i > currentScan){
-				endPoint = 4;
-			}
+
+		//Stupid find entrance
+		if (firstCodeScanned.equals("DepeEnt") ||
+			firstCodeScanned.equals("L18")){
+			endPoint = 4;
 		}
 		
 		//fill in spaces between + marks off current
