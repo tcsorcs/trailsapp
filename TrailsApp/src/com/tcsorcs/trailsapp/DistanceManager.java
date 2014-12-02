@@ -74,6 +74,7 @@ class DistanceManager {
 			startHour = aCalendar.get(Calendar.HOUR_OF_DAY);
 			startMinute = aCalendar.get(Calendar.MINUTE);
 			startTimeInMinutes = (startHour * 60) + startMinute;
+			
 			startDate = aCalendar.get(Calendar.DAY_OF_WEEK_IN_MONTH);
 			firstCodeScanned = codeName;
 		}
