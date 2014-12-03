@@ -18,7 +18,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
 /* THIS BRANCH IS CURRENTLY NOT BEING UPDATED
  *  Only Excellence trail codes available
  *  No database connection 
