@@ -32,6 +32,8 @@ public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		if (scanResult != null) {
 			String c = scanResult.getContents();
 			LinearLayout l = (LinearLayout) findViewById(R.id.MainLinearLayout);
+			InputManager.getInstance().inputQRC(c, l);
+			/*
 			if(c.endsWith("/achievements/executive")) {
 				ImageView i = new ImageView(DisplayManager.getInstance().main_activity);
 				i.setImageDrawable(getResources().getDrawable(R.drawable.achievement));
@@ -43,7 +45,7 @@ public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 				l.removeAllViews();
 				t.setText("Unknown barcode: "+scanResult.getContents());
 				l.addView(t);
-			}
+			}*/
 		}
 	}
 
