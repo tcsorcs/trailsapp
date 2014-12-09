@@ -18,7 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-/* v0.0 - Demo only version
+/* MASTER BRANCH IS NOT BEING ACTIVELY UPDATED!
  *  Only Excellence trail codes available
  *  No database connection 
  *  Only works if codes are scanned in this order, either forward or backwards ExceEnt <-> L21 <-> L20 <-> L18 <-> DepeEnt
