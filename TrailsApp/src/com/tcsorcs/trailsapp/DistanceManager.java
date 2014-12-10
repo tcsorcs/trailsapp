@@ -45,7 +45,7 @@ class DistanceManager {
 	
 	//timey-wimey stuff
 	private Boolean started = false; //flag so start time isn't reset
-	private Calendar aCalendar = Calendar.getInstance(); //to get system time
+	final Calendar aCalendar = Calendar.getInstance(); //to get system time. Maybe.
 	private int startHour = -1;
 	private int startMinute = -1;
 	private int startTimeInMinutes = -1;
@@ -105,7 +105,7 @@ class DistanceManager {
 
 		//awards achievement
 		if (this.markers[0] && this.markers[1] && this.markers[2] && this.markers[3] && this.markers[4]){
-			AchievementManager.AwardAchievement("Executive Achievement", "You've walked the Executive trail!");
+			AchievementManager.AwardAchievement("Executive", "You've walked the Executive trail!");
 		}
 	}
 	
