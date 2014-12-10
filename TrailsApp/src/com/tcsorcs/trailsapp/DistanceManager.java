@@ -45,7 +45,7 @@ class DistanceManager {
 	
 	//timey-wimey stuff
 	private Boolean started = false; //flag so start time isn't reset
-	final Calendar aCalendar = Calendar.getInstance(); //to get system time. Maybe.
+	private Calendar aCalendar = Calendar.getInstance(); //to get system time. Maybe.
 	private int startHour = -1;
 	private int startMinute = -1;
 	private int startTimeInMinutes = -1;
