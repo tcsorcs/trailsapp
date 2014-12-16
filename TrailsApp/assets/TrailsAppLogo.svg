@@ -14,7 +14,10 @@
    id="svg3894"
    version="1.1"
    inkscape:version="0.48.5 r10040"
-   sodipodi:docname="TrailsAppLogo.svg">
+   sodipodi:docname="TrailsAppLogo.svg"
+   inkscape:export-filename="/home/ben/git/trailsapp/TrailsApp/assets/launcher/TrailsAppLogo-huge.png"
+   inkscape:export-xdpi="640"
+   inkscape:export-ydpi="640">
   <defs
      id="defs3896">
     <inkscape:perspective
@@ -65,7 +68,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -141,7 +144,7 @@
        sodipodi:cy="130"
        sodipodi:rx="20"
        sodipodi:ry="20"
-       d="m 50,130 a 20,20 0 1 1 -40,0 20,20 0 1 1 40,0 z"
+       d="m 50,130 c 0,11.04569 -8.954305,20 -20,20 -11.045695,0 -20,-8.95431 -20,-20 0,-11.04569 8.954305,-20 20,-20 11.045695,0 20,8.95431 20,20 z"
        transform="matrix(0.5,0,0,0.5,105,817.36218)" />
     <path
        sodipodi:type="arc"
@@ -161,7 +164,7 @@
        sodipodi:cy="130"
        sodipodi:rx="20"
        sodipodi:ry="20"
-       d="m 50,130 a 20,20 0 1 1 -40,0 20,20 0 1 1 40,0 z"
+       d="m 50,130 c 0,11.04569 -8.954305,20 -20,20 -11.045695,0 -20,-8.95431 -20,-20 0,-11.04569 8.954305,-20 20,-20 11.045695,0 20,8.95431 20,20 z"
        transform="matrix(0.5,0,0,0.25,105,954.86218)" />
     <path
        sodipodi:type="arc"
@@ -171,7 +174,7 @@
        sodipodi:cy="130"
        sodipodi:rx="20"
        sodipodi:ry="20"
-       d="m 50,130 a 20,20 0 1 1 -40,0 20,20 0 1 1 40,0 z"
+       d="m 50,130 c 0,11.04569 -8.954305,20 -20,20 -11.045695,0 -20,-8.95431 -20,-20 0,-11.04569 8.954305,-20 20,-20 11.045695,0 20,8.95431 20,20 z"
        transform="matrix(0.5,0,0,0.5,155,817.36218)" />
     <path
        sodipodi:type="arc"
@@ -181,7 +184,7 @@
        sodipodi:cy="130"
        sodipodi:rx="20"
        sodipodi:ry="20"
-       d="m 50,130 a 20,20 0 1 1 -40,0 20,20 0 1 1 40,0 z"
+       d="m 50,130 c 0,11.04569 -8.954305,20 -20,20 -11.045695,0 -20,-8.95431 -20,-20 0,-11.04569 8.954305,-20 20,-20 11.045695,0 20,8.95431 20,20 z"
        transform="matrix(0.5,0,0,0.25,155,954.86218)" />
     <path
        sodipodi:type="arc"
@@ -201,7 +204,7 @@
        sodipodi:cy="130"
        sodipodi:rx="20"
        sodipodi:ry="20"
-       d="m 50,130 a 20,20 0 1 1 -40,0 20,20 0 1 1 40,0 z"
+       d="m 50,130 c 0,11.04569 -8.954305,20 -20,20 -11.045695,0 -20,-8.95431 -20,-20 0,-11.04569 8.954305,-20 20,-20 11.045695,0 20,8.95431 20,20 z"
        transform="matrix(0.5,0,0,0.5,165,857.36218)" />
     <path
        sodipodi:type="arc"
@@ -211,7 +214,7 @@
        sodipodi:cy="130"
        sodipodi:rx="20"
        sodipodi:ry="20"
-       d="m 50,130 a 20,20 0 1 1 -40,0 20,20 0 1 1 40,0 z"
+       d="m 50,130 c 0,11.04569 -8.954305,20 -20,20 -11.045695,0 -20,-8.95431 -20,-20 0,-11.04569 8.954305,-20 20,-20 11.045695,0 20,8.95431 20,20 z"
        transform="matrix(0.5,0,0,0.5,95,857.36218)" />
     <path
        sodipodi:type="arc"
@@ -221,7 +224,7 @@
        sodipodi:cy="130"
        sodipodi:rx="20"
        sodipodi:ry="20"
-       d="m 50,130 a 20,20 0 1 1 -40,0 20,20 0 1 1 40,0 z"
+       d="m 50,130 c 0,11.04569 -8.954305,20 -20,20 -11.045695,0 -20,-8.95431 -20,-20 0,-11.04569 8.954305,-20 20,-20 11.045695,0 20,8.95431 20,20 z"
        transform="matrix(0.5,0,0,0.5,35,827.36218)" />
     <path
        sodipodi:type="arc"
@@ -231,7 +234,7 @@
        sodipodi:cy="130"
        sodipodi:rx="20"
        sodipodi:ry="20"
-       d="m 50,130 a 20,20 0 1 1 -40,0 20,20 0 1 1 40,0 z"
+       d="m 50,130 c 0,11.04569 -8.954305,20 -20,20 -11.045695,0 -20,-8.95431 -20,-20 0,-11.04569 8.954305,-20 20,-20 11.045695,0 20,8.95431 20,20 z"
        transform="matrix(0.5,0,0,0.5,225,827.36218)" />
     <path
        sodipodi:type="arc"
@@ -241,7 +244,7 @@
        sodipodi:cy="130"
        sodipodi:rx="20"
        sodipodi:ry="20"
-       d="m 50,130 a 20,20 0 1 1 -40,0 20,20 0 1 1 40,0 z"
+       d="m 50,130 c 0,11.04569 -8.954305,20 -20,20 -11.045695,0 -20,-8.95431 -20,-20 0,-11.04569 8.954305,-20 20,-20 11.045695,0 20,8.95431 20,20 z"
        transform="matrix(0.5,0,0,0.5,75,897.36218)" />
     <path
        sodipodi:type="arc"
@@ -251,7 +254,7 @@
        sodipodi:cy="130"
        sodipodi:rx="20"
        sodipodi:ry="20"
-       d="m 50,130 a 20,20 0 1 1 -40,0 20,20 0 1 1 40,0 z"
+       d="m 50,130 c 0,11.04569 -8.954305,20 -20,20 -11.045695,0 -20,-8.95431 -20,-20 0,-11.04569 8.954305,-20 20,-20 11.045695,0 20,8.95431 20,20 z"
        transform="matrix(0.5,0,0,0.5,185,897.36218)" />
     <path
        sodipodi:type="arc"
