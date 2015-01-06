@@ -8,6 +8,19 @@ import java.util.Calendar;
  *  Currently contains Demo version code - need to update
  *  
  */
+ /*
+ *   Stuff Distance manager will need for 1 session
+  *  >Each distance code scanned needs this information stored: 
+  *    Name (String), order scanned (int), time scanned (long)
+  *  >Need distances between adjacent codes stored as:
+  *    Code Name1 (String), Code Name2 (String), distance (double)
+  *   It would be super dooper great if the order each code is listed is consistent - preferably 
+  *     alphabetically or some other easy way to sort.
+  *  
+  *  Stuff for stats recording (expanded from above)
+  *    Code Name1 (String), Code Name2 (String), distance (double), currentPace (double), averagePace (double)
+  *  STILL WORKING ON
+  */
 
 public class DistanceManager {
     // boolean marks if we've scanned these locations/assumed we've passed these
