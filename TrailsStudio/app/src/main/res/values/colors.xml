@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="RED">#f00</color>
+    <color name="GREEN">#ff83ff2e</color>
+
+
+    <color name="main_background_color">#000066</color>
+    <color name="button_background_color">#66CCFF</color>
+    <color name="button_text_color">#FFFFFF</color>
+    <color name="label_color">#FFFFFF</color>
+    <color name="stats_values_color">#FFFFFF</color>
+    <color name="action_bar_background">#66CCFF</color>
+
+
+</resources>
