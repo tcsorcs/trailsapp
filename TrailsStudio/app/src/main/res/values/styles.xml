@@ -1,0 +1,28 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+
+        <!-- Support library compatibility -->
+        <item name="actionBarStyle">@style/MyActionBar</item>
+
+        <item name="android:buttonStyle">@style/ButtonStyle</item>
+    </style>
+
+    <!-- Button Style -->
+    <style name="ButtonStyle" parent="android:style/Widget.Holo.Button">
+        <item name="android:textColor">@color/button_text_color</item>
+        <item name="android:background">@color/button_background_color</item>
+
+
+    </style>
+    <!-- ActionBar styles -->
+    <style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/action_bar_background</item>
+
+        <!-- Support library compatibility -->
+        <item name="background">@color/action_bar_background</item>
+    </style>
+
+</resources>

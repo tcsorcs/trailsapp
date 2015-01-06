@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- MainORCActivity -->
+
+    <string name="app_name">TCS Trails App</string>
+    <string name="title_trails">Trails Home</string>
+    <string name="title_achievements">Achievements</string>
+    <string name="title_orcslounge">ORCs Lounge</string>
+    <string name="title_googlemaps">Where Am I ?</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Example action</string>
+    <string name="action_settings">Settings</string>
+    <string name="exit_menu">Exit</string>
+    <string name="total_distance_label">Total Distance: </string>
+    <string name="time_on_trail_label">Time on Trail: </string>
+    <string name="pace_label">Pace: </string>
+    <string name="begin_text">Scan QR Code to Begin!</string>
+    <string name="scan_button_text">Scan QR Code</string>
+    <string name="google_maps_button_text">Google Maps</string>
+    <string name="exit_button_text">Exit</string>
+    <!--
+    <string name="map_prompt">Choose a Map</string>
+    <string name="achievement_prompt">Choose Achieevement</string>
+
+    <string-array name="map_names">
+        <item>Select Map</item>
+        <item>ExceEnt</item>
+        <item>ExceEnt_L21</item>
+        <item>L20_L21</item>
+        <item>L18_L20</item>
+        <item>DepeEnt_L18</item>
+    </string-array>
+    <string-array name="achievement_names">
+        <item>Select Achievment</item>
+        <item>Executive</item>
+    </string-array>
+    -->
+
+
+    <!-- onTrailsService -->
+
+    <string name="notification_title">TrailsApp</string>
+    <string name="notification_message">On the Trails!</string>
+    <string name="ticker_text">TRAILING!</string>
+
+    <!-- Splash Screen -->
+
+    <string name="splash_screen_title">TCS TRAILS APP</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_google_maps">TrailsApp Google Maps</string>
+    <string name="hello_world">Hello world!</string>
+
+</resources>
