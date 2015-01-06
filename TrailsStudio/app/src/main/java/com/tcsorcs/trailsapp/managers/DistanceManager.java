@@ -3,15 +3,10 @@ package com.tcsorcs.trailsapp.managers;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-/* v0.0 - Demo only version
- *  Only Excellence trail codes available
- *  No database connection 
- *  Only works if codes are scanned in this order, either forward or backwards ExceEnt <-> L21 <-> L20 <-> L18 <-> DepeEnt
- *   (no running back and forth scanning codes for bonus points ;)
+/* v1.0 - Full version
  *  
- *  Doesn't display distance yet
+ *  Currently contains Demo version code - need to update
  *  
- *  Need: assistance with displaying items
  */
 
 public class DistanceManager {
