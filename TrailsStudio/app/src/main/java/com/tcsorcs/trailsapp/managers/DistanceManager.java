@@ -47,6 +47,8 @@ import java.util.Calendar;
   *    + do not need a pastPaces column (can calculate it as needed based on pace for each segment)
   *    -/? related to ? from above, if segments are not broken down, may have many long trails only walked once
   *
+  *  Or could only store info that we need for an achievement (ex, only tally the Kurtis F Trail walks)
+  *    would simplify the problems above
   */
 
 public class DistanceManager {
