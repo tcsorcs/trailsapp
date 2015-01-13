@@ -18,8 +18,35 @@ import java.util.Calendar;
   *     alphabetically or some other easy way to sort.
   *  
   *  Stuff for stats recording (expanded from above)
+  *  Pace Stats Recording:
   *    Code Name1 (String), Code Name2 (String), distance (double), currentPace (double), averagePace (double)
-  *  STILL WORKING ON
+  *  Is there a way to store an array/mutable sized storage container in the DB? If so, then just use that
+  *    to record all paces per section of the trail, and calculate average from that data when we need to.
+  *    If so, the stats recording/entry for each path section could be:
+  *    Code Name1 (String), Code Name2 (String), distance (double), currentPace (double), pastPaces (array of doubles)
+  *
+  *  Routes Stats Recording:
+  *  Basic idea is we have a trail identifier (more later), a tally counting the times walked, and a 
+  *    container to store all paces (as described in Pace Stats Recording)
+  *    ID, timesWalked (int), pastPaces? (array of doubles)
+  *  If this identifier is a nickname (could be nickname or id) of all the logical trail loops we could 
+  *    make an entry for each in the DB before the app is ever run. 
+  *    - would need a conversion table from segments to trail name
+  *    = would still need the ability to add new "loops" on the fly (if you only scanned part of a loop)
+  *    + more human readable for debugging
+  *    +/- we know we have (the majority of) the space we'd need, but there would be wasted space
+  *    + don't care about the start/end
+  *    ? if a walk consists of multiple loops, do we tally each sub loop, or make a new entry for the
+  *       total loop
+  *    ? may not need pastPaces section if we make something grab paces for each segment of each trail
+  *  If this identifier is a container (list/array etc like for pastPaces - assuming this is possible) we
+  *    could dynamically add new trail loops as the user uses them
+  *    - each trail loop needs to have a standard start/end, or there will be duplicates
+  *    +/- DB increases as needed, but total space of app will vary more
+  *    - will need a smarter search algorithm to decide which trail we've just walked
+  *    + do not need a pastPaces column (can calculate it as needed based on pace for each segment)
+  *    -/? related to ? from above, if segments are not broken down, may have many long trails only walked once
+  *
   */
 
 public class DistanceManager {
