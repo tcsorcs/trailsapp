@@ -180,6 +180,9 @@ public class DistanceManager {
         return pace;
     }
 
+    /*****
+     * stupidPathFinder and stupidDistanceCalc will be replaces with smarterPathFinder soon.
+     */
     // Checks off markers assuming we skipped some
     // default is start at ExeEnt
     private void stupidPathFinder(int currentScan) {
@@ -225,4 +228,11 @@ public class DistanceManager {
         this.totalDistance = calcDistance;
     }
 
+    /*A smarter path finder that handles the whole trail
+     * handles skipped points, crossing the road ...
+     */
+
+    private void smarterPathFinder(int currentScan){
+
+    }
 }
