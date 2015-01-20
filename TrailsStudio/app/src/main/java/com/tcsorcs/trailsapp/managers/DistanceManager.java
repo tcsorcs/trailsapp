@@ -230,9 +230,14 @@ public class DistanceManager {
 
     /*A smarter path finder that handles the whole trail
      * handles skipped points, crossing the road ...
+     *
+     * assumes is not passed the first point seen
      */
 
     private void smarterPathFinder(int currentScan){
-
+        //get previous scanned point
+        //search for previous and current point combo in database glorious
+        //if found - yay! do stuff (add this point to current path section of database glorious, calculate/report dtp)
+        //if combo not found - gasp! be smart about it!
     }
 }
