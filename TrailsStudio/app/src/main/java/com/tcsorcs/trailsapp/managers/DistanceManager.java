@@ -2,13 +2,17 @@ package com.tcsorcs.trailsapp.managers;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Stack;
+import java.util.TreeSet;
 
 /* v1.0 - Full version
  *  
- *  Currently contains Demo version code - need to update
- *  
+ *  Currently NOT FUNCTIONAL - needs actual hooks to connect to database and hooks for display manager to be implemented
+ *  DNE = does not exist
+ *  Updated 2/17/2015
  */
- /*
+ /* Below are ideas, some outdated. Will clean up later.
  *   Stuff Distance manager will need for 1 session
   *  >Each distance code scanned needs this information stored: 
   *    Name (String), order scanned (int), time scanned (long)
@@ -51,7 +55,30 @@ import java.util.Calendar;
   *    would simplify the problems above
   */
 
+/*
+ * Assumptions made about classes that don't exist:
+ * Segment class generated from info returned from the DB
+ * need method: ArrayList<Segment> getSegmentsWithPoint(String pointA) - returns all segments with pointA
+ * need method: boolean segmentHasPoints(String pointA, String pointB) - returns true if segment contains both points
+ * Note that in both methods, "pointA" or "pointB" can be either "pointX" or "pointY"
+ * Segment class {
+ *    String pointX;
+ *    String pointY;
+ *    int segmentId;
+ *    double segmentDistance;
+ *    String sideOfRoad;
+ * }
+ *
+ * Display Manager needs this, I need a way to retrieve it based on a String "point name"
+ * need method: Location getLocation(String pointName);
+ * Location class {
+ *    String pointName aka locationId;
+ *    int x;
+ *    int y;
+ * }
+ */
 public class DistanceManager {
+    /* leftovers from demo version, left here temporarily for reference
     // boolean marks if we've scanned these locations/assumed we've passed these
     // listed in this order: ExceEnt, L21, L20, L18, DepeEnt
     private Boolean[] markers = { false, false, false, false, false };
@@ -72,8 +99,12 @@ public class DistanceManager {
     /*
      * Not using this for anything yet - but using this will let us correctly
      * calculate time if using this app for > 24 hours
-     */
+
     private int startDate = 0; // Not implemented
+*/
+    //int codesScanned = 0; //number of codes scanned so far
+    private Stack<String> path = new Stack<String>(); //path so far, saves the String names of the QR codes
+    private double totalDistance = 0.0; //keeps track of the total distance of the path
 
     public static DistanceManager getInstance() {
         return DistanceManager.instance;
@@ -82,51 +113,32 @@ public class DistanceManager {
     public static DistanceManager instance = new DistanceManager();
 
     /*
-     * Handles QR input
+     * Handles QR input (complete, needs official method names, untested)
+     * given the name of a location QR code, builds path and tells display manager what to display
      */
     public void processQRCodes(String codeName) {
-        if (!started) {
-            started = true;
-            startTimeMillis = System.currentTimeMillis();
-            firstCodeScanned = codeName;
-        }
-        if (codeName.equals("ExceEnt")) {
-            this.markers[0] = true;
-            stupidPathFinder(0);
-            DisplayManager.getInstance().updateTrailsMap(getPathSegments());
-        } else if (codeName.equals("L21")) {
-            this.markers[1] = true;
-            stupidPathFinder(1);
-            DisplayManager.getInstance().updateTrailsMap(getPathSegments());
-        } else if (codeName.equals("L20")) {
-            this.markers[2] = true;
-            stupidPathFinder(2);
-            DisplayManager.getInstance().updateTrailsMap(getPathSegments());
-        } else if (codeName.equals("L18")) {
-            this.markers[3] = true;
-            stupidPathFinder(3);
-            DisplayManager.getInstance().updateTrailsMap(getPathSegments());
-        } else if (codeName.equals("DepeEnt")) {
-            this.markers[4] = true;
-            stupidPathFinder(4);
-            DisplayManager.getInstance().updateTrailsMap(getPathSegments());
-        }
+        //I see a QR code - is either first or not first
+        if (path.empty()){            //don't need to pathfind
+            //add QRcode to path
+            path.push(codeName);
 
-        // awards achievement
-        if (this.markers[0] && this.markers[1] && this.markers[2]
-                && this.markers[3] && this.markers[4]) {
-            // TODO add achievement call. this is currently called whenever
-            // DepeEnt is scanned and finished zooming (in TouchImageView) for
-            // the demo since we know that will be the
-            // last scanned QR code
+            //grab location from DB (might not have it's own declaration)
+            PointLocation firstLocation = getLocation(codeName); //DNE
+
+            //display new point
+            DisplayManager.drawMarker(firstLocation, false, true); //DNE
         }
+        else {//need to pathfind
+            smarterPathFinder(codeName);
+        }
+    //debug System.out.println("DistanceManager.processQRCodes end");
     }
 
-    /*
+    /* DEPRICATED
      * Returns sections of path walked First value is the first code scanned,
      * rest values are the segments on the path walked (not in the order they
      * were walked)
-     */
+     *
     public ArrayList<String> getPathSegments() {
         ArrayList<String> pathList = new ArrayList<String>();
 
@@ -147,7 +159,7 @@ public class DistanceManager {
 
         return pathList;
     }
-
+*/
     /*
      * Returns total distance walked note distance is calculated each time a
      * distanceQR code is scanned
@@ -156,7 +168,7 @@ public class DistanceManager {
         return this.totalDistance;
     }
 
-    /*
+    /* TO EDIT
      * Returns total time on trail in seconds
      */
     public double getTimeOnTrail() {
@@ -167,7 +179,7 @@ public class DistanceManager {
         return totalTimeSeconds;
     }
 
-    /*
+    /* TO EDIT
      * Returns average pace since start in feet per minutes
      */
     public double getPace() {
@@ -182,7 +194,7 @@ public class DistanceManager {
 
     /*****
      * stupidPathFinder and stupidDistanceCalc will be replaces with smarterPathFinder soon.
-     */
+
     // Checks off markers assuming we skipped some
     // default is start at ExeEnt
     private void stupidPathFinder(int currentScan) {
@@ -227,17 +239,106 @@ public class DistanceManager {
 
         this.totalDistance = calcDistance;
     }
-
+*/
     /*A smarter path finder that handles the whole trail
      * handles skipped points, crossing the road ...
      *
      * assumes is not passed the first point seen
      */
 
-    private void smarterPathFinder(int currentScan){
+    private void smarterPathFinder(String currentScan){
+        String lastScan; //most recent point from global path stack
+        ArrayList<Segment> currentSegments; //list of segments, returned from DB //DNE
+        Segment aSegment; //current segment we're working with //DNE
+        boolean pointsAdjacent = false; //if two points are on the same segment
+
+        //get most recent point from path
+        lastScan = path.peek();
+
+        //get all segments with currentScan
+        currentSegments = getSegmentsWithPoint(currentScan); //DNE
+
+        //checks if last 2 points scanned are on the same segment
+        for (int i = 0; i < currentSegments.size() && !pointsAdjacent; i++){
+            aSegment = currentSegments.get(i);
+            pointsAdjacent = aSegment.segmentHasPoints(lastScan, currentScan); //DNE
+        }
+
+        //we know our next segment, yay!
+        if(pointsAdjacent){
+            path.push(currentScan);
+            totalDistance += aSegment.segmentDistance;//DNE
+            //display segment
+            DisplayManager.drawSegment(aSegment);//DNE
+
+            //display new point
+            DisplayManager.drawMarker(getLocation(currentScan), false, true); //DNE
+            return;
+        }
+
+        //if points are not adjacent, we need to pathfind!
+        //note, this starts with the currently scanned point and moves "backwards" toward the existing path
+
+        //eliminate segments crossing road if points not on different sides
+
+        /*
+        ideas: order possible segments by length, shortest add next possible length (if multiple options,
+        clone and add all options to list - without duplicating segments on same path), resort, find next
+        shortest, add next possible lenght, resort etc until find end of existing path
+        Tree might work? Needs to be able to self-order length
+
+         */
+
+
         //get previous scanned point
         //search for previous and current point combo in database glorious
         //if found - yay! do stuff (add this point to current path section of database glorious, calculate/report dtp)
         //if combo not found - gasp! be smart about it!
+
+        //And magic happens - 100% chance this will fail first time it's run...
+        //have currentScan(start with this), lastScan(end of the path we've already built)
+
+        //MUST BE FIXED!!!!!
+
+        //local class for "node"
+        class Node implements Comparator<Node> {
+            String scanName; //QR code name
+            Node parent; //parent node, or null
+            double nodeDistance; //total distance from start of subpath
+
+            Node (String aScanName, Node aNode, double aDistance){
+                scanName = aScanName;
+                parent = aNode;
+                nodeDistance = aDistance;
+            }
+
+            public int compare(Node right, Node left) {
+                if (right.nodeDistance < left.nodeDistance) {
+                    return -1;
+                } else if (right.nodeDistance == left.nodeDistance){
+                    return 0;
+                } else {
+                    return 1;
+                }
+            }
+        }//local Node class
+
+        Node currentNode = new Node(currentScan, null, 0.0);//the first node we add - put here for easier visibility
+        TreeSet<Node> subPath = new TreeSet(Node); //NOT CORRECT - want to implement the node comparator
+
+        subPath.add(currentNode);
+        Node shortest = subPath.first();
+
+        ArrayList<Segment> nextSegments = getSegmentsWithPoint(shortest.scanName);
+        Segment aSegment;
+        Node aNode;
+
+        while (!nextSegments.isEmpty()){
+            aSegment = nextSegments.popNext(); //THIS ISN'T REAL
+            aNode = new Node(aSegment.name(), shortest, (aSegment.distance+shortest.nodeDistance));
+            subPath.add(aNode);
+        }
+
+
     }
 }
