@@ -2,9 +2,13 @@ package com.tcsorcs.trailsapp.managers;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+<<<<<<< HEAD
 import java.util.Comparator;
 import java.util.Stack;
 import java.util.TreeSet;
+=======
+import java.util.Stack;
+>>>>>>> 37ee66474eac4d1578b2f531c31f52d2990123a2
 
 /* v1.0 - Full version
  *  
@@ -290,6 +294,10 @@ public class DistanceManager {
          */
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 37ee66474eac4d1578b2f531c31f52d2990123a2
         //get previous scanned point
         //search for previous and current point combo in database glorious
         //if found - yay! do stuff (add this point to current path section of database glorious, calculate/report dtp)
