@@ -240,6 +240,26 @@ public class DistanceManager {
      this.totalDistance = calcDistance;
      }
      */
+    //local class for "node"
+    class Node implements Comparable<Node> {
+        String scanName; //QR code name
+        Node parent; //parent node, or null
+        double nodeDistance; //total distance from start of subpath
+
+        Node (String aScanName, Node aNode, double aDistance){
+            scanName = aScanName;
+            parent = aNode;
+            nodeDistance = aDistance;
+        }
+
+        //Potential error - right and left might need to be switched...
+        @Override
+        public int compareTo(Node left) {
+            return Double.compare(this.nodeDistance, left.nodeDistance);
+        }
+    }//local Node class
+
+
         /*A smarter path finder that handles the whole trail
          * handles skipped points, crossing the road ...
          *
@@ -247,16 +267,15 @@ public class DistanceManager {
          */
 
     private void smarterPathFinder(String currentScan){
+        /** Check if points are adjacent **/
         String lastScan; //most recent point from global path stack
         ArrayList<Segment> attachedSegments; //list of segments, returned from DB //DNE
         Segment currentSegment = null; //current segment we're working with //DNE
         boolean pointsAdjacent = false; //if two points are on the same segment
 
-        //get most recent point from path
-        lastScan = path.peek();
+        lastScan = path.peek();//most recent point from path
 
-        //get all segments with currentScan
-        attachedSegments = getSegmentsWithPoint(currentScan); //DNE
+        attachedSegments = getSegmentsWithPoint(currentScan); //DNE //segments with currentScan
 
         //if getSegmentsWithPoint grabs nothing b/c error, don't continue because will break
         if (attachedSegments.size() < 1){
@@ -282,70 +301,66 @@ public class DistanceManager {
             return;
         }
 
-        //if points are not adjacent, we need to pathfind!
+        /**if points are not adjacent, pathfind**/
 
         //(add for optimization?) eliminate segments crossing road if points not on different sides
 
-            /*
-            ideas: order possible segments by length, shortest add next possible length (if multiple options,
-            clone and add all options to list - without duplicating segments on same path), resort, find next
-            shortest, add next possible lenght, resort etc until find end of existing path
-            Tree might work? Needs to be able to self-order length
-
-             */
-
-
-        //get previous scanned point
-        //search for previous and current point combo in database glorious
-        //if found - yay! do stuff (add this point to current path section of database glorious, calculate/report dtp)
-        //if combo not found - gasp! be smart about it!
-
         //And magic happens - 100% chance this will fail first time it's run...
         //have currentScan(start with this), lastScan(end of the path we've already built)
-            /*
-             * pathfinder will build unknown path starting with most recent scanned, last point added to
-             * pathfinder list will be last point on main path. We then remove last point from list
-             * and pop it onto path (adding distance as we go) so that last point left in pathfinder list
-             * is most recent point scanned, and now the end of the main path.
-             */
-
-        //MUST BE FIXED!!!!!
-
-        //local class for "node"
-        class Node implements Comparable<Node> {
-            String scanName; //QR code name
-            Node parent; //parent node, or null
-            double nodeDistance; //total distance from start of subpath
-
-            Node (String aScanName, Node aNode, double aDistance){
-                scanName = aScanName;
-                parent = aNode;
-                nodeDistance = aDistance;
-            }
-
-            //Potential error - right and left might need to be switched...
-            @Override
-            public int compareTo(Node left) {
-                return Double.compare(this.nodeDistance, left.nodeDistance);
-            }
-        }//local Node class
-
-        Node currentNode = new Node(currentScan, null, 0.0);//the first node we add - put here for easier visibility
-        TreeSet<Node> subPath = new TreeSet<Node>(); //hopefully knows to use Node's compareTo...
-
-        subPath.add(currentNode);//add first
-        Node shortest = subPath.first(); //get shortest (here only)
-
-        ArrayList<Segment> nextSegments = getSegmentsWithPoint(shortest.scanName);
+        /*
+        * pathfinder will build unknown path starting with most recent scanned, last point added to
+        * pathfinder list will be last point on main path. We then remove last point from list
+        * and pop it onto path (adding distance as we go) so that last point left in pathfinder list
+        * is most recent point scanned, and now the end of the main path.
+        */
+        Node currentNode; //first node we add
+        TreeSet<Node> subPath; //subpath we're building
+        Node shortest; //stores the shortest node (list)
+        ArrayList<Segment> nextSegments;
         Segment subSegment;
         Node subNode;
 
-        while (!nextSegments.isEmpty()){
-            subSegment = nextSegments.remove(0); //removes and returns, decreasing list //(is this less optimal than using a for loop?)
-            subNode = new Node(subSegment.name(), shortest, (subSegment.distance+shortest.nodeDistance));
-            subPath.add(subNode);
+        currentNode = new Node(currentScan, null, 0.0);
+        subPath = new TreeSet<Node>();
+
+        subPath.add(currentNode);//add first
+
+        shortest = subPath.first(); //get shortest
+
+        while(!shortest.scanName.equals(lastScan)) { //while the shortest scan is not the lastScan from path
+            nextSegments = getSegmentsWithPoint(shortest.scanName);
+
+            while (!nextSegments.isEmpty()) {
+                subSegment = nextSegments.remove(0); //removes and returns, decreasing list //(is this less optimal than using a for loop?)
+                subNode = new Node(subSegment.secondPoint(), shortest, (subSegment.distance + shortest.nodeDistance));//Segment.secondPoint is the point found attached, not the point given to search for
+                subPath.add(subNode);
+            }
+
+            //all connected points should be in nodes, so must remove original node from subPath
+            subPath.pollFirst(); //removes and returns first in set (shortest path here)
+
+            shortest = subPath.first(); //get shortest
+        }//end while
+
+        //we have our path
+        addSubPathToPath(shortest);
+    }
+
+    //NEED TO ADD call to display
+    /* helper to smarterPathFinder
+     * given connectingNode.scanName should be lastScan
+     * This travels through the list of nodes in connectingNode until end - where end is currentScan
+     * - and adds to path
+     */
+    private void addSubPathToPath(Node connectingNode){
+        totalDistance += connectingNode.nodeDistance; //adds subPath distance to toal distance
+        Node currentNode = connectingNode.parent;
+
+        while(currentNode != null){
+            path.push(currentNode.scanName);
+            currentNode = currentNode.parent;
         }
 
-
+        //needs to display all this now...
     }
 }
