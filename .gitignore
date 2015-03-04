@@ -1,3 +1,9 @@
+#Android Studio
+.gradle/
+local.properties
+.idea/
+/build
+
 #################
 ## Eclipse
 #################
@@ -215,3 +221,4 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 TrailsApp/.classpath
+TrailsStudio/.idea/libraries/appcompat_v7_21_0_3.xml
