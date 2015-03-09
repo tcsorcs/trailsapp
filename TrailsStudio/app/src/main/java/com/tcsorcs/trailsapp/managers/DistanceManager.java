@@ -10,7 +10,7 @@ import java.util.TreeSet;
      *
      *  Currently NOT FUNCTIONAL - needs actual hooks to connect to database and hooks for display manager to be implemented
      *  DNE = does not exist
-     *  Updated 2/17/2015
+     *  Updated 3/9/2015
      */
      /* Below are ideas, some outdated. Will clean up later.
      *   Stuff Distance manager will need for 1 session
