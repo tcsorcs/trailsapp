@@ -69,7 +69,7 @@ public class Achievement {
         this.sound = sound;
         this.isHidden = false;
         this.isSecret = false;
-        this.isAchieved = true;
+        this.isAchieved = false;
     }
 
     /// Full constructor for an Achievement
