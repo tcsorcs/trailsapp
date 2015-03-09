@@ -16,21 +16,31 @@ public class AchievementManager {
 
 	public static AchievementManager instance = new AchievementManager();
 
-	// / AwardAchievement
-	// / Awards an achievement
-	// / achievementName: Name of the achievement awarded
-	public void awardAchievement(String achievementName, String achievementDesc) {
-        //Achievement toAward = DatabaseManager.findAchievementByName(achievementName);
-		//DisplayManager.getInstance().notifyAchievement(toAward);
+    //TODO: change to pass an int once display man handles it
+	public void awardAchievement(String achievementName) {
+        Achievement toAward = findAchievementByName(achievementName);
+		DisplayManager.getInstance().notifyAcheivement(""+toAward.getAchievementID());
 	}
+    public void awardAchievement(int achievementID) {
+        Achievement toAward = findAchievementByID(achievementID);
+        DisplayManager.getInstance().notifyAcheivement(""+toAward.getAchievementID());
+    }
 
     //TODO: put logic in here
-    public Achievement FindAchievementByID(int achievementID){
+    public Achievement findAchievementByID(int achievementID){
+        return new Achievement();
+    }
+    //TODO: put logic in here
+    public Achievement findAchievementByName(String achievementName){
         return new Achievement();
     }
 
     //TODO: put logic in here
     public ArrayList<Achievement> getAchievementList(){
+        //For each achievement in the DB
+        //  if not secret
+        //    if hidden -> add hidden achievement to array
+        //    else -> add to array
         return new ArrayList<Achievement>();
     }
 }
