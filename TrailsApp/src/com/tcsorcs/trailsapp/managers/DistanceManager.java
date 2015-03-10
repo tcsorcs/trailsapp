@@ -30,16 +30,13 @@ public class DistanceManager {
 
 	// timey-wimey stuff
 	private Boolean started = false; // flag so start time isn't reset
-	private Calendar aCalendar = Calendar.getInstance(); // to get system time
-	private int startHour = -1;
-	private int startMinute = -1;
-	private int startTimeInMinutes = -1;
+	private long startTimeMillis = -1;
 
 	/*
 	 * Not using this for anything yet - but using this will let us correctly
 	 * calculate time if using this app for > 24 hours
 	 */
-	private int startDate = 0; // counts back, so negative values are valid
+	private int startDate = 0; // Not implemented
 
 	public static DistanceManager getInstance() {
 		return DistanceManager.instance;
@@ -53,10 +50,7 @@ public class DistanceManager {
 	public void processQRCodes(String codeName) {
 		if (!started) {
 			started = true;
-			startHour = aCalendar.get(Calendar.HOUR_OF_DAY);
-			startMinute = aCalendar.get(Calendar.MINUTE);
-			startTimeInMinutes = (startHour * 60) + startMinute;
-			startDate = aCalendar.get(Calendar.DAY_OF_WEEK_IN_MONTH);
+			startTimeMillis = System.currentTimeMillis();
 			firstCodeScanned = codeName;
 		}
 		if (codeName.equals("ExceEnt")) {
@@ -126,29 +120,25 @@ public class DistanceManager {
 	}
 
 	/*
-	 * Returns total time on trail in minutes
+	 * Returns total time on trail in seconds
 	 */
-	public int getTimeOnTrail() {
-		int currentHour = aCalendar.get(Calendar.HOUR_OF_DAY);
-		int currentMinute = aCalendar.get(Calendar.MINUTE);
-		int currentTimeInMinutes = (currentHour * 60) + currentMinute;
-
-		int totalMinutes = currentTimeInMinutes - startTimeInMinutes;
-
-		if (totalMinutes < 0) {
-			totalMinutes = 1440 + totalMinutes;
-		}
-
-		return totalMinutes;
+	public double getTimeOnTrail() {
+		long currentTimeMillis = System.currentTimeMillis();
+		long totalTimeMillis = currentTimeMillis - startTimeMillis;
+		int totalTimeSeconds = (int)(totalTimeMillis/1000); //convert to seconds
+		
+		return totalTimeSeconds;
 	}
 
 	/*
 	 * Returns average pace since start in feet per minutes
 	 */
 	public double getPace() {
-		int minutes = getTimeOnTrail();
-		Double distance = getDistance();
-		Double pace = distance / minutes;
+		double seconds = getTimeOnTrail();
+		double minutes = seconds/60;
+		double distance = getDistance();
+		double pace = distance / minutes;
+		pace = Math.round(pace*1000)/1000;
 
 		return pace;
 	}
