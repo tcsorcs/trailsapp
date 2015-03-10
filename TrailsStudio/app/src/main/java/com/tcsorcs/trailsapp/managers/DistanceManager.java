@@ -362,5 +362,6 @@ public class DistanceManager {
         }
 
         //needs to display all this now...
+        
     }
 }
