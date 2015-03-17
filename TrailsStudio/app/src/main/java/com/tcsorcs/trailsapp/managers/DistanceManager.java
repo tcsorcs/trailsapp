@@ -329,6 +329,7 @@ public class DistanceManager {
         ArrayList<Segment> nextSegments;
         Segment subSegment;
         Node subNode;
+        String parentScanName;//name of parent for database query
 
         currentNode = new Node(currentScan, null, 0.0, null);
         subPath = new TreeSet<Node>();
@@ -338,7 +339,13 @@ public class DistanceManager {
         shortestNode = subPath.first(); //get shortest
 
         while(!shortestNode.scanName.equals(lastScan)) { //while the shortest scan is not the lastScan from path
-            nextSegments = DummyDatabaseHelper.getSegmentsWithPoint(shortestNode.scanName);//DNE //Tim
+            if (shortestNode.parent == null){
+                parentScanName = null;
+            } else {
+                parentScanName = shortestNode.parent.scanName;
+            }
+            nextSegments = DummyDatabaseHelper.getSegmentsWithPoint(shortestNode.scanName, parentScanName);//DNE //Tim
+
 
             while (!nextSegments.isEmpty()) {
                 subSegment = nextSegments.remove(0); //removes and returns, decreasing list //(is this less optimal than using a for loop?)
