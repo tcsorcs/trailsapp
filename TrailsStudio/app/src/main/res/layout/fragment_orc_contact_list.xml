@@ -1,0 +1,51 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.tcsorcs.trailsapp.fragments.OrcContactListFragment"
+    android:background="@color/action_bar_background"
+    android:clickable="true">
+
+
+	              <Button
+                    android:id="@+id/contacts_clear_button"
+                    style="@style/ButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dip"
+                     android:layout_alignParentLeft="true"
+                      android:layout_alignParentBottom="true"
+                      android:layout_marginLeft="8dip"
+                    android:text="Clear" />
+	
+                <Button
+                    android:id="@+id/send_message_button"
+                    style="@style/ButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="4dip"
+                    android:layout_alignParentBottom="true"
+                    android:text="Message" />
+
+                <Button
+                    android:id="@+id/send_location_button"
+                    style="@style/ButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="4dip"
+                    android:layout_marginRight="8dip"
+                    android:text="Location" />
+
+        <ListView
+            android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/contacts_clear_button"
+            android:layout_marginBottom="20dip">
+        </ListView>
+
+
+</RelativeLayout>

@@ -5,6 +5,8 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Stack;
 import java.util.TreeSet;
+
+import com.tcsorcs.trailsapp.helpers.Location;
 import com.tcsorcs.trailsapp.helpers.Segment;
 import com.tcsorcs.trailsapp.helpers.DummyDatabaseHelper; //temporary until database helper is up
 
@@ -125,10 +127,10 @@ public class DistanceManager {
             path.push(codeName);
 
             //grab location from DB (might not have it's own declaration)
-            Location firstLocation = DummyDatabaseHelper.getLocation(codeName); //DNE //Dave
+            Location firstLocation = DummyDatabaseHelper.getInstance().getLocation(codeName); //DNE //Dave
 
             //display new point
-            DisplayManager.drawMarker(firstLocation, false, true); //DNE //Dave
+            DisplayManager.getInstance().drawMarker(firstLocation, false, true); //DNE //Dave
         }
         else {//need to pathfind
             smarterPathFinder(codeName);
@@ -175,6 +177,8 @@ public class DistanceManager {
      */
     public double getTimeOnTrail() {
         long currentTimeMillis = System.currentTimeMillis();
+        //TODO set startTimeMillis when drawing first location
+        long startTimeMillis=0000000000000;
         long totalTimeMillis = currentTimeMillis - startTimeMillis;
         int totalTimeSeconds = (int)(totalTimeMillis/1000); //convert to seconds
 
@@ -279,7 +283,7 @@ public class DistanceManager {
 
         lastScan = path.peek();//most recent point from path
 
-        attachedSegments = DummyDatabaseHelper.getSegmentsWithPoint(currentScan); //DNE //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
+        attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(currentScan); //DNE //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
 
         //if something goes wrong and attachedSegments is null, skip gracefully (redundant if getSegmentsWithPoint succeeds)
         if (attachedSegments == null){
@@ -304,10 +308,10 @@ public class DistanceManager {
             path.push(currentScan);
             totalDistance += currentSegment.getSegmentDistance();//if not initialized, will not be hit
             //display segment
-            DisplayManager.drawSegment(currentSegment);//DNE
+            DisplayManager.getInstance().drawSegment(currentSegment);//DNE
 
             //display new point
-            DisplayManager.drawMarker(getLocation(currentScan), false, true); //DNE
+            DisplayManager.getInstance().drawMarker(DummyDatabaseHelper.getInstance().getLocation(currentScan), false, true); //DNE
             return;
         }
 
@@ -389,7 +393,7 @@ public class DistanceManager {
         }
 
         //display stuff
-        DisplayManager.drawSegments(segmentsList);//DNE //Dave
+        DisplayManager.getInstance().drawSegments(segmentsList);//DNE //Dave
 
     }
 }
