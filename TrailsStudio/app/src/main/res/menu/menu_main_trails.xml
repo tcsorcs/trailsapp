@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context="com.tcsorcs.trailsapp.activites.MainTrailsActivity">
-    <item android:id="@+id/action_example" android:title="@string/action_example"
+    <item android:id="@+id/toggle_dev" android:title="@string/toggle_dev"
         android:showAsAction="withText|ifRoom" />
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
     android:orderInCategory="100" android:showAsAction="never" />
