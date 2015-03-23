@@ -1,0 +1,13 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.tcsorcs.trailsapp.fragments.TrailBreakdownFragment"
+    android:background="@color/main_background_color"
+    android:clickable="true">
+
+       <com.tcsorcs.trailsapp.mapview.TouchImageView
+                    android:id="@+id/TrailBreakdownView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+</FrameLayout>

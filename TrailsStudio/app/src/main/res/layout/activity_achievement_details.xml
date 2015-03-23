@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/AchievementDialogBackgroundView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/action_bar_background"
+    >
+
+
+
+
+
+        <TextView
+            android:id="@+id/achieveDetailsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:text="King of The North"
+            android:layout_alignTop="@+id/image"
+            android:textSize="30dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="10dp"
+
+            />
+
+
+    <ImageView
+        android:id="@+id/achievementDetailsImage"
+        android:layout_width="200dip"
+        android:layout_height="200dip"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_below="@+id/achieveDetailsTitle"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_launcher"
+
+        />
+
+    <TextView
+        android:id="@+id/achieveDetailsDescriptionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/achievementDetailsImage"
+        android:text="About"
+        android:textSize="20dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+
+        />
+
+        <TextView
+            android:id="@+id/achieveDetailsDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/achieveDetailsDescriptionLabel"
+            android:text="You have reached the northern most part of the TCS trails."
+            android:textSize="16dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="5dp"
+
+
+            />
+
+    <TextView
+        android:id="@+id/achieveDetailsDateLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/achieveDetailsDescription"
+        android:text="Achievement Date"
+        android:textSize="20dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+
+        />
+
+
+    <TextView
+        android:id="@+id/achieveDetailsDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/achieveDetailsDateLabel"
+        android:text="February 1st 2015"
+        android:textSize="16dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="10dp"
+
+
+        />
+
+    <TextView
+        android:id="@+id/achieveDetailsLeaderboardsLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/achieveDetailsDate"
+        android:text="Leaderboards"
+        android:textSize="20dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+
+        />
+
+    <TextView
+        android:id="@+id/achieveDetailsTotalReceived"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/achieveDetailsLeaderboardsLabel"
+        android:text="1337 people have received this achievement."
+        android:textSize="16dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+
+        />
+
+    <TextView
+        android:id="@+id/achieveDetailsPosition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/achieveDetailsTotalReceived"
+        android:text="You were the 10th person to receive this achievement."
+        android:textSize="16dp"
+        android:layout_marginLeft="5dp"
+
+
+        />
+
+
+    <ImageView
+        android:id="@+id/achievementDetailsCloseButton"
+        android:layout_width="35dip"
+        android:layout_height="35dip"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/close_button"
+
+        />
+
+
+
+</RelativeLayout>

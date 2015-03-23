@@ -1,19 +1,34 @@
 package com.tcsorcs.trailsapp.managers;
 
 import java.util.ArrayList;
+import java.util.Date;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.v7.app.ActionBarActivity;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.tcsorcs.trailsapp.R;
-import com.tcsorcs.trailsapp.activites.AchievementActivity;
-import com.tcsorcs.trailsapp.activites.GoogleMapsActivity;
+import com.tcsorcs.trailsapp.activites.AchievementDialogActivity;
+import com.tcsorcs.trailsapp.helpers.Achievement;
+import com.tcsorcs.trailsapp.helpers.DummyDatabaseHelper;
+import com.tcsorcs.trailsapp.helpers.Location;
+import com.tcsorcs.trailsapp.helpers.Segment;
+import com.tcsorcs.trailsapp.helpers.SegmentGraphic;
 import com.tcsorcs.trailsapp.mapview.TouchImageView;
 import com.tcsorcs.trailsapp.mapview.TouchImageView.DoubleTapZoom;
 import com.tcsorcs.trailsapp.services.OnTrailsService;
@@ -24,24 +39,16 @@ public class DisplayManager {
         return DisplayManager.instance;
     }
 
-    static DisplayManager instance = new DisplayManager();
-    public Activity main_activity = null;
-
-    // used for comparing values in array from DistanceManager getSegmentPaths()
-    public static final String ExceEnt = "ExceEnt";
-    public static final String ExceEnt_L21 = "ExceEnt_L21";
-    public static final String L20_L21 = "L20_L21";
-    public static final String L18_L20 = "L18_L20";
-    public static final String DepeEnt_L18 = "DepeEnt_L18";
+    public static DisplayManager instance = new DisplayManager();
+    public ActionBarActivity main_activity = null;
 
     // unit labels for textview Pace, Distance Time on Trails
     private final String DISTANCE_UNITS = "feet";
     private final String PACE_UNITS = "ft/min";
 
-    private boolean onTrailsServiceRunning = false; // boolean to keep track if
+    private boolean onTrailsServiceRunning = false; // boolean to keep track if service running
 
-    // used in beginUpdatingDistancePaceTime() for updating textviews while a
-    // person is on the trails
+    // used in updating textviews while a person is on the trails, real time stats
     private TextView timeOnTrail;
     private TextView totalDistance;
     private TextView currentPace;
@@ -55,23 +62,50 @@ public class DisplayManager {
     // the map view on the home activity
     private TouchImageView mapPanView;
 
+    //canvas for painting onto the map view
+    private Canvas canvas=null;
+
+    // color for fill of base marker
+    private final int markerOuterColor=Color.RED;
+    //color for fill of inner circle on marker
+    private final int markerInnerColor=Color.YELLOW;
+
+    private final int achievementMarkerOuterColor=Color.GREEN;
+    //private int achievementMarkerInnerColor=Color.YELLOW;
+
+
+    //size of radius for markers when drawing achievement markers or general markers
+    private final int markerOuterRadius=16;
+    private final int markerInnerRadius=8;
+
+    //max zoom level of trails map
+    private final int markerZoomLevel=6;
+
+    private Location previousLoc=null; //marker to color over on a new scan
+
+    private int previousOuterColor=0; //remember previous marker color for recoloring
+
+    //dev mode graphic segments for testing
+    private SegmentGraphic segGraphicS1=new SegmentGraphic("execent_l21",1528.839f,1843.433f);
+    private SegmentGraphic segGraphicS2=new SegmentGraphic("l20_l21",1469.213f  ,140.99f);
+    private SegmentGraphic segGraphicS3=new SegmentGraphic("l19_l20",1428.006f,1778.52f);
+    private SegmentGraphic segGraphicS4=new SegmentGraphic("l18_l19",1433.737f,1604.69f);
+    private SegmentGraphic segGraphicS5=new SegmentGraphic("depeent_l18",1694.443f,1603.73f);
+
+    private ArrayList<Achievement> achievementList=new ArrayList<Achievement>(); //dev mode achievement list
+    private String longPressLink=null; //store link copied to clipboard for sms sharing
+
+    //main trails map height and width
+    private final int mapWidth=4000;
+    private final int mapHeight=2818;
+
+    private Boolean inDevMode=false;
+
     /**
-     * set home activity button onClicks
+     * Sets click listeners for all buttons on MainTrailsActivity. Does not set click listeners
+     * for fragment buttons. Fragment buttons handle their own on click listeners
      */
     public void setButtonCallbacks() {
-
-//        //Google Maps Button
-//        Button gmButton = (Button) main_activity
-//                .findViewById(R.id.GoogleMapsButton);
-//        gmButton.setOnClickListener(new OnClickListener() {
-//
-//            @Override
-//            public void onClick(View arg0) {
-//                Intent i = new Intent(main_activity,GoogleMapsActivity.class);
-//                main_activity.startActivity(i);
-//
-//            }
-//        });
 
 
         //Scan QR Code Button
@@ -82,10 +116,6 @@ public class DisplayManager {
             @Override
             public void onClick(View arg0) {
 
-                //old bar codescanner app
-                // IntentIntegrator integrator = new IntentIntegrator(
-                //        main_activity);
-                // integrator.initiateScan();
 
                 //package name for QR Code Reader App
                 final String appPackageName = "me.scan.android.client";
@@ -110,23 +140,320 @@ public class DisplayManager {
                         main_activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
                     }
                 }
+            }
+        });
+
+        /**
+         * EVERYTHING BELOW IN THIS BUTTON CALLBACKS METHOD IS FOR DEVELOPMENT TESTING
+         */
+
+
+
+        // DEV MODE MARKER BUTTONS
+
+        Button markerButton = (Button) main_activity
+                .findViewById(R.id.M1);
+        markerButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                disableButtons();
+                float x = 1694f;
+                float y = 1850f;
+                Location loc=new Location(x,y);
+                drawMarker(loc, true, true);
+            }
+        });
+
+        final Button achievementOne = (Button) main_activity
+                .findViewById(R.id.A1);
+        achievementOne.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+
+
+                SoundManager.getInstance().playHooray("hooray");
+
+
+
+
+                int id=-1;
+                String name="Executive Achievement";
+                String longDesc="This is a long description of the Executive Achievement.";
+                String shortDesc="Walk the executive loop trail.";
+                String icon="ic_launcher";
+                String sound="";
+                boolean isAchieved=false;
+                boolean isHidden=false;
+                boolean isSecret=false;
+
+                Achievement a= new Achievement(id,name,longDesc,shortDesc,new Date().toString(),icon,sound,isAchieved,isHidden,isSecret);
+
+                achievementList.add(0,a);
+                displayAchievement(a);
+            }
+        });
+
+        Button achievementTwo = (Button) main_activity
+                .findViewById(R.id.A2);
+        achievementTwo.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+
+
+
+                float  x = 2189f;
+                float  y = 106f;
+                Location loc=new Location(x,y);
+
+                drawAchievementMarker(loc,true,true);
+
+
+                SoundManager.getInstance().playKing("kinginthenorth");
+
+                int id=-1;
+                String name="King of the North";
+                String longDesc="This is a long description of the King of the North Achievement.";
+                String shortDesc="Reach the northern most point of the trails.";
+                String icon="kinginthenorth";
+                String sound="";
+                boolean isAchieved=false;
+                boolean isHidden=false;
+                boolean isSecret=false;
+
+                Achievement a= new Achievement(id,name,longDesc,shortDesc,new Date().toString(),icon,sound,isAchieved,isHidden,isSecret);
+
+
+                achievementList.add(0,a);
+
+                displayAchievement(a);
+            }
+        });
+
+        Button achievementThree = (Button) main_activity
+                .findViewById(R.id.A3);
+        achievementThree.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+
+
+
+
+                float x = 1710f;
+                float y = 1830f;
+                Location loc=new Location(x,y);
+                drawAchievementMarker(loc,false,true);
+
+                x = 1538f;
+                y = 1945f;
+                Location loc2=new Location(x,y);
+                drawAchievementMarker(loc2,false,true);
+
+
+                x = 1490f;
+                y = 1810f;
+                Location loc3=new Location(x,y);
+                drawAchievementMarker(loc3,true,true);
+
+                SoundManager.getInstance().playKirby("kirby");
+
+
+                int id=-1;
+                String name="Super Scan Bros";
+                String longDesc="This is a long description of the Super Scan Bros Achievement.";
+                String shortDesc="Scan 3 trail markers within 3 minutes.";
+                String icon="kirby";
+                String sound="";
+                boolean isAchieved=false;
+                boolean isHidden=false;
+                boolean isSecret=false;
+
+                Achievement a= new Achievement(id,name,longDesc,shortDesc,new Date().toString(),icon,sound,isAchieved,isHidden,isSecret);
+
+                achievementList.add(0,a);
+                displayAchievement(a);
+            }
+        });
+
+        markerButton = (Button) main_activity
+                .findViewById(R.id.M2);
+        markerButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                disableButtons();
+                // Toast.makeText(main_activity.getApplicationContext(), "click", Toast.LENGTH_LONG).show();
+
+                float x = 1534f;
+                float y = 1963f;
+                Location loc=new Location(x,y);
+                drawMarker(loc,  true, true);
+            }
+        });
+
+
+
+        markerButton = (Button) main_activity
+                .findViewById(R.id.M3);
+        markerButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                disableButtons();
+
+                // Toast.makeText(main_activity.getApplicationContext(), "click", Toast.LENGTH_LONG).show();
+                float x = 1473f;
+                float y = 1826f;
+                Location loc=new Location(x,y);
+                drawMarker(loc,  true, true);
+            }
+        });
+
+        markerButton = (Button) main_activity
+                .findViewById(R.id.M4);
+        markerButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                disableButtons();
+
+                // Toast.makeText(main_activity.getApplicationContext(), "click", Toast.LENGTH_LONG).show();
+                float x = 1434f;
+                float y = 1784f;
+                Location loc=new Location(x,y);
+                drawMarker(loc,  true, true);
+            }
+        });
+
+        markerButton = (Button) main_activity
+                .findViewById(R.id.M5);
+        markerButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                disableButtons();
+                // Toast.makeText(main_activity.getApplicationContext(), "click", Toast.LENGTH_LONG).show();
+                float x = 1703f;
+                float y = 1602f;
+                Location loc=new Location(x,y);
+                drawMarker(loc,  true, true);
+            }
+        });
+
+        markerButton = (Button) main_activity
+                .findViewById(R.id.M6);
+        markerButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                disableButtons();
+                // Toast.makeText(main_activity.getApplicationContext(), "click", Toast.LENGTH_LONG).show();
+                float x = 1724f;
+                float y = 1651f;
+                Location loc=new Location(x,y);
+                drawMarker(loc,  true, true);
+            }
+        });
+
+
+        Button clearButton = (Button) main_activity
+                .findViewById(R.id.ClearButton);
+        clearButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+
+                clearTrailsMap();
+
+            }
+        });
+
+        Button segmentButton = (Button) main_activity
+                .findViewById(R.id.S1);
+        segmentButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+
+                Segment seg=new Segment("execent_l21");
+                drawSegment(seg);
 
 
             }
         });
+
+
+        segmentButton = (Button) main_activity
+                .findViewById(R.id.S2);
+        segmentButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+
+                Segment seg=new Segment("l20_l21");
+                drawSegment(seg);
+
+
+            }
+        });
+
+        segmentButton = (Button) main_activity
+                .findViewById(R.id.S3);
+        segmentButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+
+                Segment seg=new Segment("l19_l20");
+                drawSegment(seg);
+
+
+            }
+        });
+
+        segmentButton = (Button) main_activity
+                .findViewById(R.id.S4);
+        segmentButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+
+                Segment seg=new Segment("l18_l19");
+                drawSegment(seg);
+
+
+            }
+        });
+
+        segmentButton = (Button) main_activity
+                .findViewById(R.id.S5);
+        segmentButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+
+                Segment seg=new Segment("depeent_l18");
+                drawSegment(seg);
+
+
+            }
+        });
+
+        // END DEV MODE BUTTONS
     }
 
     /**
-     * @param achievementId - string value of achievement name "Executive" for prototype
+     *
+     * @return return list of achievements used in dev mode
      */
-    public void notifyAcheivement(String achievementId) {
-        if (achievementId.equals("Executive")) {
-            // start Achievement activity which shows Executive achievment for
-            // demo
-            Intent intent = new Intent(main_activity, AchievementActivity.class);
-            main_activity.startActivity(intent);
-        }
+    public ArrayList<Achievement> getAchievementList(){
+        return achievementList;
     }
+
+
 
     /**
      * if currently gathering pace, time, distance from Display manager- remove
@@ -192,10 +519,7 @@ public class DisplayManager {
         main_activity.stopService(new Intent(main_activity,
                 OnTrailsService.class));
 
-        // TODO need to research why distance manager holds values after exiting
-        // app and restarting so we do not need to do this. something isn't
-        // getting released
-        // reset distance manager for next trails start
+
         DistanceManager.instance = new DistanceManager();
 
     }
@@ -211,150 +535,337 @@ public class DisplayManager {
         // pinching
         mapPanView.setMaxZoom(10);
 
-        //first map has no points marked
-        mapPanView.setImageResource(R.drawable.trails_nomarkup);
+
+        //trails map that will be drawn on the canvas
+        Bitmap bitmap1 = BitmapFactory.decodeResource(main_activity.getResources(), R.drawable.trails_nomarkup);
+
+        Bitmap drawnBitmap = null;
+
+        try {
+
+            drawnBitmap = Bitmap.createBitmap(mapWidth , mapHeight, Bitmap.Config.ARGB_8888);
+
+            canvas = new Canvas(drawnBitmap);
+
+            //top left corner to begin drawing trails map, bottom right is height and width
+            int mapX=0;
+            int mapY=0;
+
+            canvas.drawBitmap(bitmap1, null, new Rect(mapX,mapY,mapWidth,mapHeight), null);
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //longpress will copy coordinates of the bitmap for sharing
+        mapPanView.setCopyLocationOnLongPress(true);
+
+        //set bitmap drawing to the TouchImageView
+        mapPanView.setImageBitmap(drawnBitmap);
     }
 
     /**
-     * updates the map view on the home activity given the values in the passed
-     * arraylist (ExceEnt, ExceEnt_L21...etc)
+     * Displays an achievement dialog notification which can be then clicked to get full details.
      *
-     * @param currentPathSegments ArrayList of path segments from distance manager so we know
-     *                            what map points to display on the homeactivity
+     * @param ach Achievement object to be displayed.
      */
-    public void updateTrailsMap(ArrayList<String> currentPathSegments) {
-        // //currentPathSegments=DistanceManager.getInstance().getPathSegments();
-        int numberOfPaths = currentPathSegments.size();
+    public void displayAchievement(Achievement ach){
 
-        if (!onTrailsServiceRunning) {
-            // flag service is started/begin started
-            onTrailsServiceRunning = true;
-            // begin populating distance, pace, time on trails
-            beginGatheringTime();
-            // start the onTrailsService
-            Intent intent = new Intent(main_activity, OnTrailsService.class);
-            main_activity.startService(intent);
+
+        Intent i = new Intent(main_activity,AchievementDialogActivity.class);
+        i.putExtra("achievement", ach);
+        main_activity.startActivity(i);
+
+    }
+
+    /**
+     * This method will draw a a list of trail segments to the trails map.
+     *
+     * @param segments ArrayList of segments to draw to screen
+     */
+    public void drawSegments(ArrayList<Segment> segments){
+        for(Segment s:segments){
+            drawSegment(s);
+        }
+    }
+
+    /**
+     * This method will draw a a list of trail segments to the trails map.
+     *
+     * @param seg Segement object to draw to the trails map.
+     */
+    public void drawSegment(Segment seg){
+
+        int segmentId=seg.getSegmentId();
+
+        String segmentName=seg.getSegmentName();
+
+        int topLeftX=0;
+        int topLeftY=0;
+
+        //get x and y of where to draw segment on trails map
+
+        if(inDevMode){
+            if(segmentName.equals("execent_l21")){
+                topLeftX=(int)segGraphicS1.getTopLeftX();
+                topLeftY=(int)segGraphicS1.getTopLeftY();
+            }else if(segmentName.equals("l20_l21")){
+                topLeftX=(int)segGraphicS2.getTopLeftX();
+                topLeftY=(int)segGraphicS2.getTopLeftY();
+            }else if(segmentName.equals("l19_l20")){
+                topLeftX=(int)segGraphicS3.getTopLeftX();
+                topLeftY=(int)segGraphicS3.getTopLeftY();
+            }else if(segmentName.equals("l18_l19")){
+                topLeftX=(int)segGraphicS4.getTopLeftX();
+                topLeftY=(int)segGraphicS4.getTopLeftY();
+            }else if(segmentName.equals("depeent_l18")){
+                topLeftX=(int)segGraphicS5.getTopLeftX();
+                topLeftY=(int)segGraphicS5.getTopLeftY();
+            }
+        }else{
+            SegmentGraphic segGraphic = DummyDatabaseHelper.getInstance().getSegmentGraphic(segmentId);
+
+            topLeftX=(int)segGraphic.getTopLeftX();
+            topLeftY= (int)segGraphic.getTopLeftY();
         }
 
-        if (currentPathSegments.size() == 1) {
-            //show labels on first scan
-            TextView timeLabel = (TextView) main_activity
-                    .findViewById(R.id.TimeLabelText);
-            TextView distanceLabel = (TextView) main_activity
-                    .findViewById(R.id.DistanceLabelText);
-            TextView paceLabel = (TextView) main_activity
-                    .findViewById(R.id.PaceLabelText);
 
-            timeLabel.setVisibility(View.VISIBLE);
-            distanceLabel.setVisibility(View.VISIBLE);
-            paceLabel.setVisibility(View.VISIBLE);
+        //look up segement in our drawables folder by graphics file name without extension
+        int resId  = main_activity.getResources().getIdentifier(segmentName, "drawable", main_activity.getPackageName());
 
-            totalDistance.setText(DistanceManager.getInstance().getDistance()
-                    + " " + DISTANCE_UNITS);
-            currentPace.setText("on next QR code! Better hurry :)");
-        } else {
-            // update both pace and time for all other scenarios
-            totalDistance.setText(DistanceManager.getInstance().getDistance()
-                    + " " + DISTANCE_UNITS);
-            currentPace.setText(DistanceManager.getInstance().getPace() + " "
-                    + PACE_UNITS);
+        Drawable d = main_activity.getResources().getDrawable(resId);
+
+        int width = d.getIntrinsicWidth();
+        int height = d.getIntrinsicHeight();
+        //Toast.makeText(main_activity,"w: "+width,Toast.LENGTH_SHORT).show();
+        //Toast.makeText(main_activity,"h: "+height,Toast.LENGTH_SHORT).show();
+
+        Bitmap segBitmap = BitmapFactory.decodeResource(main_activity.getResources(),  resId);
+        canvas.drawBitmap(segBitmap, null, new Rect(topLeftX,topLeftY,topLeftX+width,topLeftY+height), null);
+
+        //notify map there has been updates to redraws
+        mapPanView.invalidate();
+    }
+
+    /**
+     * Disable all dev mode marker (M) buttons from being clicked.
+     */
+    public void disableButtons(){
+        Button markerButton = (Button) main_activity
+                .findViewById(R.id.M1);
+        markerButton.setClickable(false);
+
+        markerButton = (Button) main_activity
+                .findViewById(R.id.M2);
+        markerButton.setClickable(false);
+
+        markerButton = (Button) main_activity
+                .findViewById(R.id.M3);
+        markerButton.setClickable(false);
+
+        markerButton = (Button) main_activity
+                .findViewById(R.id.M4);
+        markerButton.setClickable(false);
+
+        markerButton = (Button) main_activity
+                .findViewById(R.id.M5);
+        markerButton.setClickable(false);
+
+
+        markerButton = (Button) main_activity
+                .findViewById(R.id.M6);
+        markerButton.setClickable(false);
+    }
+
+    /**
+     * Enable dev mode marker buttons to be clickable true
+     */
+    public void enableButtons(){
+        Button markerButton = (Button) main_activity
+                .findViewById(R.id.M1);
+        markerButton.setClickable(true);
+
+        markerButton = (Button) main_activity
+                .findViewById(R.id.M2);
+        markerButton.setClickable(true);
+
+        markerButton = (Button) main_activity
+                .findViewById(R.id.M3);
+        markerButton.setClickable(true);
+
+        markerButton = (Button) main_activity
+                .findViewById(R.id.M4);
+        markerButton.setClickable(true);
+
+        markerButton = (Button) main_activity
+                .findViewById(R.id.M5);
+        markerButton.setClickable(true);
+
+        markerButton = (Button) main_activity
+                .findViewById(R.id.M6);
+        markerButton.setClickable(true);
+    }
+
+    /**
+     * Draws and zooms into an achievement green marker on map at the given location.
+     *
+     * @param loc Location to draw achievement
+     * @param zoomIntoMarker true if map should zoom into marker for this achievement
+     * @param isCurrentLocation true will draw current marker, false draws solid marker
+     */
+    public void drawAchievementMarker(Location loc, Boolean zoomIntoMarker,Boolean isCurrentLocation){
+
+        if(isCurrentLocation){
+            //draw current marker
+            drawMarker(loc,zoomIntoMarker,achievementMarkerOuterColor,markerOuterRadius,markerInnerColor,markerInnerRadius);
+            if(previousLoc!=null){
+                //draw over previous marker
+                drawMarker(previousLoc,false,previousOuterColor,markerOuterRadius,previousOuterColor,markerOuterRadius);
+            }
+        }else{
+            //only draw current marker
+            drawMarker(loc,zoomIntoMarker,achievementMarkerOuterColor,markerOuterRadius,achievementMarkerOuterColor,markerOuterRadius);
         }
+        //keep color/location for recoloring on next marker/achievement where needed
+        previousOuterColor=achievementMarkerOuterColor;
+        previousLoc=loc;
+    }
 
-        boolean containsExceEnt = false;
-        boolean containsExceEnt_L21 = false;
-        boolean containsL20_L21 = false;
-        boolean containsL18_L20 = false;
-        boolean containsDepeEnt_L18 = false;
+    /**
+     *     * Draws and zooms into an general red marker on map at the given location.
+     *
+     * @param loc Location to draw achievement
+     * @param zoomIntoMarker true if map should zoom into marker for this achievement
+     * @param isCurrentLocation true will draw current marker, false draws solid marker
+     */
+    public void drawMarker(Location loc, Boolean zoomIntoMarker,Boolean isCurrentLocation){
 
-        containsExceEnt = currentPathSegments.contains(ExceEnt);
-        containsExceEnt_L21 = currentPathSegments.contains(ExceEnt_L21);
-        containsL20_L21 = currentPathSegments.contains(L20_L21);
-        containsL18_L20 = currentPathSegments.contains(L18_L20);
-        containsDepeEnt_L18 = currentPathSegments.contains(DepeEnt_L18);
 
-        // for zooming to location
+        if(isCurrentLocation){
+            //draw current marker
+            drawMarker(loc,zoomIntoMarker,markerOuterColor,markerOuterRadius,markerInnerColor,markerInnerRadius);
+            if(previousLoc!=null){
+                //draw over previous marker
+                drawMarker(previousLoc,false,previousOuterColor,markerOuterRadius,previousOuterColor,markerOuterRadius);
+            }
 
-        float targetZoom = 6;
+        }else{
+            //only draw current marker
+            drawMarker(loc,zoomIntoMarker,markerOuterColor,markerOuterRadius,markerOuterColor,markerOuterRadius);
+        }
+        //keep color/location for recoloring on next marker/achievement where needed
+        previousOuterColor=markerOuterColor;
+        previousLoc=loc;
+    }
 
-        DoubleTapZoom doubleTap = null;
+    /**
+     * Draws and zooms into the marker given the color attributes.
+     *
+     * @param loc Location to draw marker
+     * @param zoomIntoMarker true if map should zoom into marker for this achievement
+     * @param colorOuter outer fill color for marker circle
+     * @param radiusOuter radius for outer marker circle
+     * @param colorInner inner fill color for marker circle
+     * @param radiusInner radius for inner marker circle
+     */
+    public void drawMarker(Location loc, Boolean zoomIntoMarker,int colorOuter,int radiusOuter,int colorInner,int radiusInner) {
+        float x = loc.getX();
+        float y = loc.getY();
 
-         //points for each location on map
-        float ExceEntBitmapX = 1698f;
-        float ExceEntBitmapY = 1805f;
 
-        float ExceEnt_L21X = 1565f;
-        float ExceEnt_L21Y = 1922f;
+        //zoom into map
+        if(zoomIntoMarker){
 
-        float L20_L21X = 1501f;
-        float L20_L21Y = 1790f;
-
-        float L18_L20X = 1670f;
-        float L18_L20Y = 1572f;
-
-        float DepeEnt_L18X = 1735f;
-        float DepeEnt_L18Y = 1633f;
-
-        // first Scan
-        if (numberOfPaths == 1 && containsExceEnt) {
-            // scanned ExceEnt
-            doubleTap = mapPanView.new DoubleTapZoom(targetZoom, 0, 0, false,
-                    ExceEntBitmapX, ExceEntBitmapY, R.drawable.exceent,
+            DoubleTapZoom   doubleTap = mapPanView.new DoubleTapZoom(markerZoomLevel, false,
+                    x, y, loc,colorOuter,markerOuterRadius,colorInner,markerInnerRadius,
                     mapPanView);
+
+            //TouchImageView recalls the drawMarker method after it finishes zooming
             mapPanView.compatPostOnAnimation(doubleTap);
+        }else{
+            //paint outer marker
+            Paint paint = new Paint();
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(colorOuter);
 
-        }
-        // 2 segment
-        else if (numberOfPaths == 2 && containsExceEnt && containsExceEnt_L21) {
+            // canvas.drawPaint(paint);
+            // Use Color.parseColor to define HTML colors
+            // paint.setColor(Color.parseColor("#CD5C5C"));
 
-            //
-            doubleTap = mapPanView.new DoubleTapZoom(targetZoom, 0, 0, false,
-                    ExceEnt_L21X, ExceEnt_L21Y, R.drawable.exceent_l21,
-                    mapPanView);
-            mapPanView.compatPostOnAnimation(doubleTap);
+            canvas.drawCircle(x, y, radiusOuter, paint);
 
-        }
+            // if inner and outer colors are different draw inner circle
+            if(radiusInner!=radiusOuter){
+                paint.setColor(colorInner);
+                canvas.drawCircle(x, y, radiusInner, paint);
+            }
 
-        // 3 segments
-        else if (numberOfPaths == 3 && containsExceEnt && containsExceEnt_L21
-                && containsL20_L21) {
-
-            doubleTap = mapPanView.new DoubleTapZoom(targetZoom, 0, 0, false,
-                    L20_L21X, L20_L21Y, R.drawable.exceent_l21_l20_l21,
-                    mapPanView);
-            mapPanView.compatPostOnAnimation(doubleTap);
-
-        }
-
-        // 4 segments
-        else if (numberOfPaths == 4 && containsExceEnt && containsExceEnt_L21
-                && containsL20_L21 && containsL18_L20) {
-
-            doubleTap = mapPanView.new DoubleTapZoom(targetZoom, 0, 0, false,
-                    L18_L20X, L18_L20Y, R.drawable.exceent_l21_l20_l21_l18_l20,
-                    mapPanView);
-            mapPanView.compatPostOnAnimation(doubleTap);
-
-        }
-        // 5 segments
-        else if (numberOfPaths == 5 && containsExceEnt && containsExceEnt_L21
-                && containsL20_L21 && containsL18_L20 && containsDepeEnt_L18) {
-
-            doubleTap = mapPanView.new DoubleTapZoom(targetZoom, 0, 0, false,
-                    DepeEnt_L18X, DepeEnt_L18Y,
-                    R.drawable.exceent_l21_l20_l21_l18_l20_depeent_l18,
-                    mapPanView);
-            mapPanView.compatPostOnAnimation(doubleTap);
+            //notify TouchImageView to redraw itself
+            mapPanView.invalidate();
 
         }
     }
 
+    /**
+     * OLD KEEPING FOR REFERENCE
+     */
+    public void updateTrailsMap(ArrayList<String> currentPathSegments) {
+//        // //currentPathSegments=DistanceManager.getInstance().getPathSegments();
+//        int numberOfPaths = currentPathSegments.size();
+//
+//        if (!onTrailsServiceRunning) {
+//            // flag service is started/begin started
+//            onTrailsServiceRunning = true;
+//            // begin populating distance, pace, time on trails
+//            beginGatheringTime();
+//            // start the onTrailsService
+//            Intent intent = new Intent(main_activity, OnTrailsService.class);
+//            main_activity.startService(intent);
+//        }
+//
+//        if (currentPathSegments.size() == 1) {
+//            //show labels on first scan
+//            TextView timeLabel = (TextView) main_activity
+//                    .findViewById(R.id.TimeLabelText);
+//            TextView distanceLabel = (TextView) main_activity
+//                    .findViewById(R.id.DistanceLabelText);
+//            TextView paceLabel = (TextView) main_activity
+//                    .findViewById(R.id.PaceLabelText);
+//
+//            timeLabel.setVisibility(View.VISIBLE);
+//            distanceLabel.setVisibility(View.VISIBLE);
+//            paceLabel.setVisibility(View.VISIBLE);
+//
+//            totalDistance.setText(DistanceManager.getInstance().getDistance()
+//                    + " " + DISTANCE_UNITS);
+//            currentPace.setText("on next QR code! Better hurry :)");
+//        } else {
+//            // update both pace and time for all other scenarios
+//            totalDistance.setText(DistanceManager.getInstance().getDistance()
+//                    + " " + DISTANCE_UNITS);
+//            currentPace.setText(DistanceManager.getInstance().getPace() + " "
+//                    + PACE_UNITS);
+//        }
+//
+    }
+
+    /**
+     *
+     * @return true if trails service is running collecting statistics
+     */
     public boolean isOnTrailsServiceRunning() {
         return onTrailsServiceRunning;
     }
 
-    //todo formating of time when seconds/minutes/hours are not length of 2
+    /**
+     * Convert seconds to string format to include hours and minutes.
+     *
+     * @param totalSecondsDouble seconds to convert to string format
+     * @return string format hh:mm:ss
+     */
     public String convertSecondsToTimeString(double totalSecondsDouble) {
-        String resultString = "";
+        String resultString;
         final int MINUTES_IN_AN_HOUR = 60;
         final int SECONDS_IN_A_MINUTE = 60;
 
@@ -364,15 +875,24 @@ public class DisplayManager {
         int minutes = totalMinutes % MINUTES_IN_AN_HOUR;
         int hours = totalMinutes / MINUTES_IN_AN_HOUR;
 
-        if (hours > 0) {
-            resultString = hours + ":" + minutes + ":" + seconds;
-        } else if (minutes > 0) {
-            //single digit minutes
-            resultString = minutes + ":" + seconds;
-        } else {
-            resultString = "00" + ":" + seconds;
+        String minuteStr=Integer.toString(minutes);
+        String secondsStr=Integer.toString(seconds);
+        if(secondsStr.length()<2){
+            secondsStr="0"+secondsStr;
         }
 
+        if (hours > 0) {
+            if(minuteStr.length()<2){
+                resultString = hours + ":" +"0"+ minutes + ":" + secondsStr;
+            }else{
+                resultString = hours + ":"+ minutes + ":" + secondsStr;
+            }
+        } else if (minutes > 0) {
+            //single digit minutes
+            resultString = minutes + ":" + secondsStr;
+        } else {
+            resultString = "00" + ":" + secondsStr;
+        }
 
         return resultString;
     }
@@ -387,4 +907,188 @@ public class DisplayManager {
         }
     }
 
+
+    /**
+     * Hide all dev mode buttons setting them to VIEW.GONE
+     */
+    public void hideDevButtons(){
+        Button btn = (Button) main_activity
+                .findViewById(R.id.M1);
+        btn.setVisibility(View.GONE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.M2);
+        btn.setVisibility(View.GONE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.M3);
+        btn.setVisibility(View.GONE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.M4);
+        btn.setVisibility(View.GONE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.M5);
+        btn.setVisibility(View.GONE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.M6);
+        btn.setVisibility(View.GONE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.S1);
+        btn.setVisibility(View.GONE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.S2);
+        btn.setVisibility(View.GONE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.S3);
+        btn.setVisibility(View.GONE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.S4);
+        btn.setVisibility(View.GONE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.S5);
+        btn.setVisibility(View.GONE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.A1);
+        btn.setVisibility(View.GONE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.A2);
+        btn.setVisibility(View.GONE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.A3);
+        btn.setVisibility(View.GONE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.ClearButton);
+        btn.setVisibility(View.GONE);
+    }
+
+    /**
+     * Show all dev mode buttons setting them to VIEW.VISIBLE
+     */
+    public void showDevButtons(){
+
+        Button btn = (Button) main_activity
+                .findViewById(R.id.M1);
+        btn.setVisibility(View.VISIBLE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.M2);
+        btn.setVisibility(View.VISIBLE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.M3);
+        btn.setVisibility(View.VISIBLE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.M4);
+        btn.setVisibility(View.VISIBLE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.M5);
+        btn.setVisibility(View.VISIBLE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.M6);
+        btn.setVisibility(View.VISIBLE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.S1);
+        btn.setVisibility(View.VISIBLE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.S2);
+        btn.setVisibility(View.VISIBLE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.S3);
+        btn.setVisibility(View.VISIBLE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.S4);
+        btn.setVisibility(View.VISIBLE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.S5);
+        btn.setVisibility(View.VISIBLE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.A1);
+        btn.setVisibility(View.VISIBLE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.A2);
+        btn.setVisibility(View.VISIBLE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.A3);
+        btn.setVisibility(View.VISIBLE);
+
+        btn = (Button) main_activity
+                .findViewById(R.id.ClearButton);
+        btn.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Get most recent copied link copied to the clipboard onLongPress in TouchImageView
+     *
+     * @return string link to be sent via sms for sharing locations
+     */
+    public String getLongPressLink() {
+        return longPressLink;
+    }
+
+    /**
+     * Sets the link that will be used for any calls to send sms location
+     *
+     * @param longPressLink link to be sent via sms for sharing trail location
+     */
+    public void setLongPressLink(String longPressLink) {
+        this.longPressLink = longPressLink;
+    }
+
+    /**
+     * Set boolean to track if user is in dev mode.
+     *
+     * @param bool true if in dev mode, false if not
+     */
+    public void setInDevMode(Boolean bool){
+        this.inDevMode=bool;
+    }
+
+    /**
+     * Get boolean to determine if user is in dev mode.
+     *
+     * @return true if in dev mode, false if not in dev mode
+     */
+    public Boolean getInDevMode(){
+        return this.inDevMode;
+    }
+
+
+    /**
+     * Draws a new trails map over the current one set in the trails map view.
+     */
+    public void clearTrailsMap(){
+        previousLoc=null;
+
+        int mapX=0;
+        int mapY=0;
+
+        Bitmap bitmap1 = BitmapFactory.decodeResource(main_activity.getResources(), R.drawable.trails_nomarkup);
+        canvas.drawBitmap(bitmap1, null, new Rect(mapX,mapY,mapWidth,mapHeight), null);
+        mapPanView.invalidate();
+
+        Toast.makeText(main_activity, "Map Cleared.", Toast.LENGTH_SHORT).show();
+    }
 }
