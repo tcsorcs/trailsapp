@@ -17,7 +17,6 @@ public class AchievementManager {
 
 	public static AchievementManager instance = new AchievementManager();
 
-    //TODO: change to pass an int once display man handles it
 	public void awardAchievement(String achievementName) {
         Achievement toAward = findAchievementByName(achievementName);
 		DisplayManager.getInstance().displayAchievement(toAward);
@@ -27,16 +26,14 @@ public class AchievementManager {
         DisplayManager.getInstance().displayAchievement(toAward);
     }
 
-    //TODO: put logic in here
     public Achievement findAchievementByID(int achievementID){
-
+        //TODO: Replace with actual DAO calls once implemented
         Achievement ach =DummyDatabaseHelper.getInstance().getAchievementById(achievementID);
 
         return ach;
     }
-    //TODO: put logic in here
     public Achievement findAchievementByName(String achievementName){
-
+        //TODO: Replace with actual DAO calls once implemented
         Achievement ach =DummyDatabaseHelper.getInstance().getAchievementByName(achievementName);
 
         return ach;

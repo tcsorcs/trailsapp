@@ -1,4 +1,4 @@
-package com.tcsorcs.trailsapp.activites;
+package com.tcsorcs.trailsapp.activities;
 
 
 import android.support.v7.app.ActionBarActivity;

@@ -15,7 +15,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -23,7 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tcsorcs.trailsapp.R;
-import com.tcsorcs.trailsapp.activites.AchievementDialogActivity;
+import com.tcsorcs.trailsapp.activities.AchievementDialogActivity;
 import com.tcsorcs.trailsapp.helpers.Achievement;
 import com.tcsorcs.trailsapp.helpers.DummyDatabaseHelper;
 import com.tcsorcs.trailsapp.helpers.Location;
@@ -543,7 +542,7 @@ public class DisplayManager {
 
         try {
 
-            drawnBitmap = Bitmap.createBitmap(mapWidth , mapHeight, Bitmap.Config.ARGB_8888);
+            drawnBitmap = Bitmap.createBitmap(mapWidth , mapHeight, Bitmap.Config.RGB_565);
 
             canvas = new Canvas(drawnBitmap);
 
@@ -562,7 +561,7 @@ public class DisplayManager {
         mapPanView.setCopyLocationOnLongPress(true);
 
         //set bitmap drawing to the TouchImageView
-        mapPanView.setImageBitmap(drawnBitmap);
+       mapPanView.setImageBitmap(drawnBitmap);
     }
 
     /**
