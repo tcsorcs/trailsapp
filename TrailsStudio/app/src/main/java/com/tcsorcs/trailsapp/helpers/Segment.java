@@ -9,12 +9,28 @@ public class Segment {
     private String pointA;
     private String pointB;
     private double distance;
+    private String segmentName;
 
-    public Segment (int segId, String firstPoint, String secondPoint, double segmentDistance){
+    //temp constructor just display manager dev mode for testing
+    //TODO remove this constructor after DisplayManager no longer needs for testing drawing segments without database
+    public Segment(String segmentName) {
+        this.segmentName = segmentName;
+    }
+
+    //full constructor
+    public Segment (int segId, String segName, String firstPoint, String secondPoint, double segmentDistance){
         segmentId = segId;
         pointA = firstPoint;
         pointB = secondPoint;
         distance = segmentDistance;
+        segmentName = segName;
+    }
+
+
+
+    //returns segment name
+    public String getSegmentName() {
+        return segmentName;
     }
 
     //returns segmentId

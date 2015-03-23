@@ -1,20 +1,13 @@
 package com.tcsorcs.trailsapp.activites;
 
-import android.content.Context;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationManager;
-import android.provider.SyncStateContract;
+
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.tcsorcs.trailsapp.R;
 
@@ -24,39 +17,29 @@ public class GoogleMapsActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //set layout for activity
         setContentView(R.layout.activity_google_maps);
 
 
-
-        // Getting reference to the SupportMapFragment of activity_main.xml
+        // Getting reference to the google map fragment
         MapFragment fm = (MapFragment) getFragmentManager().findFragmentById(R.id.googlemap);
 
         // Getting GoogleMap object from the fragment
         googleMap = fm.getMap();
 
-        // map is a GoogleMap object
+        // googleMap is a GoogleMap object
+
+
         googleMap.setMyLocationEnabled(true);
         googleMap.getUiSettings().setMyLocationButtonEnabled(true);
         googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 
-        //zoom to TCS
+        //zoom to TCS coordinates on start
         LatLng  myLocation = new LatLng(39.15,-84.244493);
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation,16));
 
-
-        //zoom to users current location
-//        Location location = googleMap.getMyLocation();
-//        LatLng myLocation;
-//        if (location != null) {
-//            myLocation = new LatLng(location.getLatitude(),
-//                    location.getLongitude());
-//
-//            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation,16));
-//
-//        }
     }
-
-
 
     @Override
     protected void onResume() {

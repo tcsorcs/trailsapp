@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
         <LinearLayout
             android:id="@+id/MapPanContainer"
             android:layout_width="match_parent"
@@ -22,10 +23,171 @@
             android:gravity="top"
             android:orientation="vertical">
 
-            <com.tcsorcs.trailsapp.mapview.TouchImageView
-                android:id="@+id/MapPanView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            <RelativeLayout
+                android:id="@+id/MapDevContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.tcsorcs.trailsapp.mapview.TouchImageView
+                    android:id="@+id/MapPanView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:id="@+id/M1"
+                    style="@style/ButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginRight="2dip"
+                    android:text="M1" />
+                <Button
+                    android:id="@+id/M2"
+                    style="@style/ButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toRightOf="@+id/M1"
+                    android:layout_marginRight="2dip"
+                    android:text="M2" />
+
+                <Button
+                    android:id="@+id/M3"
+                    style="@style/ButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginRight="2dip"
+                    android:layout_toRightOf="@+id/M2"
+                    android:text="M3" />
+                <Button
+                    android:id="@+id/M4"
+                    style="@style/ButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginRight="2dip"
+                    android:layout_toRightOf="@+id/M3"
+                    android:text="M4" />
+                <Button
+                    android:id="@+id/M5"
+                    style="@style/ButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toRightOf="@+id/M4"
+                    android:layout_marginRight="2dip"
+                    android:text="M5" />
+
+                <Button
+                    android:id="@+id/M6"
+                    style="@style/ButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/A3"
+                    android:layout_above="@+id/M5"
+                    android:layout_marginBottom="2dip"
+                    android:text="M6" />
+
+                <Button
+                    android:id="@+id/ClearButton"
+                    style="@style/ButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_above="@+id/M5"
+                    android:layout_marginBottom="2dip"
+                    android:layout_marginRight="2dip"
+                    android:text="Clear" />
+
+
+
+
+
+
+                <Button
+                    android:id="@+id/A1"
+                    style="@style/ButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/ClearButton"
+                    android:layout_above="@+id/M2"
+                    android:layout_marginBottom="2dip"
+                    android:layout_marginRight="2dip"
+                    android:text="A1" />
+
+                <Button
+                    android:id="@+id/A2"
+                    style="@style/ButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/A1"
+                    android:layout_above="@+id/M3"
+                    android:layout_marginBottom="2dip"
+                    android:layout_marginRight="2dip"
+
+                    android:text="A2" />
+
+                <Button
+                    android:id="@+id/A3"
+                    style="@style/ButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/A2"
+                    android:layout_above="@+id/M4"
+                    android:layout_marginBottom="2dip"
+                    android:layout_marginRight="2dip"
+                    android:text="A3" />
+
+                <Button
+                    android:id="@+id/S1"
+                    style="@style/ButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginRight="2dip"
+                    android:text="S1" />
+
+                <Button
+                    android:id="@+id/S2"
+                    style="@style/ButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/S1"
+                    android:layout_marginRight="2dip"
+                    android:text="S2" />
+                <Button
+                    android:id="@+id/S3"
+                    style="@style/ButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/S2"
+                    android:layout_marginRight="2dip"
+                    android:text="S3" />
+                <Button
+                    android:id="@+id/S4"
+                    style="@style/ButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/S3"
+                    android:layout_marginRight="2dip"
+                    android:text="S4" />
+
+                <Button
+                    android:id="@+id/S5"
+                    style="@style/ButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/S4"
+                    android:text="S5" />
+
+            </RelativeLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -131,13 +293,13 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:text="@string/scan_button_text" />
-               <!-- <Button
-                    android:id="@+id/GoogleMapsButton"
-                    style="@style/ButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:text="@string/google_maps_button_text" />-->
+                <!-- <Button
+                     android:id="@+id/GoogleMapsButton"
+                     style="@style/ButtonStyle"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_alignParentLeft="true"
+                     android:text="@string/google_maps_button_text" />-->
             </RelativeLayout>
         </LinearLayout>
 

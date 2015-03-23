@@ -5,12 +5,13 @@
 
     <string name="app_name">TCS Trails App</string>
     <string name="title_trails">Trails Home</string>
-    <string name="title_achievements">Achievements</string>
+    <string name="title_achievements">Achievement History</string>
     <string name="title_orcslounge">ORCs Lounge</string>
+    <string name="title_trailbreakdown">Trails Breakdown</string>
     <string name="title_googlemaps">Where Am I ?</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_example">Example action</string>
+    <string name="toggle_dev">Toggle Dev Mode</string>
     <string name="action_settings">Settings</string>
     <string name="exit_menu">Exit</string>
     <string name="total_distance_label">Total Distance: </string>
