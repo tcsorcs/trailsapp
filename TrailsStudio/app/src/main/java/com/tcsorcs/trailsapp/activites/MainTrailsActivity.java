@@ -1,9 +1,16 @@
 package com.tcsorcs.trailsapp.activites;
 
 import com.tcsorcs.trailsapp.R;
-import com.tcsorcs.trailsapp.fragments.AchievementsFragment;
+import com.tcsorcs.trailsapp.helpers.Location;
+import com.tcsorcs.trailsapp.fragments.AchievementHistoryListFragment;
 import com.tcsorcs.trailsapp.fragments.NavigationDrawerFragment;
-
+import com.tcsorcs.trailsapp.fragments.OrcContactListFragment;
+import com.tcsorcs.trailsapp.fragments.TrailBreakdownFragment;
+import com.tcsorcs.trailsapp.managers.DisplayManager;
+import com.tcsorcs.trailsapp.managers.DistanceManager;
+import com.tcsorcs.trailsapp.managers.GeneralManager;
+import com.tcsorcs.trailsapp.managers.InputManager;
+import com.tcsorcs.trailsapp.mapview.TouchImageView;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,19 +25,19 @@ import android.support.v7.app.ActionBar;
 import android.support.v4.app.FragmentManager;
 import android.widget.Toast;
 
-import com.tcsorcs.trailsapp.fragments.ORCSLoungeFragment;
-import com.tcsorcs.trailsapp.managers.DisplayManager;
-import com.tcsorcs.trailsapp.managers.DistanceManager;
-import com.tcsorcs.trailsapp.managers.GeneralManager;
-import com.tcsorcs.trailsapp.managers.InputManager;
-import com.tcsorcs.trailsapp.mapview.TouchImageView;
 
 public class MainTrailsActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
-    private Handler qrCodeHandler = new Handler();
-    private String trailQRCodeContents = null;
-    private boolean trailQRScanFound = false;
+
+    private Handler qrCodeHandler = new Handler(); //used for timer delay before zooming into map
+    private String trailQRCodeContents = null; //holds contents of qrcode
+    private String trailsLocSize=null; //number of incoming sms locations to draw
+    private String trailsLocX=null; // incoming sms x coordinate
+    private String trailsLocY=null; // incoming sms y coordinate
+    private boolean trailQRScanFound = false; // keep track if qr code is found
+    private boolean trailsLocFound = false; // keep track if incoming sms location is found
+
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -48,21 +55,24 @@ public class MainTrailsActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_trails);
 
-        //Toast.makeText(this,"onCreate Main", Toast.LENGTH_LONG).show();
-
 
         GeneralManager.getInstance().main_activity = this;
+
+
+        DisplayManager.instance = new DisplayManager();
         DisplayManager.getInstance().main_activity = GeneralManager
                 .getInstance().main_activity;
 
+
         // set onClicks for Buttons
         DisplayManager.getInstance().setButtonCallbacks();
-        // set initial map image/zoom limit to be displayed on the home activity
+        // set initial map image/zoom and paint map
         DisplayManager.getInstance().initializeMapView();
 
-        // TODO when exiting app, restarting app, distancemanager remembers
-        // arraylist are we exiting app correctly? for now just assigning new
-        // when we onCreate
+        //hide dev options on first creating activity
+        DisplayManager.getInstance().hideDevButtons();
+        DisplayManager.getInstance().setInDevMode(false);
+
         DistanceManager.instance = new DistanceManager();
 
 
@@ -75,6 +85,31 @@ public class MainTrailsActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+
+
+
+        //check for incoming sms before splash screen, otherwise onNewIntent handles
+        //incoming sms since activity is already created
+        Uri uri = getIntent().getData();
+        if (uri != null) {
+            //paramenter scanned_data given by QR Code Reader documentation
+            //https://scan.me/help#/article/1363347
+            trailQRCodeContents = uri.getQueryParameter("scanned_data");
+            if (trailQRCodeContents != null) {
+                trailQRScanFound = true;
+            }
+
+            //TODO implement sending multiple locations using size parameter
+
+            trailsLocSize = uri.getQueryParameter("size");
+            if (trailsLocSize != null) {
+                trailsLocFound = true;
+                trailsLocX = uri.getQueryParameter("x");
+                trailsLocY = uri.getQueryParameter("y");
+            }
+        }
+
 
     }
 
@@ -132,6 +167,13 @@ public class MainTrailsActivity extends ActionBarActivity
             if (trailQRCodeContents != null) {
                 trailQRScanFound = true;
             }
+            trailsLocSize = uri.getQueryParameter("size");
+            if (trailsLocSize != null) {
+                trailsLocFound = true;
+                trailsLocX = uri.getQueryParameter("x");
+                trailsLocY = uri.getQueryParameter("y");
+            }
+
         }
     }
 
@@ -167,6 +209,44 @@ public class MainTrailsActivity extends ActionBarActivity
 
         }
 
+        if (trailsLocFound) {
+
+            //return to main trails activity map view, popping all fragment screens off the stack
+            FragmentManager fm = getSupportFragmentManager();
+            for (int i = 0; i < fm.getBackStackEntryCount(); ++i) {
+                fm.popBackStack();
+            }
+            mTitle = getString(R.string.title_trails);
+
+            //Toast.makeText(getApplicationContext(), "X:"+trailsLocX, Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "Y:"+trailsLocY, Toast.LENGTH_LONG).show();
+
+            //draw markers from sms location
+            qrCodeHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //  InputManager.getInstance().inputQRC(trailQRCodeContents);
+
+                    if (trailsLocX != null && trailsLocY != null) {
+                        int x = Integer.parseInt(trailsLocX);
+                        int y = Integer.parseInt(trailsLocY);
+
+                        Location loc=new Location(x,y);
+                        DisplayManager.getInstance().drawMarker(loc,true,true);
+
+                    }
+
+                }
+            }, 2000);
+        }
+
+        if (trailsLocFound) {
+            // reset flag for future scans
+            trailsLocFound = false;
+
+        }
+
+
     }
 
     @Override
@@ -179,12 +259,11 @@ public class MainTrailsActivity extends ActionBarActivity
         TouchImageView mapView = (TouchImageView) this
                 .findViewById(R.id.MapPanView);
 
-        // TODO more research on handling switching images OutOfMemory Exceptions
         mapView.setImageBitmap(null);
-
     }
 
 
+    //TODO new instances created of each fragment every time selected, need to just have one instance and switch to that instance
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
@@ -208,16 +287,24 @@ public class MainTrailsActivity extends ActionBarActivity
             //AchievementFragment selected from navigation drawer
             //place on stack
             fragmentManager.beginTransaction()
-                    .replace(R.id.MainTrailsView, AchievementsFragment.newInstance("1", "2"), "Achievements_Frag")
+                    .replace(R.id.MainTrailsView, AchievementHistoryListFragment.newInstance("1", "2"), "AchievementList_Frag")
                     .addToBackStack(null).commit();
-            mTitle = getString(R.string.title_achievements);
+            mTitle =  getString(R.string.title_achievements);
         } else if (position == 3) {
-            //ORCs Lounge Fragment selected from navigation drawer
+            //ORCs Lounge selected from navigation drawer
             //place on stack
             fragmentManager.beginTransaction()
-                    .replace(R.id.MainTrailsView, ORCSLoungeFragment.newInstance("1", "2"), "ORCSLounge_Frag")
+                    .replace(R.id.MainTrailsView, OrcContactListFragment.newInstance("1", "2"), "OrcContactList_Frag")
                     .addToBackStack(null).commit();
             mTitle = getString(R.string.title_orcslounge);
+
+        } else if (position == 4) {
+            //TrailsBreakdown selected from navigation drawer
+            //place on stack
+            fragmentManager.beginTransaction()
+                    .replace(R.id.MainTrailsView, TrailBreakdownFragment.newInstance("1", "2"), "TrailBreakdown_Frag")
+                    .addToBackStack(null).commit();
+            mTitle = getString(R.string.title_trailbreakdown);
 
         }
 
@@ -253,12 +340,26 @@ public class MainTrailsActivity extends ActionBarActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Toast.makeText(this, "To be developed.", Toast.LENGTH_SHORT).show();
             return true;
         }
 
 
-        if (item.getItemId() == R.id.action_example) {
-            Toast.makeText(this, "Example action.", Toast.LENGTH_SHORT).show();
+        if (item.getItemId() == R.id.toggle_dev) {
+
+            if(DisplayManager.getInstance().getInDevMode()){
+                DisplayManager.getInstance().hideDevButtons();
+                DisplayManager.getInstance().setInDevMode(false);
+                Toast.makeText(this, "Dev Mode Off", Toast.LENGTH_SHORT).show();
+
+            }else{
+
+                DisplayManager.getInstance().showDevButtons();
+                DisplayManager.getInstance().setInDevMode(true);
+                Toast.makeText(this, "Dev Mode On", Toast.LENGTH_SHORT).show();
+
+            }
+
             return true;
         }
 
