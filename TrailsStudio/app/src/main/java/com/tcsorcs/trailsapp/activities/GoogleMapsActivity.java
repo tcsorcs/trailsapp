@@ -1,6 +1,11 @@
 package com.tcsorcs.trailsapp.activities;
 
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.location.LocationManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -38,6 +43,31 @@ public class GoogleMapsActivity extends ActionBarActivity {
         //zoom to TCS coordinates on start
         LatLng  myLocation = new LatLng(39.15,-84.244493);
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation,16));
+
+        //check for GPS enabled
+        final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+
+        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("For best accuracy, please enable Location services (GPS) on your device when using the Where Am I feature. This can be found under settings.")
+                    .setCancelable(false)
+                    .setPositiveButton("Go to Settings", new DialogInterface.OnClickListener() {
+                        public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                            dialog.cancel();
+                        }
+                    });
+            final AlertDialog alert = builder.create();
+            alert.show();
+
+
+
+        }
 
     }
 
