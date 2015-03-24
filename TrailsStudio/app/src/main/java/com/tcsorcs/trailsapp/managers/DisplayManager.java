@@ -86,7 +86,7 @@ public class DisplayManager {
 
     //dev mode graphic segments for testing
     private SegmentGraphic segGraphicS1=new SegmentGraphic("execent_l21",1528.839f,1843.433f);
-    private SegmentGraphic segGraphicS2=new SegmentGraphic("l20_l21",1469.213f  ,140.99f);
+    private SegmentGraphic segGraphicS2=new SegmentGraphic("l20_l21",1469.213f,1820.99f);
     private SegmentGraphic segGraphicS3=new SegmentGraphic("l19_l20",1428.006f,1778.52f);
     private SegmentGraphic segGraphicS4=new SegmentGraphic("l18_l19",1433.737f,1604.69f);
     private SegmentGraphic segGraphicS5=new SegmentGraphic("depeent_l18",1694.443f,1603.73f);
