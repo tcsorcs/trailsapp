@@ -15,7 +15,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -23,7 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tcsorcs.trailsapp.R;
-import com.tcsorcs.trailsapp.activites.AchievementDialogActivity;
+import com.tcsorcs.trailsapp.activities.AchievementDialogActivity;
 import com.tcsorcs.trailsapp.helpers.Achievement;
 import com.tcsorcs.trailsapp.helpers.DummyDatabaseHelper;
 import com.tcsorcs.trailsapp.helpers.Location;
@@ -87,7 +86,7 @@ public class DisplayManager {
 
     //dev mode graphic segments for testing
     private SegmentGraphic segGraphicS1=new SegmentGraphic("execent_l21",1528.839f,1843.433f);
-    private SegmentGraphic segGraphicS2=new SegmentGraphic("l20_l21",1469.213f  ,140.99f);
+    private SegmentGraphic segGraphicS2=new SegmentGraphic("l20_l21",1469.213f,1820.99f);
     private SegmentGraphic segGraphicS3=new SegmentGraphic("l19_l20",1428.006f,1778.52f);
     private SegmentGraphic segGraphicS4=new SegmentGraphic("l18_l19",1433.737f,1604.69f);
     private SegmentGraphic segGraphicS5=new SegmentGraphic("depeent_l18",1694.443f,1603.73f);
@@ -543,7 +542,7 @@ public class DisplayManager {
 
         try {
 
-            drawnBitmap = Bitmap.createBitmap(mapWidth , mapHeight, Bitmap.Config.ARGB_8888);
+            drawnBitmap = Bitmap.createBitmap(mapWidth , mapHeight, Bitmap.Config.RGB_565);
 
             canvas = new Canvas(drawnBitmap);
 
@@ -562,7 +561,7 @@ public class DisplayManager {
         mapPanView.setCopyLocationOnLongPress(true);
 
         //set bitmap drawing to the TouchImageView
-        mapPanView.setImageBitmap(drawnBitmap);
+       mapPanView.setImageBitmap(drawnBitmap);
     }
 
     /**
