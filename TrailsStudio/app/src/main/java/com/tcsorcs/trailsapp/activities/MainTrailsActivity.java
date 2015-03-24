@@ -1,4 +1,4 @@
-package com.tcsorcs.trailsapp.activites;
+package com.tcsorcs.trailsapp.activities;
 
 import com.tcsorcs.trailsapp.R;
 import com.tcsorcs.trailsapp.helpers.Location;

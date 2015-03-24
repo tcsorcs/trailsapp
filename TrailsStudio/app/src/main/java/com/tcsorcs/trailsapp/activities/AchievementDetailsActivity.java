@@ -1,4 +1,4 @@
-package com.tcsorcs.trailsapp.activites;
+package com.tcsorcs.trailsapp.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
