@@ -260,10 +260,20 @@ public class DistanceManager {
             segment = aSegment;
         }
 
-        //Potential error - right and left might need to be switched...
+        /*NOTE: never returns that two nodes are equal - otherwise the pathfinder will not add
+		*   to the path b/c TreeSets allow no duplicates. This is probably temporary unil
+		*   the TreeSet collection can be replaced by something without this problem and with
+		*   all needed functionality
+		*/
         @Override
         public int compareTo(Node left) {
-            return Double.compare(this.nodeDistance, left.nodeDistance);
+            int returnValue = Double.compare(this.nodeDistance, left.nodeDistance);
+
+            if (returnValue == 0){
+                return 1;
+            } else {
+                return returnValue;
+            }
         }
     }//local Node class
 
