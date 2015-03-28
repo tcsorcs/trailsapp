@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.Stack;
 import java.util.TreeSet;
 
-import com.tcsorcs.trailsapp.helpers.Location;
 import com.tcsorcs.trailsapp.helpers.Segment;
 import com.tcsorcs.trailsapp.helpers.DummyDatabaseHelper; //temporary until database helper is up
 
@@ -14,7 +13,7 @@ import com.tcsorcs.trailsapp.helpers.DummyDatabaseHelper; //temporary until data
      *
      *  Currently NOT FUNCTIONAL - needs actual hooks to connect to database and hooks for display manager to be implemented
      *  DNE = does not exist
-     *  Updated 3/9/2015
+     *  Updated 3/28/2015
      */
      /* Below are ideas, some outdated. Will clean up later.
      *   Stuff Distance manager will need for 1 session
@@ -125,12 +124,6 @@ public class DistanceManager {
         if (path.empty()){            //don't need to pathfind
             //add QRcode to path
             path.push(codeName);
-
-            //grab location from DB (might not have it's own declaration)
-            Location firstLocation = DummyDatabaseHelper.getInstance().getLocation(codeName); //DNE //Dave
-
-            //display new point
-            DisplayManager.getInstance().drawMarker(firstLocation, false, true); //DNE //Dave
         }
         else {//need to pathfind
             smarterPathFinder(codeName);
