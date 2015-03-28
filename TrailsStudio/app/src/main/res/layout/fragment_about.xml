@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.tcsorcs.trailsapp.fragments.AboutFragment"
+    android:id="@+id/AboutFragmentMainLayoutView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fragment_background_color"
+    android:clickable="true">
+
+
+
+
+
+        <ImageView
+            android:id="@+id/aboutFragImage"
+            android:layout_width="wrap_content"
+            android:layout_height="150dip"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="7dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/tcs_milford"
+
+            />
+
+
+
+        <TextView
+            android:id="@+id/about_frag_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/aboutFragImage"
+            android:text="@string/about_description"
+            android:textSize="16dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            />
+    <TextView
+        android:id="@+id/about_frag_features"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/about_frag_description"
+        android:text="@string/about_features"
+        android:textSize="14dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="10dp"
+        />
+
+        <TextView
+            android:id="@+id/dev_team_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/about_frag_features"
+            android:text="@string/about_developmentteam_title"
+            android:textSize="16dp"
+            android:layout_marginLeft="5dp"
+
+            />
+
+
+        <TextView
+            android:id="@+id/dev_team_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dev_team_title"
+            android:text="@string/about_developmentteam_list"
+            android:textSize="14dp"
+            android:layout_marginLeft="10dp"
+            />
+
+
+
+    </RelativeLayout>

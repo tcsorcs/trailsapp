@@ -3,7 +3,9 @@ package com.tcsorcs.trailsapp.managers;
 import java.util.ArrayList;
 import java.util.Date;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -1090,4 +1092,33 @@ public class DisplayManager {
 
         Toast.makeText(main_activity, "Map Cleared.", Toast.LENGTH_SHORT).show();
     }
+
+    /**
+     * Creates alert showing app version and release date information.
+     */
+    public void showVersionDialog(){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(main_activity);
+
+        try{
+            String versionName = main_activity.getPackageManager().getPackageInfo(main_activity.getPackageName(), 0).versionName;
+            String appFullName=main_activity.getString(R.string.app_full_name);
+            String releaseDate=main_activity.getString(R.string.release_date);
+
+            builder.setMessage(appFullName+"\n\nRelease Date: "+releaseDate+"\nVersion: "+versionName)
+                    .setCancelable(false)
+                    .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                        public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                            dialog.cancel();
+                        }
+                    });
+            final AlertDialog alert = builder.create();
+            alert.show();
+
+        }catch(PackageManager.NameNotFoundException e){
+             Toast.makeText(main_activity.getApplicationContext(), "Unable to gather version info.", Toast.LENGTH_LONG).show();
+
+        }
+
+    }
+
 }

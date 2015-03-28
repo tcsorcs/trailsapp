@@ -1,6 +1,7 @@
 package com.tcsorcs.trailsapp.activities;
 
 import com.tcsorcs.trailsapp.R;
+import com.tcsorcs.trailsapp.fragments.AboutFragment;
 import com.tcsorcs.trailsapp.helpers.Location;
 import com.tcsorcs.trailsapp.fragments.AchievementHistoryListFragment;
 import com.tcsorcs.trailsapp.fragments.NavigationDrawerFragment;
@@ -306,6 +307,15 @@ public class MainTrailsActivity extends ActionBarActivity
                     .addToBackStack(null).commit();
             mTitle = getString(R.string.title_trailbreakdown);
 
+        } else if (position == 5) {
+            //TrailsBreakdown selected from navigation drawer
+            //place on stack
+            fragmentManager.beginTransaction()
+                    .replace(R.id.MainTrailsView, AboutFragment.newInstance("1", "2"), "About_Frag")
+                    .addToBackStack(null).commit();
+            mTitle = getString(R.string.title_about
+            );
+
         }
 
     }
@@ -341,6 +351,12 @@ public class MainTrailsActivity extends ActionBarActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Toast.makeText(this, "To be developed.", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        if (id == R.id.version_menu) {
+            //Toast.makeText(this, "To be developed.", Toast.LENGTH_SHORT).show();
+            DisplayManager.getInstance().showVersionDialog();
             return true;
         }
 
