@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Stack;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import com.tcsorcs.trailsapp.helpers.Segment;
@@ -253,20 +254,9 @@ public class DistanceManager {
             segment = aSegment;
         }
 
-        /*NOTE: never returns that two nodes are equal - otherwise the pathfinder will not add
-		*   to the path b/c TreeSets allow no duplicates. This is probably temporary unil
-		*   the TreeSet collection can be replaced by something without this problem and with
-		*   all needed functionality
-		*/
         @Override
         public int compareTo(Node left) {
-            int returnValue = Double.compare(this.nodeDistance, left.nodeDistance);
-
-            if (returnValue == 0){
-                return 1;
-            } else {
-                return returnValue;
-            }
+            return Double.compare(this.nodeDistance, left.nodeDistance);
         }
     }//local Node class
 
@@ -331,19 +321,21 @@ public class DistanceManager {
         * is most recent point scanned, and now the end of the main path.
         */
         Node currentNode; //first node we add
-        TreeSet<Node> subPath; //subpath we're building
+       // TreeSet<Node> subPath; //subpath we're building
+        TreeMap<Double, Node> subPath;
         Node shortestNode; //stores the shortest node (list)
         ArrayList<Segment> nextSegments;
         Segment subSegment;
         Node subNode;
         String parentScanName;//name of parent for database query
+        Double tempDistance; //temp storage for distance
 
         currentNode = new Node(currentScan, null, 0.0, null);
-        subPath = new TreeSet<Node>();
+        subPath = new TreeMap<Double, Node>();
 
-        subPath.add(currentNode);//add first
+        subPath.put(0.0, currentNode);//add first
 
-        shortestNode = subPath.first(); //get shortest
+        shortestNode = subPath.get(subPath.firstKey()); //get shortest node
 
         while(!shortestNode.scanName.equals(lastScan)) { //while the shortest scan is not the lastScan from path
             if (shortestNode.parent == null){
@@ -363,14 +355,15 @@ public class DistanceManager {
                  */
 
                 //DEBUG - if something goes wrong, it's probably here!
-                subNode = new Node(subSegment.getOtherPoint(shortestNode.scanName), shortestNode, (subSegment.getSegmentDistance() + shortestNode.nodeDistance), subSegment);//Segment.secondPoint is the point found attached, not the point given to search for
-                subPath.add(subNode);
+                tempDistance = (subSegment.getSegmentDistance() + shortestNode.nodeDistance);
+                subNode = new Node(subSegment.getOtherPoint(shortestNode.scanName), shortestNode, tempDistance, subSegment);//Segment.secondPoint is the point found attached, not the point given to search for
+                subPath.put(tempDistance, subNode);
             }
 
             //all connected points should be in nodes, so must remove original node from subPath
-            subPath.pollFirst(); //removes and returns first in set (shortest path here)
+            subPath.pollFirstEntry(); //removes and returns first in set (shortest path here)
 
-            shortestNode = subPath.first(); //get shortest
+            shortestNode = subPath.get(subPath.firstKey()); //get shortest
         }//end while
 
         //we have our path
@@ -383,6 +376,8 @@ public class DistanceManager {
      * given connectingNode.scanName should be lastScan
      * This travels through the list of nodes in connectingNode until end - where end is currentScan
      * - and adds to path
+     * 
+     * UNTESTED
      */
     private void addSubPathToPath(Node shortestNode){
         totalDistance += shortestNode.nodeDistance; //adds subPath distance to total distance
