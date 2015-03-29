@@ -101,7 +101,7 @@ public class TrailBreakdownFragment extends Fragment {
         Bitmap drawnBitmap = null;
 
         try {
-            drawnBitmap = Bitmap.createBitmap( 1447,1966 , Bitmap.Config.ARGB_8888);
+            drawnBitmap = Bitmap.createBitmap( 1447,1966 , Bitmap.Config.RGB_565);
 
             //canvas for painting onto the map view
             Canvas canvas = new Canvas(drawnBitmap);

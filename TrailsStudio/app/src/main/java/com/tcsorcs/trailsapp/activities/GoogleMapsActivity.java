@@ -48,26 +48,26 @@ public class GoogleMapsActivity extends ActionBarActivity {
         final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
 
         if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
-
-            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("For best accuracy, please enable Location services (GPS) on your device when using the Where Am I feature. This can be found under settings.")
-                    .setCancelable(false)
-                    .setPositiveButton("Go to Settings", new DialogInterface.OnClickListener() {
-                        public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                            dialog.cancel();
-                        }
-                    });
-            final AlertDialog alert = builder.create();
-            alert.show();
-
-
-
+            showEnableGPSDialog();
         }
+
+
+        //set listener for if My Location button is clicked to check for GPS again
+        final Context context = this;
+        googleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+            @Override
+            public boolean onMyLocationButtonClick() {
+                LocationManager mgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                if (!mgr.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    //Toast.makeText(context, "GPS is disabled!", Toast.LENGTH_SHORT).show();
+                    showEnableGPSDialog();
+                }
+                return false;
+            }
+        });
+
+
+
 
     }
 
@@ -80,24 +80,49 @@ public class GoogleMapsActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_google_maps, menu);
-        return true;
+       // getMenuInflater().inflate(R.menu.menu_google_maps, menu);
+
+        //return true to add menu to this activity
+        return false;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        int id = item.getItemId();
+//
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    /**
+     *  Shows a dialog to the user with button to direct them
+     *  to their settings screen to turn on GPS.
+     */
+    private void showEnableGPSDialog(){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("For best accuracy, please enable Location services (GPS) on your device when using the Where Am I feature. This can be found under settings.")
+                .setCancelable(false)
+                .setPositiveButton("Go to Settings", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
     }
+
     @Override
     public void onBackPressed() {
         finish();
