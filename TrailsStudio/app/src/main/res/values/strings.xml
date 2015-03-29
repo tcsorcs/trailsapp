@@ -14,6 +14,7 @@
     <string name="about_developmentteam_list"><u>Kurtis F. Taylor - Manager</u>\n\t •in charge of client POV testing\n<u>Mike Keck - Project Manager</u>\n\t •creator of the achievement manager\n<u>Dave Leaders - Lead Programmer</u>\n\t •creator of the display manager\n<u>Sarah Henney - Programmer</u>\n\t •creator of the distance manager\n<u>Tim Sandoval - Programmer</u>\n\t •database admin</string>
 
 
+    <string name="invalid_qrc">Invalid TrailsApp QRCode.</string>
 
     <!-- MainTrailsActivity -->
 

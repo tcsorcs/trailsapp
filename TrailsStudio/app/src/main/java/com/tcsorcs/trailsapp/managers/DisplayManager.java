@@ -20,6 +20,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -536,7 +537,6 @@ public class DisplayManager {
         // pinching
         mapPanView.setMaxZoom(10);
 
-
         //trails map that will be drawn on the canvas
         Bitmap bitmap1 = BitmapFactory.decodeResource(main_activity.getResources(), R.drawable.trails_nomarkup);
 
@@ -564,6 +564,7 @@ public class DisplayManager {
 
         //set bitmap drawing to the TouchImageView
        mapPanView.setImageBitmap(drawnBitmap);
+
     }
 
     /**
@@ -1090,6 +1091,7 @@ public class DisplayManager {
         canvas.drawBitmap(bitmap1, null, new Rect(mapX,mapY,mapWidth,mapHeight), null);
         mapPanView.invalidate();
 
+
         Toast.makeText(main_activity, "Map Cleared.", Toast.LENGTH_SHORT).show();
     }
 
@@ -1104,7 +1106,7 @@ public class DisplayManager {
             String appFullName=main_activity.getString(R.string.app_full_name);
             String releaseDate=main_activity.getString(R.string.release_date);
 
-            builder.setMessage(appFullName+"\n\nRelease Date: "+releaseDate+"\nVersion: "+versionName)
+            builder.setMessage(appFullName+"\n\nRelease Date: "+releaseDate+"\nVersion: Alpha "+versionName)
                     .setCancelable(false)
                     .setPositiveButton("Close", new DialogInterface.OnClickListener() {
                         public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {

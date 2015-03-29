@@ -44,8 +44,12 @@
                     android:scheme="com.tcsorcs.trailsapp" />
 
                 <data
+                android:host="trailsapp.tcsorcs.com"
+                android:scheme="http" />
+
+                <data
                     android:host="trailsapp.tcsorcs.com"
-                    android:scheme="http" />
+                    android:scheme="tcsshp" />
 
             </intent-filter>
 
