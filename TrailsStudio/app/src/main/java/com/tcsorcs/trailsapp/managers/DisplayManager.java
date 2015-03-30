@@ -3,7 +3,9 @@ package com.tcsorcs.trailsapp.managers;
 import java.util.ArrayList;
 import java.util.Date;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -15,15 +17,15 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tcsorcs.trailsapp.R;
-import com.tcsorcs.trailsapp.activites.AchievementDialogActivity;
+import com.tcsorcs.trailsapp.activities.AchievementDialogActivity;
 import com.tcsorcs.trailsapp.helpers.Achievement;
 import com.tcsorcs.trailsapp.helpers.DummyDatabaseHelper;
 import com.tcsorcs.trailsapp.helpers.Location;
@@ -87,7 +89,7 @@ public class DisplayManager {
 
     //dev mode graphic segments for testing
     private SegmentGraphic segGraphicS1=new SegmentGraphic("execent_l21",1528.839f,1843.433f);
-    private SegmentGraphic segGraphicS2=new SegmentGraphic("l20_l21",1469.213f  ,140.99f);
+    private SegmentGraphic segGraphicS2=new SegmentGraphic("l20_l21",1469.213f,1820.99f);
     private SegmentGraphic segGraphicS3=new SegmentGraphic("l19_l20",1428.006f,1778.52f);
     private SegmentGraphic segGraphicS4=new SegmentGraphic("l18_l19",1433.737f,1604.69f);
     private SegmentGraphic segGraphicS5=new SegmentGraphic("depeent_l18",1694.443f,1603.73f);
@@ -535,7 +537,6 @@ public class DisplayManager {
         // pinching
         mapPanView.setMaxZoom(10);
 
-
         //trails map that will be drawn on the canvas
         Bitmap bitmap1 = BitmapFactory.decodeResource(main_activity.getResources(), R.drawable.trails_nomarkup);
 
@@ -543,7 +544,7 @@ public class DisplayManager {
 
         try {
 
-            drawnBitmap = Bitmap.createBitmap(mapWidth , mapHeight, Bitmap.Config.ARGB_8888);
+            drawnBitmap = Bitmap.createBitmap(mapWidth , mapHeight, Bitmap.Config.RGB_565);
 
             canvas = new Canvas(drawnBitmap);
 
@@ -562,7 +563,8 @@ public class DisplayManager {
         mapPanView.setCopyLocationOnLongPress(true);
 
         //set bitmap drawing to the TouchImageView
-        mapPanView.setImageBitmap(drawnBitmap);
+       mapPanView.setImageBitmap(drawnBitmap);
+
     }
 
     /**
@@ -1089,6 +1091,36 @@ public class DisplayManager {
         canvas.drawBitmap(bitmap1, null, new Rect(mapX,mapY,mapWidth,mapHeight), null);
         mapPanView.invalidate();
 
+
         Toast.makeText(main_activity, "Map Cleared.", Toast.LENGTH_SHORT).show();
     }
+
+    /**
+     * Creates alert showing app version and release date information.
+     */
+    public void showVersionDialog(){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(main_activity);
+
+        try{
+            String versionName = main_activity.getPackageManager().getPackageInfo(main_activity.getPackageName(), 0).versionName;
+            String appFullName=main_activity.getString(R.string.app_full_name);
+            String releaseDate=main_activity.getString(R.string.release_date);
+
+            builder.setMessage(appFullName+"\n\nRelease Date: "+releaseDate+"\nVersion: Alpha "+versionName)
+                    .setCancelable(false)
+                    .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                        public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                            dialog.cancel();
+                        }
+                    });
+            final AlertDialog alert = builder.create();
+            alert.show();
+
+        }catch(PackageManager.NameNotFoundException e){
+             Toast.makeText(main_activity.getApplicationContext(), "Unable to gather version info.", Toast.LENGTH_LONG).show();
+
+        }
+
+    }
+
 }

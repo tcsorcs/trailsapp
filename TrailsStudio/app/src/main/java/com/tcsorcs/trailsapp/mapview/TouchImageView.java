@@ -848,7 +848,7 @@ public class TouchImageView extends ImageView {
                         true);
                 Location loc=new Location(bitmapPoint.x, bitmapPoint.y);
                 DisplayManager.getInstance().drawMarker(loc,true,true);
-                String locationLink="trailsapp.tcsorcs.com/?size=1&x="+(int)bitmapPoint.x+"&y="+(int)bitmapPoint.y;
+                String locationLink="trailsapp.tcsorcs.com/?type=sms&x="+(int)bitmapPoint.x+"&y="+(int)bitmapPoint.y;
                 DisplayManager.getInstance().setLongPressLink(locationLink);
 
                 // Gets a handle to the clipboard service.
