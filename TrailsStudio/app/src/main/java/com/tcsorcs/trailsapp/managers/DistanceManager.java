@@ -12,7 +12,7 @@ import com.tcsorcs.trailsapp.helpers.DummyDatabaseHelper; //temporary until data
  *  Currently FUNCTIONAL but UNTESTED - DummyDatabaseHelper used in place of actual database helper
  *    smarterPathFinder and related helpers not tested thoroughly
  *  DNE = does not exist
- *  Updated 3/28/2015
+ *  Updated 3/30/2015
  */
 
 public class DistanceManager {
@@ -161,7 +161,6 @@ public class DistanceManager {
 		Node currentNode; //first node we add
 		TreeMap<Double, Node> subPath; //subpath we're building
 		Node shortestNode; //stores the shortest node (list)
-		//ArrayList<Segment> nextSegments;
 		Segment subSegment;
 		Node subNode;
 		String parentScanName;//name of parent for database query
@@ -222,7 +221,7 @@ public class DistanceManager {
 	 */
 	private void addSubPathToPath(Node shortestNode){
 		totalDistance += shortestNode.nodeDistance; //adds subPath distance to total distance
-		Node currentNode = shortestNode.parent;
+		Node currentNode = shortestNode.parent; //start w/parent because current is end of main path
 		ArrayList<Segment> segmentsList = new ArrayList<Segment>(); //stores for DisplayManager
 
 		while(currentNode != null){
@@ -233,6 +232,5 @@ public class DistanceManager {
 
 		//display stuff
 		DisplayManager.getInstance().drawSegments(segmentsList);//DNE //Dave
-
 	}
 }
