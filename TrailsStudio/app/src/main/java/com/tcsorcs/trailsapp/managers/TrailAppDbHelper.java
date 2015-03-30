@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.tcsorcs.trailsapp.helpers.Location;
+
 /**
  * Created by Innovation on 3/3/2015.
  */
@@ -18,13 +20,7 @@ public class TrailAppDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(TrailAppDbContract.SQL_CREATE_QR_INFO);
-        db.execSQL(TrailAppDbContract.SQL_CREATE_ACHIEVEMENTS);
-        db.execSQL(TrailAppDbContract.SQL_CREATE_REQUIREMENTS);
-        db.execSQL(TrailAppDbContract.SQL_CREATE_LOCATIONS);
-        db.execSQL(TrailAppDbContract.SQL_CREATE_STATS_INFORMATION);
-        db.execSQL(TrailAppDbContract.SQL_CREATE_SEGMENT_INFORMATION);
-        db.execSQL(TrailAppDbContract.SQL_CREATE_SEGMENT_GRAPHIC);
+
     }
 
     @Override
@@ -33,5 +29,12 @@ public class TrailAppDbHelper extends SQLiteOpenHelper {
     }
 
     // CRUD (Create, Read, Update, Delete)
+
+    public Location getLocation(String currentScan){
+
+        //TODO query database for location x, y based on location name: currentScan
+
+        return null;
+    }
 
 }
