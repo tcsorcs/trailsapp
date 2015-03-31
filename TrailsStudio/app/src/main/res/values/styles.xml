@@ -25,32 +25,55 @@
         <item name="background">@color/action_bar_background</item>
     </style>
 
-    <style name="AchievementDialogTheme" parent="android:Theme.Dialog">
-        <!-- Fill the screen -->
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
 
-        <!-- No backgrounds, titles or window float -->
-        <item name="android:windowBackground">@null</item>
-        <item name="android:windowNoTitle">true</item>
-
-        <item name="android:windowIsFloating">true</item>
-
-        <!-- Just to prove it's working -->
-        <item name="android:background">#ff0000</item>
-
-    </style>
-
-    <style name="TransparentActivityTheme">
+    <style name="TransparentActivityTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@android:style/Animation</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
 
 
+    <style name="MainTrailsActivity" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+
+
+        <!-- Support library compatibility -->
+        <item name="actionBarStyle">@style/MyActionBar</item>
+
+        <item name="android:buttonStyle">@style/ButtonStyle</item>
+    </style>
+
+
+    <style name="GoogleMapsTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+
+
+        <!-- Support library compatibility -->
+        <item name="actionBarStyle">@style/MyActionBar</item>
+
+        <item name="android:buttonStyle">@style/ButtonStyle</item>
+    </style>
+
+    <style name="AchievementDetailsTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+
+        <!-- Support library compatibility -->
+        <item name="actionBarStyle">@style/MyActionBar</item>
+
+        <item name="android:buttonStyle">@style/ButtonStyle</item>
+    </style>
 
 </resources>
