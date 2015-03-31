@@ -538,7 +538,6 @@ public class DisplayManager {
         mapPanView.setMaxZoom(10);
 
         //trails map that will be drawn on the canvas
-        Bitmap bitmap1 = BitmapFactory.decodeResource(main_activity.getResources(), R.drawable.trails_nomarkup);
 
         Bitmap drawnBitmap = null;
 
@@ -552,7 +551,14 @@ public class DisplayManager {
             int mapX=0;
             int mapY=0;
 
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = 2;
+            Bitmap bitmap1 = BitmapFactory.decodeResource(main_activity.getResources(), R.drawable.trails_nomarkup, options);
             canvas.drawBitmap(bitmap1, null, new Rect(mapX,mapY,mapWidth,mapHeight), null);
+            bitmap1.recycle();
+            mapPanView.invalidate();
+
 
         }
         catch (Exception e) {
@@ -563,7 +569,7 @@ public class DisplayManager {
         mapPanView.setCopyLocationOnLongPress(true);
 
         //set bitmap drawing to the TouchImageView
-       mapPanView.setImageBitmap(drawnBitmap);
+        mapPanView.setImageBitmap(drawnBitmap);
 
     }
 
@@ -1087,8 +1093,11 @@ public class DisplayManager {
         int mapX=0;
         int mapY=0;
 
-        Bitmap bitmap1 = BitmapFactory.decodeResource(main_activity.getResources(), R.drawable.trails_nomarkup);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 2;
+        Bitmap bitmap1 = BitmapFactory.decodeResource(main_activity.getResources(), R.drawable.trails_nomarkup, options);
         canvas.drawBitmap(bitmap1, null, new Rect(mapX,mapY,mapWidth,mapHeight), null);
+        bitmap1.recycle();
         mapPanView.invalidate();
 
 
@@ -1117,7 +1126,7 @@ public class DisplayManager {
             alert.show();
 
         }catch(PackageManager.NameNotFoundException e){
-             Toast.makeText(main_activity.getApplicationContext(), "Unable to gather version info.", Toast.LENGTH_LONG).show();
+            Toast.makeText(main_activity.getApplicationContext(), "Unable to gather version info.", Toast.LENGTH_LONG).show();
 
         }
 

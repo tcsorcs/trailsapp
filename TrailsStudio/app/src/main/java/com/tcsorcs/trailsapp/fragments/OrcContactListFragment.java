@@ -208,7 +208,6 @@ public class OrcContactListFragment extends ListFragment {
 
 
 
-
         OrcContactArrayAdapter<OrcContact> adapter = new OrcContactArrayAdapter<OrcContact>(getActivity(),
                 orcContacts);
         setListAdapter(adapter);
