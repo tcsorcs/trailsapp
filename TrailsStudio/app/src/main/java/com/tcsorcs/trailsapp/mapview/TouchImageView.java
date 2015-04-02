@@ -1112,6 +1112,8 @@ public class TouchImageView extends ImageView {
             endTouch = new PointF(viewWidth / 2, viewHeight / 2);
         }
 
+
+
         // TODO added this new constructor specifically for taking bitmap
         // coordinates of locations of QR codes, still in development
         /**
