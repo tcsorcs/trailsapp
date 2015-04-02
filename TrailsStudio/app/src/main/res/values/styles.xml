@@ -12,11 +12,23 @@
 
     <!-- Button Style -->
     <style name="ButtonStyle" parent="android:style/Widget.Holo.Button">
-        <item name="android:textColor">@color/button_text_color</item>
-        <item name="android:background">@color/button_background_color</item>
-
-
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/buttonshape</item>
     </style>
+
+    <!-- Stats Button Style -->
+    <style name="StatsButtonStyle" parent="android:style/Widget.Holo.Button">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/buttonshape</item>
+    </style>
+
+
     <!-- ActionBar styles -->
     <style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@color/action_bar_background</item>

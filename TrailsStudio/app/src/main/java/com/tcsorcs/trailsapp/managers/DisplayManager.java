@@ -20,6 +20,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -111,7 +112,7 @@ public class DisplayManager {
 
 
         //Scan QR Code Button
-        Button scanBarcodeButton = (Button) main_activity
+        ImageButton scanBarcodeButton = (ImageButton) main_activity
                 .findViewById(R.id.ScanBarcodeButton);
         scanBarcodeButton.setOnClickListener(new OnClickListener() {
 
@@ -173,6 +174,7 @@ public class DisplayManager {
 
             @Override
             public void onClick(View arg0) {
+
 
 
                 SoundManager.getInstance().playHooray("hooray");
@@ -479,34 +481,33 @@ public class DisplayManager {
      */
     public void beginGatheringTime() {
 
-        if (onTrailsServiceRunning) {
-            timeOnTrail = (TextView) main_activity
-                    .findViewById(R.id.time_on_trail_text);
-            totalDistance = (TextView) main_activity
-                    .findViewById(R.id.distance_text);
-            currentPace = (TextView) main_activity.findViewById(R.id.pace_text);
-
-            // TIME ON TRAILS RUNNABLE
-
-            //start thread to begin gathering time
-
-            timeOnTrailsViewRunnable = new Runnable() {
-                @Override
-                public void run() {
-
-
-                    String convertedTime = convertSecondsToTimeString(DistanceManager.getInstance()
-                            .getTimeOnTrail());
-
-                    timeOnTrail.setText(convertedTime);
-
-                    timeOnTrail.postDelayed(timeOnTrailsViewRunnable, 1000);
-                }
-            };
-            // add to message queue
-            timeOnTrail.post(timeOnTrailsViewRunnable);
-
-        }
+//        if (onTrailsServiceRunning) {
+//            timeOnTrail = (TextView) main_activity
+//                    .findViewById(R.id.time_on_trail_text);
+//            totalDistance = (TextView) main_activity
+//                    .findViewById(R.id.distance_text);
+//            currentPace = (TextView) main_activity.findViewById(R.id.pace_text);
+//
+//            // TIME ON TRAILS RUNNABLE
+//
+//            //start thread to begin gathering time
+//
+//            timeOnTrailsViewRunnable = new Runnable() {
+//                @Override
+//                public void run() {
+//
+//
+//                    String convertedTime = convertSecondsToTimeString(DistanceManager.getInstance()
+//                            .getTimeOnTrail());
+//
+//                    timeOnTrail.setText(convertedTime);
+//
+//                    timeOnTrail.postDelayed(timeOnTrailsViewRunnable, 1000);
+//                }
+//            };
+//            // add to message queue
+//            timeOnTrail.post(timeOnTrailsViewRunnable);
+// }
 
     }
 
@@ -570,6 +571,11 @@ public class DisplayManager {
 
         //set bitmap drawing to the TouchImageView
         mapPanView.setImageBitmap(drawnBitmap);
+
+        mapPanView.invalidate();
+
+        mapPanView.setZoom(2);
+        mapPanView.setScaleType(ImageView.ScaleType.CENTER);
 
     }
 

@@ -19,9 +19,9 @@
         android:id="@+id/splashScreenImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_centerHorizontal="true"
         android:layout_below="@+id/TCSTrailsTitle"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="5dp"
         android:src="@drawable/tcs_milford"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp" />
