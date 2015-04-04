@@ -17,8 +17,7 @@
                 <com.tcsorcs.trailsapp.mapview.TouchImageView
                     android:id="@+id/MapPanView"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_above="@+id/StatsButton"/>
+                    android:layout_height="wrap_content"/>
 
 
         <ImageButton
@@ -32,6 +31,24 @@
             android:scaleType="fitCenter"
             android:layout_alignParentBottom="true"/>
 
+        <RelativeLayout
+            android:id="@+id/right_toolbar_margin"
+            android:layout_width="15dp"
+            android:layout_height="60dp"
+            android:layout_toRightOf="@id/ScanBarcodeButton"
+            android:background="@color/main_background_color"
+            android:layout_alignParentBottom="true">
+            </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/left_toolbar_margin"
+            android:layout_width="15dp"
+            android:layout_height="60dp"
+            android:layout_toLeftOf="@id/ScanBarcodeButton"
+            android:background="@color/main_background_color"
+            android:layout_alignParentBottom="true">
+        </RelativeLayout>
+
                 <Button
                     android:id="@+id/M1"
                     style="@style/ButtonStyle"
@@ -41,6 +58,9 @@
                     android:layout_above="@id/ScanBarcodeButton"
                     android:layout_marginRight="2dip"
                     android:text="M1" />
+
+
+
                 <Button
                     android:id="@+id/M2"
                     style="@style/ButtonStyle"
@@ -192,6 +212,18 @@
 
 
 
+
+
+        <ImageButton
+            android:id="@+id/MyLocation"
+            style="@style/ButtonStyle"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_toRightOf="@id/right_toolbar_margin"
+            android:src="@drawable/my_location"
+            android:scaleType="fitCenter"
+            android:layout_alignParentBottom="true"/>
+
         <ImageButton
             android:id="@+id/ShortestPath"
             style="@style/ButtonStyle"
@@ -199,29 +231,16 @@
             android:layout_height="60dp"
             android:src="@drawable/shortest_path"
             android:scaleType="fitCenter"
-            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@id/MyLocation"
             android:layout_alignParentBottom="true"/>
-
-        <ImageButton
-            android:id="@+id/MyLocation"
-            style="@style/ButtonStyle"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_toLeftOf="@id/ShortestPath"
-            android:src="@drawable/my_location"
-            android:scaleType="fitCenter"
-            android:layout_alignParentBottom="true"/>
-
-
 
 
                 <Button
                     android:id="@+id/StatsButton"
                     style="@style/StatsButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_toLeftOf="@id/ScanBarcodeButton"
+                    android:layout_width="120dp"
+                    android:layout_height="60dp"
+                    android:layout_toLeftOf="@id/left_toolbar_margin"
                     android:text="Total Dist: 450 feet\nTime: 45 minutes\nPace: 10 ft/min"
                     android:layout_alignBottom="@id/ScanBarcodeButton"/>
 

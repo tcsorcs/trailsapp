@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -27,6 +29,8 @@ import android.widget.Toast;
 
 import com.tcsorcs.trailsapp.R;
 import com.tcsorcs.trailsapp.activities.AchievementDialogActivity;
+import com.tcsorcs.trailsapp.activities.GoogleMapsActivity;
+import com.tcsorcs.trailsapp.activities.MainTrailsActivity;
 import com.tcsorcs.trailsapp.helpers.Achievement;
 import com.tcsorcs.trailsapp.helpers.DummyDatabaseHelper;
 import com.tcsorcs.trailsapp.helpers.Location;
@@ -102,13 +106,57 @@ public class DisplayManager {
     private final int mapWidth=4000;
     private final int mapHeight=2818;
 
-    private Boolean inDevMode=false;
+    private Boolean inDevMode=false; //true if in dev mode
+
+    private ProgressDialog progressDialog = null; //used for loading screens
+
+
+    private Bitmap drawnBitmap = null; //used in canvas for main trails image
+
+
 
     /**
      * Sets click listeners for all buttons on MainTrailsActivity. Does not set click listeners
      * for fragment buttons. Fragment buttons handle their own on click listeners
      */
     public void setButtonCallbacks() {
+
+
+        //my location button
+        ImageButton shortestPathBtn = (ImageButton) main_activity
+                .findViewById(R.id.ShortestPath);
+        shortestPathBtn.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+
+
+                //TODO develop shortest path
+
+                Toast.makeText(main_activity,"To be developed.",Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
+
+        //my location button
+        ImageButton myLocation = (ImageButton) main_activity
+                .findViewById(R.id.MyLocation);
+        myLocation.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+
+
+                showLoadingDialog();
+
+                //open google maps activity
+                Intent i = new Intent(main_activity,GoogleMapsActivity.class);
+                main_activity.startActivity(i);
+
+
+            }
+        });
 
 
         //Scan QR Code Button
@@ -207,9 +255,8 @@ public class DisplayManager {
             public void onClick(View arg0) {
 
 
-
-                float  x = 2189f;
-                float  y = 106f;
+                float  x = 2181f;
+                float  y = 118f;
                 Location loc=new Location(x,y);
 
                 drawAchievementMarker(loc,true,true);
@@ -245,20 +292,19 @@ public class DisplayManager {
 
 
 
-
-                float x = 1710f;
-                float y = 1830f;
+                float x = 1694f;
+                float y = 1850f;
                 Location loc=new Location(x,y);
                 drawAchievementMarker(loc,false,true);
 
-                x = 1538f;
-                y = 1945f;
+                x = 1534f;
+                y = 1963f;
                 Location loc2=new Location(x,y);
                 drawAchievementMarker(loc2,false,true);
 
 
-                x = 1490f;
-                y = 1810f;
+                x = 1473f;
+                y = 1826f;
                 Location loc3=new Location(x,y);
                 drawAchievementMarker(loc3,true,true);
 
@@ -291,6 +337,7 @@ public class DisplayManager {
                 disableButtons();
                 // Toast.makeText(main_activity.getApplicationContext(), "click", Toast.LENGTH_LONG).show();
 
+
                 float x = 1534f;
                 float y = 1963f;
                 Location loc=new Location(x,y);
@@ -309,6 +356,9 @@ public class DisplayManager {
                 disableButtons();
 
                 // Toast.makeText(main_activity.getApplicationContext(), "click", Toast.LENGTH_LONG).show();
+
+
+
                 float x = 1473f;
                 float y = 1826f;
                 Location loc=new Location(x,y);
@@ -540,7 +590,7 @@ public class DisplayManager {
 
         //trails map that will be drawn on the canvas
 
-        Bitmap drawnBitmap = null;
+         drawnBitmap = null;
 
         try {
 
@@ -574,8 +624,11 @@ public class DisplayManager {
 
         mapPanView.invalidate();
 
-        mapPanView.setZoom(2);
+       mapPanView.setZoom(2.2f);
+
         mapPanView.setScaleType(ImageView.ScaleType.CENTER);
+
+        mapPanView.setMinZoom(2.2f);
 
     }
 
@@ -1136,6 +1189,41 @@ public class DisplayManager {
 
         }
 
+
     }
 
+    /**
+     * Shows a loading dialog to the user until dismissLoadingDialog is called.
+     */
+    public void showLoadingDialog(){
+
+        if(progressDialog!=null){
+            progressDialog.show();
+        }else{
+            progressDialog=new ProgressDialog(main_activity);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage("Loading. Please wait...");
+            progressDialog.setIndeterminate(true);
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
+        }
+
+    }
+
+    /**
+     * Dismiss a Loading dialog that is showing to the user.
+     */
+    public void dismissLOadingDialog(){
+        if(progressDialog!=null && progressDialog.isShowing()){
+            progressDialog.dismiss();
+        }
+    }
+
+    /**
+     *
+     * @return Bitmap associcated with the current trails map (could have drawings on it)
+     */
+    public Bitmap getCanvasBitmap(){
+        return drawnBitmap;
+    }
 }
