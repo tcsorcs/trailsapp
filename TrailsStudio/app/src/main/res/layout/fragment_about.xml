@@ -20,7 +20,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginBottom="7dp"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/tcs_milford"
+            android:src="@drawable/tcs_milford_portrait"
 
             />
 
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/aboutFragImage"
             android:text="@string/about_description"
-            android:textSize="16dp"
+            android:textSize="15sp"
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="5dp"
             />
@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/about_frag_description"
         android:text="@string/about_features"
-        android:textSize="14dp"
+        android:textSize="13sp"
         android:layout_marginBottom="3dp"
         android:layout_marginLeft="10dp"
         />
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/about_frag_features"
             android:text="@string/about_developmentteam_title"
-            android:textSize="16dp"
+            android:textSize="15sp"
             android:layout_marginLeft="5dp"
 
             />
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/dev_team_title"
             android:text="@string/about_developmentteam_list"
-            android:textSize="14dp"
+            android:textSize="13sp"
             android:layout_marginLeft="10dp"
             />
 

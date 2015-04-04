@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.FragmentManager;
+import android.view.Window;
 import android.widget.Toast;
 
 
@@ -89,6 +90,7 @@ public class MainTrailsActivity extends ActionBarActivity
         //incoming sms since activity is already created
         Uri uri = getIntent().getData();
         parseScanData(uri);
+
 
 
     }
@@ -180,6 +182,8 @@ public class MainTrailsActivity extends ActionBarActivity
             // reset flag for future scans
             trailQRScanFound = false;
         }
+
+        DisplayManager.getInstance().dismissLOadingDialog();
     }
 
     @Override
@@ -212,6 +216,9 @@ public class MainTrailsActivity extends ActionBarActivity
 
 
         }else if (position == 1) {
+            mNavigationDrawerFragment.closeDrawer();
+
+            DisplayManager.getInstance().showLoadingDialog();
             //Google Maps selected from Navigation Drawer
             Intent i = new Intent(this,GoogleMapsActivity.class);
             startActivity(i);
