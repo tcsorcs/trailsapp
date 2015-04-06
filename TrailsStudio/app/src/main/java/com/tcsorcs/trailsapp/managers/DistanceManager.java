@@ -12,7 +12,7 @@ import java.util.LinkedList;
  *  Currently FUNCTIONAL but UNTESTED - DummyDatabaseHelper used in place of actual database helper
  *    smarterPathFinder and related helpers not tested thoroughly
  *  DNE = does not exist
- *  Updated 4/04/2015
+ *  Updated 4/06/2015
  *
  *  POTENTIAL PROBLEM AREAS:
  *  -collection type for path was changed from Stack to a LinkedList - if poll/pop were converted incorrectly, results will be wrong
@@ -20,8 +20,8 @@ import java.util.LinkedList;
 
 public class DistanceManager {
 	private LinkedList<String> path = new LinkedList<String>(); //path so far, saves the String names of the QR codes
-	private double totalDistance = 0.0; //keeps track of the total distance of the path
-	private long startTimeMillis = -1;
+	private double totalDistance = 0.0; //total distance of the path
+	private long startTimeMillis = -1; //time first location point was scanned
 
 	public static DistanceManager getInstance() {
 		return DistanceManager.instance;
@@ -35,14 +35,13 @@ public class DistanceManager {
 	 */
 	public void processQRCodes(String codeName) {
 		//I see a QR code - is either first or not first
-		if (path.size() < 1){ //don't need to pathfind
-			path.push(codeName); //add QRcode to path
-			startTimeMillis = System.currentTimeMillis(); //start timer
+		if (path.size() < 1){ //first, don't pathfind
+			path.push(codeName);
+			startTimeMillis = System.currentTimeMillis();
 		}
-		else {//need to pathfind
+		else { //not first, need to pathfind
 			smarterPathFinder(codeName);
 		}
-		//debug System.out.println("DistanceManager.processQRCodes end");
 	}
 
 
@@ -80,13 +79,13 @@ public class DistanceManager {
 
 	/*
 	 * local class Node
-	 * Contains information to help pick shortest path 
+	 * Contains information to help pick shortest subpath
 	 */
 	class Node implements Comparable<Node> {
 		String scanName; //QR code name
 		Node parent; //parent node, or null
 		double nodeDistance; //total distance from start of subpath
-		Segment segment; //segment containing this scanName and previous scan name
+		Segment segment; //segment containing this scanName and previous scan name, or null if no previous
 
 		Node (String aScanName, Node aNode, double aDistance, Segment aSegment){
 			scanName = aScanName;
@@ -104,7 +103,7 @@ public class DistanceManager {
 
 	/*
 	 * Finds the shortest path from the most recently scanned code (currentScan) to 
-	 *   end of alreay travelled path
+	 *   end of the path travelled already
 	 * Assumes:
 	 *   -If points have been skipped, will not double back over the last segment in the path 
 	 *   	(but may go through other segments already traveled on)
@@ -115,13 +114,12 @@ public class DistanceManager {
 	 */
 
 	private void smarterPathFinder(String currentScan){
-		// Check if points are adjacent 
-		String lastScan; //most recent point from global path stack
+		String lastScan; //most recent point travelled path
 		ArrayList<Segment> attachedSegments; //list of segments, returned from DB //DNE
 		Segment currentSegment = null; //current segment we're working with
 		boolean pointsAdjacent = false; //if two points are on the same segment
 
-		lastScan = path.peekLast();//most recent point from path
+		lastScan = path.peekLast(); //look at most recent point from path
 
 		//POSSIBLE ERROR LOCATION make sure adding the null for excluded point works
 		attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(currentScan, null); //DNE //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
@@ -144,18 +142,16 @@ public class DistanceManager {
 			pointsAdjacent = currentSegment.segmentHasPoints(lastScan, currentScan);
 		}
 
-		//we know our next segment, yay!
+		//if on same segment, we know our next segment, yay!
 		if(pointsAdjacent){
 			path.push(currentScan);
 			totalDistance += currentSegment.getSegmentDistance();//if not initialized, will not be hit
 			DisplayManager.getInstance().drawSegment(currentSegment);//display segment
 			return;
 		}
-
 		// if points are not adjacent, pathfind
 
 		//And magic happens - 100% chance this will fail first time it's run...
-		//have currentScan(start with this), lastScan(end of the path we've already built)
 		/*
 		 * pathfinder will build unknown path starting with most recent scanned, last point added to
 		 * pathfinder list will be last point on main path. We then remove last point from list
@@ -163,10 +159,10 @@ public class DistanceManager {
 		 * is most recent point scanned, and now the end of the main path.
 		 */
 		Node currentNode; //first node we add
-		TreeMap<Double, Node> subPath; //subpath we're building
-		Node shortestNode; //stores the shortest node (list)
-		Segment subSegment;
-		Node subNode;
+		TreeMap<Double, Node> subPath; //keeps track of possible subpaths
+		Node shortestNode; //shortest node currently
+		Segment subSegment; //temp segment storage
+		Node subNode; //temp node storage
 		String parentScanName;//name of parent for database query
 		Double tempDistance; //temp storage for distance
 
@@ -178,8 +174,6 @@ public class DistanceManager {
 		shortestNode = subPath.get(subPath.firstKey()); //get shortest node
 
 		while(!shortestNode.scanName.equals(lastScan)) { //while the shortest scan is not the lastScan from path
-			//attachedSegments block originally here - never used from above
-
 			while (!attachedSegments.isEmpty()) {
 				subSegment = attachedSegments.remove(0); //removes and returns, decreasing list //(is this less optimal than using a for loop?)
 
@@ -191,15 +185,14 @@ public class DistanceManager {
 				//DEBUG - if something goes wrong, it's probably here!
 				tempDistance = (subSegment.getSegmentDistance() + shortestNode.nodeDistance);
 				subNode = new Node(subSegment.getOtherPoint(shortestNode.scanName), shortestNode, tempDistance, subSegment);//Segment.secondPoint is the point found attached, not the point given to search for
-				subPath.put(tempDistance, subNode);
+				subPath.put(tempDistance, subNode); //add new node to possible path
 			}
 
 			//all connected points should be in nodes, so must remove original node from subPath
 			subPath.pollFirstEntry(); //removes and returns first in set (shortest path here)
 
-			shortestNode = subPath.get(subPath.firstKey()); //get shortest
-			
-			//attachedSegment block moved
+			shortestNode = subPath.get(subPath.firstKey()); //get new shortest
+
 			if (shortestNode.parent == null){
 				parentScanName = null;
 			} else {
@@ -220,9 +213,6 @@ public class DistanceManager {
 	 * given connectingNode.scanName should be lastScan
 	 * This travels through the list of nodes in connectingNode until end - where end is currentScan
 	 * - and adds to path
-	 * 
-	 * UNTESTED
-	 * Issue with segment being dropped should be resolved. Still need to test
 	 */
 	private void addSubPathToPath(Node shortestNode){
 		totalDistance += shortestNode.nodeDistance; //adds subPath distance to total distance
