@@ -12,7 +12,11 @@ import com.tcsorcs.trailsapp.helpers.Location;
 public class TrailAppDbHelper extends SQLiteOpenHelper {
     // IF you change the database schema, you must increment the database version.
     public static final int DATABASE_VERSION = 1;
+
+    private static final String DATABASE_LOCATION = "/data/data/com.tcsorcs.trailsapp/databases/";
     public static final String DATABASE_NAME = "TrailApp.db";
+
+    private SQLiteDatabase myDataBase;
 
     public TrailAppDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
