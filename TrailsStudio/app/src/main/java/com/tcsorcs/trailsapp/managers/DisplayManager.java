@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,13 +20,17 @@ import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tcsorcs.trailsapp.R;
 import com.tcsorcs.trailsapp.activities.AchievementDialogActivity;
+import com.tcsorcs.trailsapp.activities.GoogleMapsActivity;
+import com.tcsorcs.trailsapp.activities.MainTrailsActivity;
 import com.tcsorcs.trailsapp.helpers.Achievement;
 import com.tcsorcs.trailsapp.helpers.DummyDatabaseHelper;
 import com.tcsorcs.trailsapp.helpers.Location;
@@ -101,7 +106,14 @@ public class DisplayManager {
     private final int mapWidth=4000;
     private final int mapHeight=2818;
 
-    private Boolean inDevMode=false;
+    private Boolean inDevMode=false; //true if in dev mode
+
+    private ProgressDialog progressDialog = null; //used for loading screens
+
+
+    private Bitmap drawnBitmap = null; //used in canvas for main trails image
+
+
 
     /**
      * Sets click listeners for all buttons on MainTrailsActivity. Does not set click listeners
@@ -110,8 +122,45 @@ public class DisplayManager {
     public void setButtonCallbacks() {
 
 
+        //my location button
+        ImageButton shortestPathBtn = (ImageButton) main_activity
+                .findViewById(R.id.ShortestPath);
+        shortestPathBtn.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+
+
+                //TODO develop shortest path
+
+                Toast.makeText(main_activity,"To be developed.",Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
+
+        //my location button
+        ImageButton myLocation = (ImageButton) main_activity
+                .findViewById(R.id.MyLocation);
+        myLocation.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+
+
+                showLoadingDialog();
+
+                //open google maps activity
+                Intent i = new Intent(main_activity,GoogleMapsActivity.class);
+                main_activity.startActivity(i);
+
+
+            }
+        });
+
+
         //Scan QR Code Button
-        Button scanBarcodeButton = (Button) main_activity
+        ImageButton scanBarcodeButton = (ImageButton) main_activity
                 .findViewById(R.id.ScanBarcodeButton);
         scanBarcodeButton.setOnClickListener(new OnClickListener() {
 
@@ -175,6 +224,7 @@ public class DisplayManager {
             public void onClick(View arg0) {
 
 
+
                 SoundManager.getInstance().playHooray("hooray");
 
 
@@ -205,9 +255,8 @@ public class DisplayManager {
             public void onClick(View arg0) {
 
 
-
-                float  x = 2189f;
-                float  y = 106f;
+                float  x = 2181f;
+                float  y = 118f;
                 Location loc=new Location(x,y);
 
                 drawAchievementMarker(loc,true,true);
@@ -243,20 +292,19 @@ public class DisplayManager {
 
 
 
-
-                float x = 1710f;
-                float y = 1830f;
+                float x = 1694f;
+                float y = 1850f;
                 Location loc=new Location(x,y);
                 drawAchievementMarker(loc,false,true);
 
-                x = 1538f;
-                y = 1945f;
+                x = 1534f;
+                y = 1963f;
                 Location loc2=new Location(x,y);
                 drawAchievementMarker(loc2,false,true);
 
 
-                x = 1490f;
-                y = 1810f;
+                x = 1473f;
+                y = 1826f;
                 Location loc3=new Location(x,y);
                 drawAchievementMarker(loc3,true,true);
 
@@ -289,6 +337,7 @@ public class DisplayManager {
                 disableButtons();
                 // Toast.makeText(main_activity.getApplicationContext(), "click", Toast.LENGTH_LONG).show();
 
+
                 float x = 1534f;
                 float y = 1963f;
                 Location loc=new Location(x,y);
@@ -307,6 +356,9 @@ public class DisplayManager {
                 disableButtons();
 
                 // Toast.makeText(main_activity.getApplicationContext(), "click", Toast.LENGTH_LONG).show();
+
+
+
                 float x = 1473f;
                 float y = 1826f;
                 Location loc=new Location(x,y);
@@ -479,34 +531,33 @@ public class DisplayManager {
      */
     public void beginGatheringTime() {
 
-        if (onTrailsServiceRunning) {
-            timeOnTrail = (TextView) main_activity
-                    .findViewById(R.id.time_on_trail_text);
-            totalDistance = (TextView) main_activity
-                    .findViewById(R.id.distance_text);
-            currentPace = (TextView) main_activity.findViewById(R.id.pace_text);
-
-            // TIME ON TRAILS RUNNABLE
-
-            //start thread to begin gathering time
-
-            timeOnTrailsViewRunnable = new Runnable() {
-                @Override
-                public void run() {
-
-
-                    String convertedTime = convertSecondsToTimeString(DistanceManager.getInstance()
-                            .getTimeOnTrail());
-
-                    timeOnTrail.setText(convertedTime);
-
-                    timeOnTrail.postDelayed(timeOnTrailsViewRunnable, 1000);
-                }
-            };
-            // add to message queue
-            timeOnTrail.post(timeOnTrailsViewRunnable);
-
-        }
+//        if (onTrailsServiceRunning) {
+//            timeOnTrail = (TextView) main_activity
+//                    .findViewById(R.id.time_on_trail_text);
+//            totalDistance = (TextView) main_activity
+//                    .findViewById(R.id.distance_text);
+//            currentPace = (TextView) main_activity.findViewById(R.id.pace_text);
+//
+//            // TIME ON TRAILS RUNNABLE
+//
+//            //start thread to begin gathering time
+//
+//            timeOnTrailsViewRunnable = new Runnable() {
+//                @Override
+//                public void run() {
+//
+//
+//                    String convertedTime = convertSecondsToTimeString(DistanceManager.getInstance()
+//                            .getTimeOnTrail());
+//
+//                    timeOnTrail.setText(convertedTime);
+//
+//                    timeOnTrail.postDelayed(timeOnTrailsViewRunnable, 1000);
+//                }
+//            };
+//            // add to message queue
+//            timeOnTrail.post(timeOnTrailsViewRunnable);
+// }
 
     }
 
@@ -538,9 +589,8 @@ public class DisplayManager {
         mapPanView.setMaxZoom(10);
 
         //trails map that will be drawn on the canvas
-        Bitmap bitmap1 = BitmapFactory.decodeResource(main_activity.getResources(), R.drawable.trails_nomarkup);
 
-        Bitmap drawnBitmap = null;
+         drawnBitmap = null;
 
         try {
 
@@ -552,7 +602,14 @@ public class DisplayManager {
             int mapX=0;
             int mapY=0;
 
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = 2;
+            Bitmap bitmap1 = BitmapFactory.decodeResource(main_activity.getResources(), R.drawable.trails_nomarkup, options);
             canvas.drawBitmap(bitmap1, null, new Rect(mapX,mapY,mapWidth,mapHeight), null);
+            bitmap1.recycle();
+            mapPanView.invalidate();
+
 
         }
         catch (Exception e) {
@@ -563,7 +620,15 @@ public class DisplayManager {
         mapPanView.setCopyLocationOnLongPress(true);
 
         //set bitmap drawing to the TouchImageView
-       mapPanView.setImageBitmap(drawnBitmap);
+        mapPanView.setImageBitmap(drawnBitmap);
+
+        mapPanView.invalidate();
+
+       mapPanView.setZoom(2.2f);
+
+        mapPanView.setScaleType(ImageView.ScaleType.CENTER);
+
+        mapPanView.setMinZoom(2.2f);
 
     }
 
@@ -1087,8 +1152,11 @@ public class DisplayManager {
         int mapX=0;
         int mapY=0;
 
-        Bitmap bitmap1 = BitmapFactory.decodeResource(main_activity.getResources(), R.drawable.trails_nomarkup);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 2;
+        Bitmap bitmap1 = BitmapFactory.decodeResource(main_activity.getResources(), R.drawable.trails_nomarkup, options);
         canvas.drawBitmap(bitmap1, null, new Rect(mapX,mapY,mapWidth,mapHeight), null);
+        bitmap1.recycle();
         mapPanView.invalidate();
 
 
@@ -1117,10 +1185,45 @@ public class DisplayManager {
             alert.show();
 
         }catch(PackageManager.NameNotFoundException e){
-             Toast.makeText(main_activity.getApplicationContext(), "Unable to gather version info.", Toast.LENGTH_LONG).show();
+            Toast.makeText(main_activity.getApplicationContext(), "Unable to gather version info.", Toast.LENGTH_LONG).show();
 
+        }
+
+
+    }
+
+    /**
+     * Shows a loading dialog to the user until dismissLoadingDialog is called.
+     */
+    public void showLoadingDialog(){
+
+        if(progressDialog!=null){
+            progressDialog.show();
+        }else{
+            progressDialog=new ProgressDialog(main_activity);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage("Loading. Please wait...");
+            progressDialog.setIndeterminate(true);
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
         }
 
     }
 
+    /**
+     * Dismiss a Loading dialog that is showing to the user.
+     */
+    public void dismissLOadingDialog(){
+        if(progressDialog!=null && progressDialog.isShowing()){
+            progressDialog.dismiss();
+        }
+    }
+
+    /**
+     *
+     * @return Bitmap associcated with the current trails map (could have drawings on it)
+     */
+    public Bitmap getCanvasBitmap(){
+        return drawnBitmap;
+    }
 }

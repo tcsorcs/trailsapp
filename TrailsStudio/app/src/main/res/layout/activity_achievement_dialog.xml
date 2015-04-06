@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/image"
         android:layout_alignTop="@+id/image"
-        android:textSize="20dp"
+        android:textSize="19sp"
         android:textColor="@color/label_color"
         />
 
@@ -39,6 +39,7 @@
         android:layout_toRightOf="@+id/image"
         android:layout_below="@+id/achieveDialogTitle"
         android:textColor="@color/label_color"
+        android:textSize="16sp"
 
         />
         </RelativeLayout>

@@ -3,11 +3,19 @@
     android:layout_height="match_parent"
     tools:context="com.tcsorcs.trailsapp.activities.GoogleMapsActivity">
 
+    <SeekBar
+        android:id="@+id/transparencySeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"/>
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/googlemap"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/transparencySeekBar"
         android:name="com.google.android.gms.maps.MapFragment"/>
+
+
 
 </RelativeLayout>

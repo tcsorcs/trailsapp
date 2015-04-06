@@ -1,22 +1,25 @@
 package com.tcsorcs.trailsapp.managers;
 
 import java.util.ArrayList;
-import java.util.Stack;
 import java.util.TreeMap;
 
 import com.tcsorcs.trailsapp.helpers.Segment;
 import com.tcsorcs.trailsapp.helpers.DummyDatabaseHelper; //temporary until database helper is up
+import java.util.LinkedList;
 
 /* v1.0 - Full version
  *
  *  Currently FUNCTIONAL but UNTESTED - DummyDatabaseHelper used in place of actual database helper
  *    smarterPathFinder and related helpers not tested thoroughly
  *  DNE = does not exist
- *  Updated 3/28/2015
+ *  Updated 4/04/2015
+ *
+ *  POTENTIAL PROBLEM AREAS:
+ *  -collection type for path was changed from Stack to a LinkedList - if poll/pop were converted incorrectly, results will be wrong
  */
 
 public class DistanceManager {
-	private Stack<String> path = new Stack<String>(); //path so far, saves the String names of the QR codes
+	private LinkedList<String> path = new LinkedList<String>(); //path so far, saves the String names of the QR codes
 	private double totalDistance = 0.0; //keeps track of the total distance of the path
 	private long startTimeMillis = -1;
 
@@ -32,7 +35,7 @@ public class DistanceManager {
 	 */
 	public void processQRCodes(String codeName) {
 		//I see a QR code - is either first or not first
-		if (path.empty()){            //don't need to pathfind
+		if (path.size() < 1){ //don't need to pathfind
 			path.push(codeName); //add QRcode to path
 			startTimeMillis = System.currentTimeMillis(); //start timer
 		}
@@ -118,9 +121,10 @@ public class DistanceManager {
 		Segment currentSegment = null; //current segment we're working with
 		boolean pointsAdjacent = false; //if two points are on the same segment
 
-		lastScan = path.peek();//most recent point from path
+		lastScan = path.peekLast();//most recent point from path
 
-		attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(currentScan); //DNE //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
+		//POSSIBLE ERROR LOCATION make sure adding the null for excluded point works
+		attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(currentScan, null); //DNE //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
 
 		//if something goes wrong and attachedSegments is null, skip gracefully (redundant if getSegmentsWithPoint succeeds)
 		if (attachedSegments == null){
@@ -161,7 +165,6 @@ public class DistanceManager {
 		Node currentNode; //first node we add
 		TreeMap<Double, Node> subPath; //subpath we're building
 		Node shortestNode; //stores the shortest node (list)
-		//ArrayList<Segment> nextSegments;
 		Segment subSegment;
 		Node subNode;
 		String parentScanName;//name of parent for database query
@@ -175,13 +178,7 @@ public class DistanceManager {
 		shortestNode = subPath.get(subPath.firstKey()); //get shortest node
 
 		while(!shortestNode.scanName.equals(lastScan)) { //while the shortest scan is not the lastScan from path
-			if (shortestNode.parent == null){
-				parentScanName = null;
-			} else {
-				parentScanName = shortestNode.parent.scanName;
-			}
-			attachedSegments = DummyDatabaseHelper.getSegmentsWithPoint(shortestNode.scanName, parentScanName);//DNE //Tim
-
+			//attachedSegments block originally here - never used from above
 
 			while (!attachedSegments.isEmpty()) {
 				subSegment = attachedSegments.remove(0); //removes and returns, decreasing list //(is this less optimal than using a for loop?)
@@ -201,16 +198,22 @@ public class DistanceManager {
 			subPath.pollFirstEntry(); //removes and returns first in set (shortest path here)
 
 			shortestNode = subPath.get(subPath.firstKey()); //get shortest
+			
+			//attachedSegment block moved
+			if (shortestNode.parent == null){
+				parentScanName = null;
+			} else {
+				parentScanName = shortestNode.parent.scanName;
+			}
+			attachedSegments = DummyDatabaseHelper.getSegmentsWithPoint(shortestNode.scanName, parentScanName);//DNE //Tim
 		}//end while
-
-		//we have our path
-		addSubPathToPath(shortestNode);
 
 		/*
 		 * If we want to let the user change the path they took, add that code here.
 		 */
 
-		this.totalDistance += shortestNode.nodeDistance; //updates total distance
+		//we have our path
+		addSubPathToPath(shortestNode);
 	}
 
 	/* helper to smarterPathFinder - might fold into smarterPathFinder later
@@ -219,20 +222,21 @@ public class DistanceManager {
 	 * - and adds to path
 	 * 
 	 * UNTESTED
+	 * Issue with segment being dropped should be resolved. Still need to test
 	 */
 	private void addSubPathToPath(Node shortestNode){
 		totalDistance += shortestNode.nodeDistance; //adds subPath distance to total distance
-		Node currentNode = shortestNode.parent;
+		Node currentNode = shortestNode; //start w/parent because current is end of main path
 		ArrayList<Segment> segmentsList = new ArrayList<Segment>(); //stores for DisplayManager
 
-		while(currentNode != null){
-			path.push(currentNode.scanName);
-			currentNode = currentNode.parent;
+		while(currentNode.parent != null){
 			segmentsList.add(currentNode.segment);
+
+			currentNode = currentNode.parent;
+			path.push(currentNode.scanName);
 		}
 
 		//display stuff
 		DisplayManager.getInstance().drawSegments(segmentsList);//DNE //Dave
-
 	}
 }
