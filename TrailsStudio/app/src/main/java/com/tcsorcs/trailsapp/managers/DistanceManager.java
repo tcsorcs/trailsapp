@@ -124,15 +124,10 @@ public class DistanceManager {
 		//POSSIBLE ERROR LOCATION make sure adding the null for excluded point works
 		attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(currentScan, null); //DNE //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
 
-		//if something goes wrong and attachedSegments is null, skip gracefully (redundant if getSegmentsWithPoint succeeds)
-		if (attachedSegments == null){
+		//if something goes wrong and attachedSegments is null or is empty, skip gracefully (redundant if getSegmentsWithPoint succeeds)
+		if ((attachedSegments == null) ||
+                (attachedSegments.isEmpty())){
 			System.err.println("Segment list not created. Pathfinding cannot be done. Returning to processQRCode");
-			return;
-		}
-
-		//if getSegmentsWithPoint grabs nothing b/c error, don't continue because will break
-		if (attachedSegments.size() < 1){
-			System.err.println("Scanned point "+currentScan+" does not seem to be part of a segment. Pathfinding cannot be done. Returning to processQRCode");
 			return;
 		}
 
@@ -166,7 +161,7 @@ public class DistanceManager {
 		String parentScanName;//name of parent for database query
 		Double tempDistance; //temp storage for distance
 
-		currentNode = new Node(currentScan, null, 0.0, null);
+        currentNode = new Node(currentScan, null, 0.0, null);
 		subPath = new TreeMap<Double, Node>();
 
 		subPath.put(0.0, currentNode);//add first
@@ -229,4 +224,79 @@ public class DistanceManager {
 		//display stuff
 		DisplayManager.getInstance().drawSegments(segmentsList);//DNE //Dave
 	}
+
+    /*
+     * Extension - if this button is pressed, will find shortest path to a trail entrance
+     *
+     * CURRENTLY, will base escape route on last QR code scanned, in future, will take actual
+     *   GPS location as start point
+     */
+    public void stupidPressButtonToEscape(){
+        //get last point scanned
+        String lastScan; //start point of escape route
+
+
+        lastScan = path.peekLast();
+
+
+        //pathfind until find an entrance
+
+        /*
+		 * pathfinder will build unknown path starting lastScan, last point added to
+		 * pathfinder list will be entrance.
+		 *
+		 * Options - (stupid) escape route displays permanently, (smarter) escape route shortens if being taken, erases
+		 *     if not taken, (smartest?) escape auto updates until told to stop
+		 */
+        ArrayList<Segment> attachedSegments; //list of segments, returned from DB //DNE
+        Node currentNode; //first node we add
+        TreeMap<Double, Node> subPath; //keeps track of possible subpaths
+        Node shortestNode; //shortest node currently
+        Segment subSegment; //temp segment storage
+        Node subNode; //temp node storage
+        String parentScanName;//name of parent for database query
+        Double tempDistance; //temp storage for distance
+
+        attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(lastScan, null); //DNE //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
+
+        //if something goes wrong and attachedSegments is null or is empty, skip gracefully (redundant if getSegmentsWithPoint succeeds)
+        if ((attachedSegments == null) ||
+                (attachedSegments.isEmpty())){
+            System.err.println("Segment list not created. Pathfinder failed for escape route. YOU CANNOT ESCAPE!");
+            return;
+        }
+
+        currentNode = new Node(lastScan, null, 0.0, null);
+        subPath = new TreeMap<Double, Node>();
+
+        subPath.put(0.0, currentNode);//add first
+
+        shortestNode = subPath.get(subPath.firstKey()); //get shortest node
+
+        while(!shortestNode.segment.getSegmentOnEntrance()) { //while segment is not on an entrance
+            while (!attachedSegments.isEmpty()) {
+                subSegment = attachedSegments.remove(0); //removes and returns, decreasing list //(is this less optimal than using a for loop?)
+
+                //DEBUG - if something goes wrong, it's probably here!
+                tempDistance = (subSegment.getSegmentDistance() + shortestNode.nodeDistance);
+                subNode = new Node(subSegment.getOtherPoint(shortestNode.scanName), shortestNode, tempDistance, subSegment);//Segment.secondPoint is the point found attached, not the point given to search for
+                subPath.put(tempDistance, subNode); //add new node to possible path
+            }
+
+            //all connected points should be in nodes, so must remove original node from subPath
+            subPath.pollFirstEntry(); //removes and returns first in set (shortest path here)
+
+            shortestNode = subPath.get(subPath.firstKey()); //get new shortest
+
+            if (shortestNode.parent == null){
+                parentScanName = null;
+            } else {
+                parentScanName = shortestNode.parent.scanName;
+            }
+            attachedSegments = DummyDatabaseHelper.getSegmentsWithPoint(shortestNode.scanName, parentScanName);//DNE //Tim
+        }//end while
+
+        //display
+
+    }
 }
