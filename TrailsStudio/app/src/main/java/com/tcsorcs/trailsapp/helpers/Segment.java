@@ -11,6 +11,7 @@ public class Segment {
     private double distance;
     private String segmentName;
     private String sideOfRoad; //east, west or cross
+    private boolean onEntrance; //if a point is an entrance
 
     //temp constructor just display manager dev mode for testing
     //TODO remove this constructor after DisplayManager no longer needs for testing drawing segments without database
@@ -27,13 +28,14 @@ public class Segment {
      * segmentDistance(double) - the distance of the segment
      * roadSide(String) - the side of road the segment is on - east, west or cross
      */
-    public Segment (int segId, String segName, String firstPoint, String secondPoint, double segmentDistance, String roadSide){
+    public Segment (int segId, String segName, String firstPoint, String secondPoint, double segmentDistance, String roadSide, boolean entrance){
         segmentId = segId;
         pointA = firstPoint;
         pointB = secondPoint;
         distance = segmentDistance;
         segmentName = segName;
         sideOfRoad = roadSide;
+        onEntrance = entrance;
     }
 
 
@@ -67,6 +69,8 @@ public class Segment {
     public String getSegmentSideOfRoad(){
     	return sideOfRoad;
     }
+
+    public boolean getSegmentOnEntrance() { return onEntrance; }
 
     //returns point in segment that is not the given point, or "NullPoint" if given point is not in the segment
     public String getOtherPoint(String somePoint){
