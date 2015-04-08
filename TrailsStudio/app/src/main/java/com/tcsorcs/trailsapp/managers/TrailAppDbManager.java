@@ -2,6 +2,8 @@ package com.tcsorcs.trailsapp.managers;
 
 import android.content.Context;
 
+import com.tcsorcs.trailsapp.helpers.Location;
+
 import static java.security.AccessController.getContext;
 
 /**
@@ -9,4 +11,8 @@ import static java.security.AccessController.getContext;
  */
 public class TrailAppDbManager {
     TrailAppDbHelper mDbHelper = new TrailAppDbHelper(GeneralManager.getInstance().main_activity.getApplicationContext());
+
+
+
+
 }

@@ -45,7 +45,7 @@ public class TrailAppDbContract {
 
     public static abstract class Locations implements BaseColumns {
         public static final String TABLE_NAME = "locations";
-        public static final String COLUMN_NAME_LOCATION_ID = "locationid";
+        public static final String COLUMN_NAME_LOCATION_ID = "_id";
         public static final String COLUMN_NAME_LOCATION_NAME = "locationname";
         public static final String COLUMN_NAME_LOCATION_DESCRIPTION = "locationdescription";
         public static final String COLUMN_NAME_LOCATION_X = "locationx";
