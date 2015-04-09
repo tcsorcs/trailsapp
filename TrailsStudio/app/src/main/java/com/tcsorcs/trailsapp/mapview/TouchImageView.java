@@ -846,7 +846,7 @@ public class TouchImageView extends ImageView {
 
                 PointF bitmapPoint = transformCoordTouchToBitmap(e.getX(), e.getY(),
                         true);
-                Location loc=new Location(bitmapPoint.x, bitmapPoint.y);
+                Location loc=new Location("0",bitmapPoint.x, bitmapPoint.y);
                 DisplayManager.getInstance().drawMarker(loc,true,true);
                 String locationLink="trailsapp.tcsorcs.com/?type=sms&x="+(int)bitmapPoint.x+"&y="+(int)bitmapPoint.y;
                 DisplayManager.getInstance().setLongPressLink(locationLink);
