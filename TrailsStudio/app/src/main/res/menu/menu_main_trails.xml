@@ -5,6 +5,8 @@
         android:showAsAction="withText|ifRoom" />
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
     android:orderInCategory="100" android:showAsAction="never" />
+    <item android:id="@+id/version_menu" android:title="@string/version_menu"
+        android:orderInCategory="100" android:showAsAction="never" />
     <item android:id="@+id/exit_menu" android:title="@string/exit_menu"
         android:orderInCategory="100" android:showAsAction="never" />
 </menu>

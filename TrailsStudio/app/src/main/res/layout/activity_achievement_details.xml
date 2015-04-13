@@ -18,7 +18,7 @@
             android:layout_centerHorizontal="true"
             android:text="King of The North"
             android:layout_alignTop="@+id/image"
-            android:textSize="30dp"
+            android:textSize="29sp"
             android:layout_marginTop="25dp"
             android:layout_marginBottom="10dp"
 
@@ -43,7 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/achievementDetailsImage"
         android:text="About"
-        android:textSize="20dp"
+        android:textSize="19sp"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="5dp"
 
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/achieveDetailsDescriptionLabel"
             android:text="You have reached the northern most part of the TCS trails."
-            android:textSize="16dp"
+            android:textSize="15sp"
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="5dp"
 
@@ -68,7 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/achieveDetailsDescription"
         android:text="Achievement Date"
-        android:textSize="20dp"
+        android:textSize="19sp"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="5dp"
 
@@ -81,7 +81,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/achieveDetailsDateLabel"
         android:text="February 1st 2015"
-        android:textSize="16dp"
+        android:textSize="15sp"
         android:layout_marginLeft="5dp"
         android:layout_marginBottom="10dp"
 
@@ -94,7 +94,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/achieveDetailsDate"
         android:text="Leaderboards"
-        android:textSize="20dp"
+        android:textSize="19sp"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="5dp"
 
@@ -106,7 +106,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/achieveDetailsLeaderboardsLabel"
         android:text="1337 people have received this achievement."
-        android:textSize="16dp"
+        android:textSize="15sp"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="5dp"
 
@@ -118,7 +118,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/achieveDetailsTotalReceived"
         android:text="You were the 10th person to receive this achievement."
-        android:textSize="16dp"
+        android:textSize="15sp"
         android:layout_marginLeft="5dp"
 
 

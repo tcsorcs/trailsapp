@@ -846,9 +846,9 @@ public class TouchImageView extends ImageView {
 
                 PointF bitmapPoint = transformCoordTouchToBitmap(e.getX(), e.getY(),
                         true);
-                Location loc=new Location(bitmapPoint.x, bitmapPoint.y);
+                Location loc=new Location("0",bitmapPoint.x, bitmapPoint.y);
                 DisplayManager.getInstance().drawMarker(loc,true,true);
-                String locationLink="trailsapp.tcsorcs.com/?size=1&x="+(int)bitmapPoint.x+"&y="+(int)bitmapPoint.y;
+                String locationLink="trailsapp.tcsorcs.com/?type=sms&x="+(int)bitmapPoint.x+"&y="+(int)bitmapPoint.y;
                 DisplayManager.getInstance().setLongPressLink(locationLink);
 
                 // Gets a handle to the clipboard service.
@@ -1111,6 +1111,8 @@ public class TouchImageView extends ImageView {
             startTouch = transformCoordBitmapToTouch(bitmapX, bitmapY);
             endTouch = new PointF(viewWidth / 2, viewHeight / 2);
         }
+
+
 
         // TODO added this new constructor specifically for taking bitmap
         // coordinates of locations of QR codes, still in development

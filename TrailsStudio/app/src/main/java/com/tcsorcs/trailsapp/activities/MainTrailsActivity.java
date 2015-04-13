@@ -1,7 +1,7 @@
 package com.tcsorcs.trailsapp.activities;
 
 import com.tcsorcs.trailsapp.R;
-import com.tcsorcs.trailsapp.helpers.Location;
+import com.tcsorcs.trailsapp.fragments.AboutFragment;
 import com.tcsorcs.trailsapp.fragments.AchievementHistoryListFragment;
 import com.tcsorcs.trailsapp.fragments.NavigationDrawerFragment;
 import com.tcsorcs.trailsapp.fragments.OrcContactListFragment;
@@ -10,6 +10,7 @@ import com.tcsorcs.trailsapp.managers.DisplayManager;
 import com.tcsorcs.trailsapp.managers.DistanceManager;
 import com.tcsorcs.trailsapp.managers.GeneralManager;
 import com.tcsorcs.trailsapp.managers.InputManager;
+import com.tcsorcs.trailsapp.managers.TrailAppDbManager;
 import com.tcsorcs.trailsapp.mapview.TouchImageView;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -23,7 +24,10 @@ import android.view.MenuItem;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.FragmentManager;
+import android.view.Window;
 import android.widget.Toast;
+
+import java.io.IOException;
 
 
 public class MainTrailsActivity extends ActionBarActivity
@@ -31,12 +35,8 @@ public class MainTrailsActivity extends ActionBarActivity
 
 
     private Handler qrCodeHandler = new Handler(); //used for timer delay before zooming into map
-    private String trailQRCodeContents = null; //holds contents of qrcode
-    private String trailsLocSize=null; //number of incoming sms locations to draw
-    private String trailsLocX=null; // incoming sms x coordinate
-    private String trailsLocY=null; // incoming sms y coordinate
+    private Uri trailQRCodeUri=null; //holds uri representation of scanned qr contents
     private boolean trailQRScanFound = false; // keep track if qr code is found
-    private boolean trailsLocFound = false; // keep track if incoming sms location is found
 
 
     /**
@@ -58,6 +58,16 @@ public class MainTrailsActivity extends ActionBarActivity
 
         GeneralManager.getInstance().main_activity = this;
 
+
+        //create database
+        try{
+            TrailAppDbManager.getInstance().getDBHelper().createDataBase();
+
+        }catch(IOException e){
+            // unable to create db
+             Toast.makeText(getApplicationContext(), "Unable to Create Database", Toast.LENGTH_LONG).show();
+
+        }
 
         DisplayManager.instance = new DisplayManager();
         DisplayManager.getInstance().main_activity = GeneralManager
@@ -92,23 +102,8 @@ public class MainTrailsActivity extends ActionBarActivity
         //check for incoming sms before splash screen, otherwise onNewIntent handles
         //incoming sms since activity is already created
         Uri uri = getIntent().getData();
-        if (uri != null) {
-            //paramenter scanned_data given by QR Code Reader documentation
-            //https://scan.me/help#/article/1363347
-            trailQRCodeContents = uri.getQueryParameter("scanned_data");
-            if (trailQRCodeContents != null) {
-                trailQRScanFound = true;
-            }
+        parseScanData(uri);
 
-            //TODO implement sending multiple locations using size parameter
-
-            trailsLocSize = uri.getQueryParameter("size");
-            if (trailsLocSize != null) {
-                trailsLocFound = true;
-                trailsLocX = uri.getQueryParameter("x");
-                trailsLocY = uri.getQueryParameter("y");
-            }
-        }
 
 
     }
@@ -160,21 +155,7 @@ public class MainTrailsActivity extends ActionBarActivity
 
         //check to see if qrcode was scanned
         Uri uri = intent.getData();
-        if (uri != null) {
-            //paramenter scanned_data given by QR Code Reader documentation
-            //https://scan.me/help#/article/1363347
-            trailQRCodeContents = uri.getQueryParameter("scanned_data");
-            if (trailQRCodeContents != null) {
-                trailQRScanFound = true;
-            }
-            trailsLocSize = uri.getQueryParameter("size");
-            if (trailsLocSize != null) {
-                trailsLocFound = true;
-                trailsLocX = uri.getQueryParameter("x");
-                trailsLocY = uri.getQueryParameter("y");
-            }
-
-        }
+        parseScanData(uri);
     }
 
     @Override
@@ -187,66 +168,35 @@ public class MainTrailsActivity extends ActionBarActivity
             DisplayManager.getInstance().beginGatheringTime();
         }
 
-        //on Resuming, if resuming from a qr code scan, update the location on map and zoom
-//        // send qr contents to inputmanager if found, pausing 3 seconds
+        //on Resuming, if resuming from a qr code scan or sms location, update the location on map and zoom
+//        // send qr contents to inputmanager if found, pausing 2 seconds
 //        // to allow for mapview to load and show transition to new location
-//        // without the 3 second delay it just goes directly to the location
+//        // without the 2 second delay it just goes directly to the location
         if (trailQRScanFound) {
-            Toast.makeText(getApplicationContext(), trailQRCodeContents, Toast.LENGTH_LONG).show();
-            // pass qr code contents to input manager
-            qrCodeHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    InputManager.getInstance().inputQRC(trailQRCodeContents);
+            //Toast.makeText(getApplicationContext(), trailQRCodeContents, Toast.LENGTH_LONG).show();
 
-                }
-            }, 3000);
-        }
-
-        if (trailQRScanFound) {
-            // reset flag for future scans
-            trailQRScanFound = false;
-
-        }
-
-        if (trailsLocFound) {
-
-            //return to main trails activity map view, popping all fragment screens off the stack
+            //pop fragments off and go back to maintrails map view
             FragmentManager fm = getSupportFragmentManager();
             for (int i = 0; i < fm.getBackStackEntryCount(); ++i) {
                 fm.popBackStack();
             }
             mTitle = getString(R.string.title_trails);
 
-            //Toast.makeText(getApplicationContext(), "X:"+trailsLocX, Toast.LENGTH_LONG).show();
-            //Toast.makeText(getApplicationContext(), "Y:"+trailsLocY, Toast.LENGTH_LONG).show();
-
-            //draw markers from sms location
+            // pass qr code contents to input manager
             qrCodeHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    //  InputManager.getInstance().inputQRC(trailQRCodeContents);
-
-                    if (trailsLocX != null && trailsLocY != null) {
-                        int x = Integer.parseInt(trailsLocX);
-                        int y = Integer.parseInt(trailsLocY);
-
-                        Location loc=new Location(x,y);
-                        DisplayManager.getInstance().drawMarker(loc,true,true);
-
-                    }
-
+                    InputManager.getInstance().inputQRC(trailQRCodeUri);
                 }
             }, 2000);
         }
 
-        if (trailsLocFound) {
+        if (trailQRScanFound) {
             // reset flag for future scans
-            trailsLocFound = false;
-
+            trailQRScanFound = false;
         }
 
-
+        DisplayManager.getInstance().dismissLOadingDialog();
     }
 
     @Override
@@ -279,6 +229,9 @@ public class MainTrailsActivity extends ActionBarActivity
 
 
         }else if (position == 1) {
+            mNavigationDrawerFragment.closeDrawer();
+
+            DisplayManager.getInstance().showLoadingDialog();
             //Google Maps selected from Navigation Drawer
             Intent i = new Intent(this,GoogleMapsActivity.class);
             startActivity(i);
@@ -305,6 +258,15 @@ public class MainTrailsActivity extends ActionBarActivity
                     .replace(R.id.MainTrailsView, TrailBreakdownFragment.newInstance("1", "2"), "TrailBreakdown_Frag")
                     .addToBackStack(null).commit();
             mTitle = getString(R.string.title_trailbreakdown);
+
+        } else if (position == 5) {
+            //TrailsBreakdown selected from navigation drawer
+            //place on stack
+            fragmentManager.beginTransaction()
+                    .replace(R.id.MainTrailsView, AboutFragment.newInstance("1", "2"), "About_Frag")
+                    .addToBackStack(null).commit();
+            mTitle = getString(R.string.title_about
+            );
 
         }
 
@@ -341,6 +303,12 @@ public class MainTrailsActivity extends ActionBarActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Toast.makeText(this, "To be developed.", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        if (id == R.id.version_menu) {
+            //Toast.makeText(this, "To be developed.", Toast.LENGTH_SHORT).show();
+            DisplayManager.getInstance().showVersionDialog();
             return true;
         }
 
@@ -396,6 +364,57 @@ public class MainTrailsActivity extends ActionBarActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Check for incoming QR code from internal "Scan QR Code" button, or from
+     * an external qr code app.
+     *
+     * @param uri Uri object to look for parameters 'scanned_data' and/or 'type' fields.
+     *            scanned_data present means qrcode was scanned from within trails app by pressing scan qr button
+     *            since this is the data field that the qr code app we are using passes back.
+     *            then the 'type' field can be parsed from the scanned_data.
+     *
+     *            No scanned_data present, but 'type" field present in Uri parameter means qrcode was scanned frome xternal qr code application
+     *            and not from within the trails app.
+     *
+     */
+    private void parseScanData(Uri uri){
+
+        if (uri != null) {
+            //paramenter scanned_data given by QR Code Reader documentation
+            //https://scan.me/help#/article/1363347
+
+            //scanned_data comes back from opening QR code reader from inside trails app
+            String trailQRCodeContents = uri.getQueryParameter("scanned_data");
+
+            String qrCodeType; //qr code type, ach,loc,triv,sms
+            if (trailQRCodeContents != null && trailQRCodeContents.length()>0) {
+                //decode scanned_data information from uri
+                String decoded = Uri.decode(trailQRCodeContents);
+                 trailQRCodeUri= Uri.parse(decoded);
+
+                qrCodeType = trailQRCodeUri.getQueryParameter("type");
+                if(qrCodeType!=null && qrCodeType.length()>0){
+                    trailQRScanFound = true;
+                }else{
+                    //invalid qr code scanned message, more validation in inputmanager also
+                    Toast.makeText(this,getString(R.string.invalid_qrc),Toast.LENGTH_LONG);
+                }
+
+            }else{
+                //reaching here means not a scan from within trails app, user opened external QR code app, or opened an sms location
+                //sms shared location will have a type param
+                //external qr code app will pass type param
+                //otherwise no type field means not a valid qr code scan
+                qrCodeType = uri.getQueryParameter("type");
+                if(qrCodeType!=null && qrCodeType.length()>0){
+                    trailQRCodeUri=uri;
+                    trailQRScanFound = true;
+                }
+
+            }
+        }
     }
 
 }

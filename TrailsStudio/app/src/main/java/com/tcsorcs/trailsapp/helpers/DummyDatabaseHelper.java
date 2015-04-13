@@ -25,8 +25,9 @@ public class DummyDatabaseHelper {
      *  Note that excludeAPoint can be null
      *
      * @param searchPoint each segment in list should contain this point
-     * @param excludeAPoint each segment in list should not contain this point
-     * @return all segments with searchPoint as an end point, but without excludeAPoint as an end point
+     * @param excludeAPoint each segment in list should not contain this point, or null, if no points to be excluded
+     * @return all segments with searchPoint as an end point, but without excludeAPoint as an end point.
+     *         If no segments exist, return null.
      */
     public static ArrayList<Segment> getSegmentsWithPoint(String searchPoint, String excludeAPoint) {
 

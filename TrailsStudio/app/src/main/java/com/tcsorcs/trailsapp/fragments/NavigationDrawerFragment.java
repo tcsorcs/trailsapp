@@ -107,7 +107,7 @@ public class NavigationDrawerFragment extends Fragment {
                         getString(R.string.title_googlemaps),
                         getString(R.string.title_achievements),
                         getString(R.string.title_orcslounge),
-                        getString(R.string.title_trailbreakdown),
+                        getString(R.string.title_trailbreakdown),getString(R.string.title_about)
                 }));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;

@@ -13,15 +13,14 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="90dp"
         android:text="@string/splash_screen_title"
-        android:textSize="32dp" />
+        android:textSize="31sp" />
 
     <ImageView
         android:id="@+id/splashScreenImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_centerHorizontal="true"
         android:layout_below="@+id/TCSTrailsTitle"
-        android:layout_marginTop="44dp"
         android:src="@drawable/tcs_milford"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp" />
