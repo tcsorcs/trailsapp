@@ -211,7 +211,7 @@ public class DisplayManager {
                 disableButtons();
                 float x = 1694f;
                 float y = 1850f;
-                Location loc=new Location(x,y);
+                Location loc=new Location("0",x,y);
                 drawMarker(loc, true, true);
             }
         });
@@ -257,7 +257,7 @@ public class DisplayManager {
 
                 float  x = 2181f;
                 float  y = 118f;
-                Location loc=new Location(x,y);
+                Location loc=new Location("0",x,y);
 
                 drawAchievementMarker(loc,true,true);
 
@@ -294,18 +294,18 @@ public class DisplayManager {
 
                 float x = 1694f;
                 float y = 1850f;
-                Location loc=new Location(x,y);
+                Location loc=new Location("0",x,y);
                 drawAchievementMarker(loc,false,true);
 
                 x = 1534f;
                 y = 1963f;
-                Location loc2=new Location(x,y);
+                Location loc2=new Location("0",x,y);
                 drawAchievementMarker(loc2,false,true);
 
 
                 x = 1473f;
                 y = 1826f;
-                Location loc3=new Location(x,y);
+                Location loc3=new Location("0",x,y);
                 drawAchievementMarker(loc3,true,true);
 
                 SoundManager.getInstance().playKirby("kirby");
@@ -340,7 +340,7 @@ public class DisplayManager {
 
                 float x = 1534f;
                 float y = 1963f;
-                Location loc=new Location(x,y);
+                Location loc=new Location("0",x,y);
                 drawMarker(loc,  true, true);
             }
         });
@@ -361,7 +361,7 @@ public class DisplayManager {
 
                 float x = 1473f;
                 float y = 1826f;
-                Location loc=new Location(x,y);
+                Location loc=new Location("0",x,y);
                 drawMarker(loc,  true, true);
             }
         });
@@ -377,7 +377,7 @@ public class DisplayManager {
                 // Toast.makeText(main_activity.getApplicationContext(), "click", Toast.LENGTH_LONG).show();
                 float x = 1434f;
                 float y = 1784f;
-                Location loc=new Location(x,y);
+                Location loc=new Location("0",x,y);
                 drawMarker(loc,  true, true);
             }
         });
@@ -392,7 +392,7 @@ public class DisplayManager {
                 // Toast.makeText(main_activity.getApplicationContext(), "click", Toast.LENGTH_LONG).show();
                 float x = 1703f;
                 float y = 1602f;
-                Location loc=new Location(x,y);
+                Location loc=new Location("0",x,y);
                 drawMarker(loc,  true, true);
             }
         });
@@ -407,7 +407,7 @@ public class DisplayManager {
                 // Toast.makeText(main_activity.getApplicationContext(), "click", Toast.LENGTH_LONG).show();
                 float x = 1724f;
                 float y = 1651f;
-                Location loc=new Location(x,y);
+                Location loc=new Location("0",x,y);
                 drawMarker(loc,  true, true);
             }
         });

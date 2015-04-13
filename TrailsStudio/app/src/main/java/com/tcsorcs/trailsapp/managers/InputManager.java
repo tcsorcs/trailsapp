@@ -1,11 +1,14 @@
 package com.tcsorcs.trailsapp.managers;
 
+import java.io.IOException;
+import java.sql.SQLDataException;
 import java.util.Arrays;
 import com.tcsorcs.trailsapp.R;
 import com.tcsorcs.trailsapp.helpers.DummyDatabaseHelper;
 import com.tcsorcs.trailsapp.helpers.Location;
 
 import android.net.Uri;
+import android.os.DropBoxManager;
 import android.widget.Toast;
 
 public class InputManager {
@@ -55,10 +58,15 @@ public class InputManager {
 
                     Toast.makeText(DisplayManager.getInstance().main_activity.getApplicationContext(), "Location: "+locationName, Toast.LENGTH_LONG).show();
 
-                    //ask database for location object associated with the location name
-                    Location loc=DummyDatabaseHelper.getInstance().getLocation(locationName);
-                    if(loc!=null){
-                        DisplayManager.getInstance().drawMarker(loc,true,true);
+                   //retreive location object from DB
+                    Location locDB= TrailAppDbManager.getInstance().getDBHelper().getLocation(locationName);
+
+                    if(locDB!=null){
+                        //lcoation found in db, so draw location on map from qrc
+                        DisplayManager.getInstance().drawMarker(locDB,true,true);
+                    }else{
+                        //unable to find location in DB
+                        Toast.makeText(DisplayManager.getInstance().main_activity.getApplicationContext(), "Unable to find Location in DB: "+locationName, Toast.LENGTH_LONG).show();
                     }
 
                     //TODO hook up distance manager
@@ -89,7 +97,7 @@ public class InputManager {
                         //Toast.makeText(DisplayManager.getInstance().main_activity.getApplicationContext(), "SMS: x="+xStr+" y="+yStr, Toast.LENGTH_LONG).show();
 
                         //draw sms shared location to map
-                        Location loc=new Location(xInt,yInt);
+                        Location loc=new Location("0",xInt,yInt);
                         DisplayManager.getInstance().drawMarker(loc,true,true);
 
                     }catch(NumberFormatException e){

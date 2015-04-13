@@ -10,6 +10,7 @@ import com.tcsorcs.trailsapp.managers.DisplayManager;
 import com.tcsorcs.trailsapp.managers.DistanceManager;
 import com.tcsorcs.trailsapp.managers.GeneralManager;
 import com.tcsorcs.trailsapp.managers.InputManager;
+import com.tcsorcs.trailsapp.managers.TrailAppDbManager;
 import com.tcsorcs.trailsapp.mapview.TouchImageView;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -25,6 +26,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v4.app.FragmentManager;
 import android.view.Window;
 import android.widget.Toast;
+
+import java.io.IOException;
 
 
 public class MainTrailsActivity extends ActionBarActivity
@@ -55,6 +58,16 @@ public class MainTrailsActivity extends ActionBarActivity
 
         GeneralManager.getInstance().main_activity = this;
 
+
+        //create database
+        try{
+            TrailAppDbManager.getInstance().getDBHelper().createDataBase();
+
+        }catch(IOException e){
+            // unable to create db
+             Toast.makeText(getApplicationContext(), "Unable to Create Database", Toast.LENGTH_LONG).show();
+
+        }
 
         DisplayManager.instance = new DisplayManager();
         DisplayManager.getInstance().main_activity = GeneralManager
