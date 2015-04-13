@@ -5,6 +5,7 @@ import java.util.TreeMap;
 
 import com.tcsorcs.trailsapp.helpers.Segment;
 import com.tcsorcs.trailsapp.helpers.DummyDatabaseHelper; //temporary until database helper is up
+import com.tcsorcs.trailsapp.helpers.Location;
 import java.util.LinkedList;
 
 /* v1.0 - Full version
@@ -12,41 +13,64 @@ import java.util.LinkedList;
  *  Currently FUNCTIONAL but UNTESTED - DummyDatabaseHelper used in place of actual database helper
  *    smarterPathFinder and related helpers not tested thoroughly
  *  DNE = does not exist
- *  Updated 4/06/2015
+ *  Updated 4/13/2015
  *
  *  POTENTIAL PROBLEM AREAS:
  *  -collection type for path was changed from Stack to a LinkedList - if poll/pop were converted incorrectly, results will be wrong
+ *
+ *  Distance and start time are only stored locally - if app closed(still alive in background) and is reopened, will these be erased?
+ *  Database to store segments in path
+ *
+ *  Quick reference for DB tables referenced (not official names):
+ *  -PathTable - stores segments, in order of completion, from start of session
+ *  -StatsTable - stores stats (distance, time, pace) for current and other sessions
+ *  -RecentScannedTable - stores recent QR codes scanned (including time scanned)
+ *
+ *  TODO:
+ *  -add locations to PathTable
+ *  -update distances stored in StatsTable
+ *  -update pace stored in StatsTable
+ *  -update time method
+ *  -Add stuff to constructor to retrieve stored info in case app closed and reopenedd
  */
 
 public class DistanceManager {
-	private LinkedList<String> path = new LinkedList<String>(); //path so far, saves the String names of the QR codes
+    //Global variables - do these need to be stored in the DB?
+//	private LinkedList<String> path = new LinkedList<String>(); //path so far, saves the String names of the QR codes
 	private double totalDistance = 0.0; //total distance of the path
 	private long startTimeMillis = -1; //time first location point was scanned
 
+    /***** Setup *****/
 	public static DistanceManager getInstance() {
 		return DistanceManager.instance;
 	}
 
+    /* Need to add stuff to reconstruct current session if app is closed and reopened */
 	public static DistanceManager instance = new DistanceManager();
 
-	/*
-	 * Handles QR input (complete, needs official method names, untested)
-	 * given the name of a location QR code, builds path and tells display manager what to display
+    /***** First contact *****/
+
+	/* Handles new location QR input
+	 *  Builds path if necessary and tells display manager what to display
+	 *  @param codeName String name of location QR code
 	 */
-	public void processQRCodes(String codeName) {
+	public static void processQRCodes(String codeName) {
 		//I see a QR code - is either first or not first
-		if (path.size() < 1){ //first, don't pathfind
-			path.push(codeName);
-			startTimeMillis = System.currentTimeMillis();
-		}
+        if (DummyDatabaseHelper.getPathTableSize() < 1){//first, don't pathfind
+            DummyDatabaseHelper.addLocationToPath(DummyDatabaseHelper.getLocation(codeName));
+        }
 		else { //not first, need to pathfind
 			smarterPathFinder(codeName);
 		}
 	}
 
 
-	/*
-	 * Returns total distance walked 
+    /***** Get Stats - NEED TO UPDATE ALL for perma DB storage/retrieval *****/
+
+
+    //display manager will poll for DTP
+    //distance and pace stored to DB at each point scan, time will be calculate fresh at each poll
+	/* Returns total distance walked
 	 * NOTE distance is calculated each time a distanceQR code is scanned
 	 */
 	public double getDistance() {
@@ -113,13 +137,13 @@ public class DistanceManager {
 	 *   -Add check side of road before pathfinding
 	 */
 
-	private void smarterPathFinder(String currentScan){
-		String lastScan; //most recent point travelled path
+	private static void smarterPathFinder(String currentScan){
+		Location lastScan; //most recent point travelled path
 		ArrayList<Segment> attachedSegments; //list of segments, returned from DB //DNE
 		Segment currentSegment = null; //current segment we're working with
 		boolean pointsAdjacent = false; //if two points are on the same segment
 
-		lastScan = path.peekLast(); //look at most recent point from path
+		lastScan = DummyDatabaseHelper.peekLastLocation(); //look at most recent point from PathTable
 
 		//POSSIBLE ERROR LOCATION make sure adding the null for excluded point works
 		attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(currentScan, null); //DNE //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null

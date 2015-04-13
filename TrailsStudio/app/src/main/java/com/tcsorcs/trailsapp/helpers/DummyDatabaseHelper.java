@@ -17,8 +17,6 @@ public class DummyDatabaseHelper {
 
     public static DummyDatabaseHelper instance = new DummyDatabaseHelper();
 
-    //stuff will be added here...
-
 
     /**
      * Returns all segments with searchPoint as an end point, but without excludeAPoint as an end point
@@ -28,6 +26,8 @@ public class DummyDatabaseHelper {
      * @param excludeAPoint each segment in list should not contain this point, or null, if no points to be excluded
      * @return all segments with searchPoint as an end point, but without excludeAPoint as an end point.
      *         If no segments exist, return null.
+     *
+     * NOTE: if DB helper is not referenced statically, remove static declaration. Keep else.
      */
     public static ArrayList<Segment> getSegmentsWithPoint(String searchPoint, String excludeAPoint) {
 
@@ -37,34 +37,36 @@ public class DummyDatabaseHelper {
         return null;
     }
 
+    /** Not used in DistanceManager - if not used anywhere, please delete
+     * Retrieve segments that contain the current scan location
+     *
+     * @param currentScan string representing current scan location example: "l21", "execent","l19" etc...
+     * @return  ArrayList of segments that contain currentScan as one of their endpoints
+     */
+    public ArrayList<Segment> getSegmentsWithPoint(String currentScan){
+
+        Location currentLoc=getLocation(currentScan);
+        float x= currentLoc.getX();
+        float y=currentLoc.getY();
+
+        //TODO query database for all segments that have x,y as one of their points
+
+        return null;
+    }
+
     /**
      *
      * @param currentScan string representing current scan location example: "l21", "execent","l19" etc...
      * @return Location object with x,y coordinates for this scan
      */
-    public Location getLocation(String currentScan){
+    public static Location getLocation(String currentScan){
 
         //TODO query database for location x, y based on location name: currentScan
 
         return null;
     }
 
-    /**
-     * Retrieve segments that contain the current scan location
-     *
-     * @param currentScan string representing current scan location example: "l21", "execent","l19" etc...
-     * @return  ArrayList of segments that contain currentScan as one of their endpoints
-     */
-   public ArrayList<Segment> getSegmentsWithPoint(String currentScan){
 
-       Location currentLoc=getLocation(currentScan);
-        float x= currentLoc.getX();
-       float y=currentLoc.getY();
-
-       //TODO query database for all segments that have x,y as one of their points
-
-       return null;
-   }
 
     /**
      * Retreive list of all achievements in the database
@@ -133,4 +135,29 @@ public class DummyDatabaseHelper {
         return null;
     }
 
+    /**
+     * Adds new Location to PathTable (table storing path Locations and order added)
+     *
+     * @param newLocation a Segment to add to PathTable
+     */
+    public static void addLocationToPath(Location newLocation){
+        //TODO add Location to PathTable
+    }
+
+    /**
+     * Returns the number of entries in the PathTable
+     *
+     * @return size an Integer with the number of entries in the table
+     */
+    public static Integer getPathTableSize(){
+        //TODO returns number of entries in the PathTable
+        return 0;
+    }
+
+
+    public static Location peekLastLocation(){
+        //TODO returns last location stored in PathTable
+
+        return null;
+    }
 }
