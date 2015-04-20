@@ -34,7 +34,7 @@ public class DummyDatabaseHelper {
      *
      * NOTE: if DB helper is not referenced statically, remove static declaration. Keep else.
      */
-    public static ArrayList<Segment> getSegmentsWithPoint(String searchPoint, String excludeAPoint) {
+    public ArrayList<Segment> getSegmentsWithPoint(String searchPoint, String excludeAPoint) {
 
 
         //TODO query database for list of segements that each segment includes searchPoint, but does not include excludeAPoint
@@ -64,7 +64,7 @@ public class DummyDatabaseHelper {
      * @param currentScan string representing current scan location example: "l21", "execent","l19" etc...
      * @return Location object with x,y coordinates for this scan
      */
-    public static Location getLocation(String currentScan){
+    public Location getLocation(String currentScan){
 
         //TODO query database for location x, y based on location name: currentScan
 
@@ -145,7 +145,7 @@ public class DummyDatabaseHelper {
      *
      * @param newLocation a Segment to add to PathTable
      */
-    public static void addLocationToPath(Location newLocation){
+    public void addLocationToPath(Location newLocation){
         //TODO add Location to PathTable
     }
 
@@ -154,34 +154,53 @@ public class DummyDatabaseHelper {
      *
      * @return size an Integer with the number of entries in the table
      */
-    public static Integer getPathTableSize(){
+    public Integer getPathTableSize(){
         //TODO returns number of entries in the PathTable
         return 0;
     }
 
 
-    public static Location peekLastLocation(){
+    public Location getLastLocation(){
         //TODO returns last location stored in PathTable
 
         return null;
     }
 
     /**
-     * Replaces current distance with a new distance distance to StatsTable (table storing current distance, pace, etc.)
+     * Replaces current distance with a new distance to StatsTable (table storing current distance, pace, etc.)
      *
      * @param newDistance the new current distance to store
      */
-    public static void addDistance(double newDistance){
+    public void addDistance(double newDistance){
         //TODO replaces current distance with new distance
     }
 
     /**
      * Returns current distance from StatsTable (table storing current distance, pace, etc.)
      *
-     * @return currentDistance the current distance to store
+     * @return currentDistance the current distance
      */
-    public static Double getDistance(){
+    public Double getDistance(){
         //TODO returns the current distance
+        return -1.1;
+    }
+
+    /**
+     * Replaces current pace with a new pace to StatsTable (table storing current distance, pace, etc.)
+     *
+     * @param newPace the new current pace to store
+     */
+    public void addPace(double newPace){
+        //TODO replaces current pace with new pace
+    }
+
+    /**
+     * Returns current pace from StatsTable (table storing current distance, pace, etc.)
+     *
+     * @return currentPace the current pace
+     */
+    public Double getPace(){
+        //TODO returns the current pace
         return -1.1;
     }
 
@@ -190,7 +209,7 @@ public class DummyDatabaseHelper {
      *
      * @return Start Time
      */
-    public static Long getStartTime(){
+    public Long getStartTime(){
         //TODO returns the start time
         return -1L;
     }
