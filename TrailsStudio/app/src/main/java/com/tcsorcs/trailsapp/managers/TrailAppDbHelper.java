@@ -48,7 +48,8 @@ public class TrailAppDbHelper extends SQLiteOpenHelper {
             databaseExists = false;
             e.printStackTrace();
         }catch (SQLiteCantOpenDatabaseException e){
-            //TODO does this throw only when database doesn't exist? we don't want to overwrite database if it can't open a connection for other reasons? research neeeded
+            //TODO does this throw only when database doesn't exist?
+            // we don't want to overwrite database if it can't open a connection for other reasons? research neeeded
             //was throwing this exception when trying to open database that didn't exist, setting boolean value to false to signal copy db
             databaseExists = false;
             e.printStackTrace();
@@ -138,7 +139,7 @@ public class TrailAppDbHelper extends SQLiteOpenHelper {
     // CRUD (Create, Read, Update, Delete)
     public Location getLocation(String currentScan){
 
-        //TODO query database for location x, y based on location name: currentScan
+        // Open up the database to be read from
         SQLiteDatabase db = this.getReadableDatabase();
 
 

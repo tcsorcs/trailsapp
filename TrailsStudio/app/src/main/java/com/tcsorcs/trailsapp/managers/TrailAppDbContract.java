@@ -15,7 +15,7 @@ public class TrailAppDbContract {
 
     public static abstract class QRInfo implements BaseColumns {
         public static final String TABLE_NAME = "qrinfo";
-        public static final String COLUMN_NAME_QR_ID = "qrid";
+        public static final String COLUMN_NAME_QR_ID = "_id";
         public static final String COLUMN_NAME_QR_CODE = "qrcode";
         public static final String COLUMN_NAME_QR_TYPE = "qrtype";
         public static final String COLUMN_NAME_QR_TYPED_ID = "qrtypedid";
@@ -60,19 +60,20 @@ public class TrailAppDbContract {
         public static final String COLUMN_NAME_LIFETIME_DISTANCE = "lifetimedistance";
         public static final String COLUMN_NAME_LIFETIME_PACE = "lifetimepace";
         public static final String COLUMN_NAME_LIFETIME_DURATION = "lifetimeduration";
-        public static final String COLUMN_NAME_CUMMULATIVE_DISTANCE = "cummulativedistance";
-        public static final String COLUMN_NAME_CUMMULATIVE_PACE = "cummulativepace";
-        public static final String COLUMN_NAME_CUMMULATIVE_DURATION = "cummulativeduration";
+        public static final String COLUMN_NAME_CUMULATIVE_DISTANCE = "cumulativedistance";
+        public static final String COLUMN_NAME_CUMULATIVE_PACE = "cumulativepace";
+        public static final String COLUMN_NAME_CUMULATIVE_DURATION = "cumulativeduration";
     }
 
     public static abstract class SegmentInformation implements BaseColumns {
         public static final String TABLE_NAME = "segments";
-        public static final String COLUMN_NAME_SEGMENT_ID = "segmentid";
+        public static final String COLUMN_NAME_SEGMENT_ID = "_id";
         public static final String COLUMN_NAME_SEGMENT_NAME = "segmentname";
         public static final String COLUMN_NAME_POINT_A = "pointa";
         public static final String COLUMN_NAME_POINT_B = "pointb";
         public static final String COLUMN_NAME_SEGMENT_LENGTH = "segmentlength";
         public static final String COLUMN_NAME_SEGMENT_TYPE = "segmenttype";
+        public static final String COLUMN_NAME_IS_ENTRANCE = "isentrance";
     }
 
     public static abstract class SegmentGraphic implements BaseColumns{
