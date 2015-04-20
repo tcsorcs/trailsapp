@@ -8,6 +8,11 @@ import java.util.ArrayList;
  *   information to fake database returns
  *
  *   Singleton
+ *
+ *  Quick reference for DB tables referenced (not official names):
+ *  -PathTable - stores segments, in order of completion, from start of session
+ *  -StatsTable - stores stats (distance, time, pace) for current and other sessions
+ *  -RecentScannedTable - stores recent QR codes scanned (including time scanned)
  */
 public class DummyDatabaseHelper {
 
@@ -159,5 +164,34 @@ public class DummyDatabaseHelper {
         //TODO returns last location stored in PathTable
 
         return null;
+    }
+
+    /**
+     * Replaces current distance with a new distance distance to StatsTable (table storing current distance, pace, etc.)
+     *
+     * @param newDistance the new current distance to store
+     */
+    public static void addDistance(double newDistance){
+        //TODO replaces current distance with new distance
+    }
+
+    /**
+     * Returns current distance from StatsTable (table storing current distance, pace, etc.)
+     *
+     * @return currentDistance the current distance to store
+     */
+    public static Double getDistance(){
+        //TODO returns the current distance
+        return -1.1;
+    }
+
+    /**
+     * Returns start time from StatsTable (table storing current distance, pace, etc.)
+     *
+     * @return Start Time
+     */
+    public static Long getStartTime(){
+        //TODO returns the start time
+        return -1L;
     }
 }

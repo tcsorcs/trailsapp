@@ -13,13 +13,10 @@ import java.util.LinkedList;
  *  Currently FUNCTIONAL but UNTESTED - DummyDatabaseHelper used in place of actual database helper
  *    smarterPathFinder and related helpers not tested thoroughly
  *  DNE = does not exist
- *  Updated 4/13/2015
+ *  Updated 4/20/2015
  *
  *  POTENTIAL PROBLEM AREAS:
  *  -collection type for path was changed from Stack to a LinkedList - if poll/pop were converted incorrectly, results will be wrong
- *
- *  Distance and start time are only stored locally - if app closed(still alive in background) and is reopened, will these be erased?
- *  Database to store segments in path
  *
  *  Quick reference for DB tables referenced (not official names):
  *  -PathTable - stores segments, in order of completion, from start of session
@@ -37,8 +34,8 @@ import java.util.LinkedList;
 public class DistanceManager {
     //Global variables - do these need to be stored in the DB?
 //	private LinkedList<String> path = new LinkedList<String>(); //path so far, saves the String names of the QR codes
-	private double totalDistance = 0.0; //total distance of the path
-	private long startTimeMillis = -1; //time first location point was scanned
+	//private double totalDistance = 0.0; //total distance of the path
+	//private long startTimeMillis = -1; //time first location point was scanned
 
     /***** Setup *****/
 	public static DistanceManager getInstance() {
@@ -74,7 +71,7 @@ public class DistanceManager {
 	 * NOTE distance is calculated each time a distanceQR code is scanned
 	 */
 	public double getDistance() {
-		return this.totalDistance;
+		return DummyDatabaseHelper.getDistance();
 	}
 
 	/* 
@@ -82,7 +79,7 @@ public class DistanceManager {
 	 */
 	public double getTimeOnTrail() {
 		long currentTimeMillis = System.currentTimeMillis();
-		long totalTimeMillis = currentTimeMillis - startTimeMillis;
+		long totalTimeMillis = currentTimeMillis - DummyDatabaseHelper.getStartTime();
 		int totalTimeSeconds = (int)(totalTimeMillis/1000);
 
 		return totalTimeSeconds;
@@ -105,8 +102,9 @@ public class DistanceManager {
 	 * local class Node
 	 * Contains information to help pick shortest subpath
 	 */
-	class Node implements Comparable<Node> {
+	private static class Node implements Comparable<Node> {
 		String scanName; //QR code name
+        Location scanLocation; //location of scanName
 		Node parent; //parent node, or null
 		double nodeDistance; //total distance from start of subpath
 		Segment segment; //segment containing this scanName and previous scan name, or null if no previous
@@ -116,6 +114,7 @@ public class DistanceManager {
 			parent = aNode;
 			nodeDistance = aDistance;
 			segment = aSegment;
+            scanLocation = DummyDatabaseHelper.getLocation(aScanName);
 		}
 
 		@Override
@@ -158,13 +157,13 @@ public class DistanceManager {
 		//checks if last 2 points scanned are on the same segment
 		for (int i = 0; i < attachedSegments.size() && !pointsAdjacent; i++){
 			currentSegment = attachedSegments.get(i);
-			pointsAdjacent = currentSegment.segmentHasPoints(lastScan, currentScan);
+			pointsAdjacent = currentSegment.segmentHasPoints(lastScan.getID(), currentScan);
 		}
 
 		//if on same segment, we know our next segment, yay!
 		if(pointsAdjacent){
-			path.push(currentScan);
-			totalDistance += currentSegment.getSegmentDistance();//if not initialized, will not be hit
+			DummyDatabaseHelper.addLocationToPath(DummyDatabaseHelper.getLocation(currentScan));
+			DummyDatabaseHelper.addDistance(DummyDatabaseHelper.getDistance() + currentSegment.getSegmentDistance());//if not initialized, will not be hit
 			DisplayManager.getInstance().drawSegment(currentSegment);//display segment
 			return;
 		}
@@ -233,8 +232,8 @@ public class DistanceManager {
 	 * This travels through the list of nodes in connectingNode until end - where end is currentScan
 	 * - and adds to path
 	 */
-	private void addSubPathToPath(Node shortestNode){
-		totalDistance += shortestNode.nodeDistance; //adds subPath distance to total distance
+	private static void addSubPathToPath(Node shortestNode){
+		DummyDatabaseHelper.addDistance(DummyDatabaseHelper.getDistance() + shortestNode.nodeDistance); //adds subPath distance to total distance
 		Node currentNode = shortestNode; //start w/parent because current is end of main path
 		ArrayList<Segment> segmentsList = new ArrayList<Segment>(); //stores for DisplayManager
 
@@ -242,7 +241,7 @@ public class DistanceManager {
 			segmentsList.add(currentNode.segment);
 
 			currentNode = currentNode.parent;
-			path.push(currentNode.scanName);
+            DummyDatabaseHelper.addLocationToPath(currentNode.scanLocation);
 		}
 
 		//display stuff
@@ -257,10 +256,10 @@ public class DistanceManager {
      */
     public void stupidPressButtonToEscape(){
         //get last point scanned
-        String lastScan; //start point of escape route
+        Location lastScan; //start point of escape route
 
 
-        lastScan = path.peekLast();
+        lastScan = DummyDatabaseHelper.peekLastLocation();
 
 
         //pathfind until find an entrance
@@ -281,7 +280,7 @@ public class DistanceManager {
         String parentScanName;//name of parent for database query
         Double tempDistance; //temp storage for distance
 
-        attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(lastScan, null); //DNE //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
+        attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(lastScan.getID(), null); //DNE //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
 
         //if something goes wrong and attachedSegments is null or is empty, skip gracefully (redundant if getSegmentsWithPoint succeeds)
         if ((attachedSegments == null) ||
@@ -290,7 +289,7 @@ public class DistanceManager {
             return;
         }
 
-        currentNode = new Node(lastScan, null, 0.0, null);
+        currentNode = new Node(lastScan.getID(), null, 0.0, null);
         subPath = new TreeMap<Double, Node>();
 
         subPath.put(0.0, currentNode);//add first
