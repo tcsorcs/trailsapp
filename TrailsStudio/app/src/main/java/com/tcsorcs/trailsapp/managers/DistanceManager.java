@@ -5,83 +5,120 @@ import java.util.TreeMap;
 
 import com.tcsorcs.trailsapp.helpers.Segment;
 import com.tcsorcs.trailsapp.helpers.DummyDatabaseHelper; //temporary until database helper is up
-import java.util.LinkedList;
+import com.tcsorcs.trailsapp.helpers.Location;
 
 /* v1.0 - Full version
  *
  *  Currently FUNCTIONAL but UNTESTED - DummyDatabaseHelper used in place of actual database helper
  *    smarterPathFinder and related helpers not tested thoroughly
  *  DNE = does not exist
- *  Updated 4/06/2015
+ *  Updated 4/20/2015
  *
  *  POTENTIAL PROBLEM AREAS:
  *  -collection type for path was changed from Stack to a LinkedList - if poll/pop were converted incorrectly, results will be wrong
+ *
+ *  Quick reference for DB tables referenced (not official names):
+ *  -PathTable - stores segments, in order of completion, from start of session
+ *  -StatsTable - stores stats (distance, time, pace) for current and other sessions
+ *  -RecentScannedTable - stores recent QR codes scanned (including time scanned)
+ *
+ *  TODO:
+ *  -update pace stored in StatsTable
+ *  -Add stuff to constructor to retrieve stored info in case app closed and reopenedd
  */
 
 public class DistanceManager {
-	private LinkedList<String> path = new LinkedList<String>(); //path so far, saves the String names of the QR codes
-	private double totalDistance = 0.0; //total distance of the path
-	private long startTimeMillis = -1; //time first location point was scanned
+    //Global variables - do these need to be stored in the DB?
+//	private LinkedList<String> path = new LinkedList<String>(); //path so far, saves the String names of the QR codes
+	//private double totalDistance = 0.0; //total distance of the path
+	//private long startTimeMillis = -1; //time first location point was scanned
 
+    /***** Setup *****/
 	public static DistanceManager getInstance() {
 		return DistanceManager.instance;
 	}
 
+    /* Need to add stuff to reconstruct current session if app is closed and reopened */
 	public static DistanceManager instance = new DistanceManager();
 
-	/*
-	 * Handles QR input (complete, needs official method names, untested)
-	 * given the name of a location QR code, builds path and tells display manager what to display
-	 */
-	public void processQRCodes(String codeName) {
+    /***** First contact *****/
+
+    /** Handles new location QR input
+     * Builds path if necessary and tells display manager what to display
+     *
+     * @param locationName String name of location
+     */
+	public void processQRCodes(String locationName) {
 		//I see a QR code - is either first or not first
-		if (path.size() < 1){ //first, don't pathfind
-			path.push(codeName);
-			startTimeMillis = System.currentTimeMillis();
-		}
+        if (DummyDatabaseHelper.getInstance().getPathTableSize() < 1){//first, don't pathfind
+            DummyDatabaseHelper.getInstance().addLocationToPath(DummyDatabaseHelper.getInstance().getLocation(locationName));
+        }
 		else { //not first, need to pathfind
-			smarterPathFinder(codeName);
+			smarterPathFinder(locationName);
 		}
 	}
 
 
-	/*
-	 * Returns total distance walked 
-	 * NOTE distance is calculated each time a distanceQR code is scanned
-	 */
+    /***** Get Stats *****/
+    /** DisplayManager will poll for stats **/
+
+    /** Returns total distance walked this session
+     * Distance calculated each time a distance QR code is scanned
+     *
+     * @return double, the distance walked
+     */
 	public double getDistance() {
-		return this.totalDistance;
+		return DummyDatabaseHelper.getInstance().getDistance();
 	}
 
-	/* 
-	 * Returns total time on trail in seconds
-	 */
+    /** Returns time on trails this session
+     * Time calculated from current time
+     *
+     * @return double, the time spent on the trails, in seconds
+     */
 	public double getTimeOnTrail() {
 		long currentTimeMillis = System.currentTimeMillis();
-		long totalTimeMillis = currentTimeMillis - startTimeMillis;
+		long totalTimeMillis = currentTimeMillis - DummyDatabaseHelper.getInstance().getStartTime();
 		int totalTimeSeconds = (int)(totalTimeMillis/1000);
 
 		return totalTimeSeconds;
 	}
 
-	/* 
-	 * Returns average pace since start in feet per minutes
-	 */
-	public double getPace() {
-		double seconds = getTimeOnTrail();
-		double minutes = seconds/60;
-		double distance = getDistance();
-		double pace = distance / minutes;
-		pace = Math.round(pace*1000)/1000;
+    /** Returns pace for this session
+     * Pace calculated based on current time but last scanned QR code - so pace will be most
+     *      accurate immediately after scan.
+     *
+     * @return double, the pace in feet/minute
+     */
+	public double getPace() { return DummyDatabaseHelper.getInstance().getPace();	}
 
-		return pace;
-	}
 
+    /** Updates DB distance and pace for this session - guarantees pace will be calculated accurately
+     * Pace calculated at each scan and stored as feet/minute
+     *
+     * @param newDistance, the new distance to place in the StatsTable
+     */
+    private void updateDistancePace(double newDistance) {
+        DummyDatabaseHelper.getInstance().addDistance(newDistance);
+
+        double seconds = getTimeOnTrail();
+        double minutes = seconds/60;
+        double pace = newDistance / minutes;
+        pace = Math.round(pace*1000)/1000;
+
+        DummyDatabaseHelper.getInstance().addPace(pace);
+    }
+
+
+    /***** Pathfinders and helpers *****/
 	/*
 	 * local class Node
 	 * Contains information to help pick shortest subpath
 	 */
-	class Node implements Comparable<Node> {
+    /** Local node class
+     *  Stores information necessary for pathfinders
+     */
+	private class Node implements Comparable<Node> {
 		String scanName; //QR code name
 		Node parent; //parent node, or null
 		double nodeDistance; //total distance from start of subpath
@@ -111,18 +148,20 @@ public class DistanceManager {
 	 *   -Handles skipped points
 	 * ToDo:
 	 *   -Add check side of road before pathfinding
+	 *
+	 * @param currentScan, String is the location name of the current scan
 	 */
 
 	private void smarterPathFinder(String currentScan){
-		String lastScan; //most recent point travelled path
-		ArrayList<Segment> attachedSegments; //list of segments, returned from DB //DNE
+		Location lastScan; //most recent point travelled path
+		ArrayList<Segment> attachedSegments; //list of segments, returned from DB
 		Segment currentSegment = null; //current segment we're working with
 		boolean pointsAdjacent = false; //if two points are on the same segment
 
-		lastScan = path.peekLast(); //look at most recent point from path
+		lastScan = DummyDatabaseHelper.getInstance().getLastLocation(); //look at most recent point from PathTable
 
 		//POSSIBLE ERROR LOCATION make sure adding the null for excluded point works
-		attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(currentScan, null); //DNE //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
+		attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(currentScan, null); //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
 
 		//if something goes wrong and attachedSegments is null or is empty, skip gracefully (redundant if getSegmentsWithPoint succeeds)
 		if ((attachedSegments == null) ||
@@ -134,13 +173,13 @@ public class DistanceManager {
 		//checks if last 2 points scanned are on the same segment
 		for (int i = 0; i < attachedSegments.size() && !pointsAdjacent; i++){
 			currentSegment = attachedSegments.get(i);
-			pointsAdjacent = currentSegment.segmentHasPoints(lastScan, currentScan);
+			pointsAdjacent = currentSegment.segmentHasPoints(lastScan.getID(), currentScan);
 		}
 
 		//if on same segment, we know our next segment, yay!
 		if(pointsAdjacent){
-			path.push(currentScan);
-			totalDistance += currentSegment.getSegmentDistance();//if not initialized, will not be hit
+			DummyDatabaseHelper.getInstance().addLocationToPath(DummyDatabaseHelper.getInstance().getLocation(currentScan));
+			updateDistancePace(DummyDatabaseHelper.getInstance().getDistance() + currentSegment.getSegmentDistance());//if not initialized, will not be hit
 			DisplayManager.getInstance().drawSegment(currentSegment);//display segment
 			return;
 		}
@@ -193,7 +232,7 @@ public class DistanceManager {
 			} else {
 				parentScanName = shortestNode.parent.scanName;
 			}
-			attachedSegments = DummyDatabaseHelper.getSegmentsWithPoint(shortestNode.scanName, parentScanName);//DNE //Tim
+			attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(shortestNode.scanName, parentScanName);//DNE //Tim
 		}//end while
 
 		/*
@@ -204,13 +243,13 @@ public class DistanceManager {
 		addSubPathToPath(shortestNode);
 	}
 
-	/* helper to smarterPathFinder - might fold into smarterPathFinder later
-	 * given connectingNode.scanName should be lastScan
-	 * This travels through the list of nodes in connectingNode until end - where end is currentScan
-	 * - and adds to path
-	 */
+    /** Adds path found by pathfinder to PathTable, in order
+     *
+     * @param shortestNode, Node contains location name that is end of existing path, node parent
+     *                      contains next location name, and so on until most recent scanned
+     */
 	private void addSubPathToPath(Node shortestNode){
-		totalDistance += shortestNode.nodeDistance; //adds subPath distance to total distance
+		updateDistancePace(DummyDatabaseHelper.getInstance().getDistance() + shortestNode.nodeDistance); //adds subPath distance to total distance
 		Node currentNode = shortestNode; //start w/parent because current is end of main path
 		ArrayList<Segment> segmentsList = new ArrayList<Segment>(); //stores for DisplayManager
 
@@ -218,25 +257,25 @@ public class DistanceManager {
 			segmentsList.add(currentNode.segment);
 
 			currentNode = currentNode.parent;
-			path.push(currentNode.scanName);
+            DummyDatabaseHelper.getInstance().addLocationToPath(DummyDatabaseHelper.getInstance().getLocation(currentNode.scanName));
 		}
 
 		//display stuff
 		DisplayManager.getInstance().drawSegments(segmentsList);//DNE //Dave
 	}
 
-    /*
-     * Extension - if this button is pressed, will find shortest path to a trail entrance
+    //INCOMPLETE! DO NOT USE!
+    /** Extension - if this button is pressed, will find shortest path to a trail entrance
      *
      * CURRENTLY, will base escape route on last QR code scanned, in future, will take actual
      *   GPS location as start point
      */
     public void stupidPressButtonToEscape(){
         //get last point scanned
-        String lastScan; //start point of escape route
+        Location lastScan; //start point of escape route
 
 
-        lastScan = path.peekLast();
+        lastScan = DummyDatabaseHelper.getInstance().getLastLocation();
 
 
         //pathfind until find an entrance
@@ -257,7 +296,7 @@ public class DistanceManager {
         String parentScanName;//name of parent for database query
         Double tempDistance; //temp storage for distance
 
-        attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(lastScan, null); //DNE //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
+        attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(lastScan.getID(), null); //DNE //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
 
         //if something goes wrong and attachedSegments is null or is empty, skip gracefully (redundant if getSegmentsWithPoint succeeds)
         if ((attachedSegments == null) ||
@@ -266,7 +305,7 @@ public class DistanceManager {
             return;
         }
 
-        currentNode = new Node(lastScan, null, 0.0, null);
+        currentNode = new Node(lastScan.getID(), null, 0.0, null);
         subPath = new TreeMap<Double, Node>();
 
         subPath.put(0.0, currentNode);//add first
@@ -293,7 +332,7 @@ public class DistanceManager {
             } else {
                 parentScanName = shortestNode.parent.scanName;
             }
-            attachedSegments = DummyDatabaseHelper.getSegmentsWithPoint(shortestNode.scanName, parentScanName);//DNE //Tim
+            attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(shortestNode.scanName, parentScanName);//DNE //Tim
         }//end while
 
         //display
