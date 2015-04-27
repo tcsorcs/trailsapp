@@ -12,7 +12,7 @@ import com.tcsorcs.trailsapp.helpers.Location;
  *  Currently FUNCTIONAL but UNTESTED - DummyDatabaseHelper used in place of actual database helper
  *    smarterPathFinder and related helpers not tested thoroughly
  *  DNE = does not exist
- *  Updated 4/20/2015
+ *  Updated 4/27/2015
  *
  *  POTENTIAL PROBLEM AREAS:
  *  -collection type for path was changed from Stack to a LinkedList - if poll/pop were converted incorrectly, results will be wrong
@@ -23,7 +23,6 @@ import com.tcsorcs.trailsapp.helpers.Location;
  *  -RecentScannedTable - stores recent QR codes scanned (including time scanned)
  *
  *  TODO:
- *  -update pace stored in StatsTable
  *  -Add stuff to constructor to retrieve stored info in case app closed and reopenedd
  */
 
@@ -269,6 +268,8 @@ public class DistanceManager {
      *
      * CURRENTLY, will base escape route on last QR code scanned, in future, will take actual
      *   GPS location as start point
+     *
+     *   Does NOT store things in the DB yet
      */
     public void stupidPressButtonToEscape(){
         //get last point scanned
