@@ -8,6 +8,11 @@ import java.util.ArrayList;
  *   information to fake database returns
  *
  *   Singleton
+ *
+ *  Quick reference for DB tables referenced (not official names):
+ *  -PathTable - stores segments, in order of completion, from start of session
+ *  -StatsTable - stores stats (distance, time, pace) for current and other sessions
+ *  -RecentScannedTable - stores recent QR codes scanned (including time scanned)
  */
 public class DummyDatabaseHelper {
 
@@ -16,8 +21,6 @@ public class DummyDatabaseHelper {
     }
 
     public static DummyDatabaseHelper instance = new DummyDatabaseHelper();
-
-    //stuff will be added here...
 
 
     /**
@@ -28,11 +31,30 @@ public class DummyDatabaseHelper {
      * @param excludeAPoint each segment in list should not contain this point, or null, if no points to be excluded
      * @return all segments with searchPoint as an end point, but without excludeAPoint as an end point.
      *         If no segments exist, return null.
+     *
+     * NOTE: if DB helper is not referenced statically, remove static declaration. Keep else.
      */
-    public static ArrayList<Segment> getSegmentsWithPoint(String searchPoint, String excludeAPoint) {
+    public ArrayList<Segment> getSegmentsWithPoint(String searchPoint, String excludeAPoint) {
 
 
         //TODO query database for list of segements that each segment includes searchPoint, but does not include excludeAPoint
+
+        return null;
+    }
+
+    /** Not used in DistanceManager - if not used anywhere, please delete
+     * Retrieve segments that contain the current scan location
+     *
+     * @param currentScan string representing current scan location example: "l21", "execent","l19" etc...
+     * @return  ArrayList of segments that contain currentScan as one of their endpoints
+     */
+    public ArrayList<Segment> getSegmentsWithPoint(String currentScan){
+
+        Location currentLoc=getLocation(currentScan);
+        float x= currentLoc.getX();
+        float y=currentLoc.getY();
+
+        //TODO query database for all segments that have x,y as one of their points
 
         return null;
     }
@@ -49,22 +71,7 @@ public class DummyDatabaseHelper {
         return null;
     }
 
-    /**
-     * Retrieve segments that contain the current scan location
-     *
-     * @param currentScan string representing current scan location example: "l21", "execent","l19" etc...
-     * @return  ArrayList of segments that contain currentScan as one of their endpoints
-     */
-   public ArrayList<Segment> getSegmentsWithPoint(String currentScan){
 
-       Location currentLoc=getLocation(currentScan);
-        float x= currentLoc.getX();
-       float y=currentLoc.getY();
-
-       //TODO query database for all segments that have x,y as one of their points
-
-       return null;
-   }
 
     /**
      * Retreive list of all achievements in the database
@@ -133,4 +140,77 @@ public class DummyDatabaseHelper {
         return null;
     }
 
+    /**
+     * Adds new Location to PathTable (table storing path Locations and order added)
+     *
+     * @param newLocation a Segment to add to PathTable
+     */
+    public void addLocationToPath(Location newLocation){
+        //TODO add Location to PathTable
+    }
+
+    /**
+     * Returns the number of entries in the PathTable
+     *
+     * @return size an Integer with the number of entries in the table
+     */
+    public Integer getPathTableSize(){
+        //TODO returns number of entries in the PathTable
+        return 0;
+    }
+
+
+    public Location getLastLocation(){
+        //TODO returns last location stored in PathTable
+
+        return null;
+    }
+
+    /**
+     * Replaces current distance with a new distance to StatsTable (table storing current distance, pace, etc.)
+     *
+     * @param newDistance the new current distance to store
+     */
+    public void addDistance(double newDistance){
+        //TODO replaces current distance with new distance
+    }
+
+    /**
+     * Returns current distance from StatsTable (table storing current distance, pace, etc.)
+     *
+     * @return currentDistance the current distance
+     */
+    public Double getDistance(){
+        //TODO returns the current distance
+        return -1.1;
+    }
+
+    /**
+     * Replaces current pace with a new pace to StatsTable (table storing current distance, pace, etc.)
+     *
+     * @param newPace the new current pace to store
+     */
+    public void addPace(double newPace){
+        //TODO replaces current pace with new pace
+    }
+
+    /**
+     * Returns current pace from StatsTable (table storing current distance, pace, etc.)
+     *
+     * @return currentPace the current pace
+     */
+    public Double getPace(){
+        //TODO returns the current pace
+        return -1.1;
+    }
+
+    /**
+     * Returns start time from StatsTable (table storing current distance, pace, etc.)
+     *
+     * @return Start Time
+     */
+    public Long getStartTime(){
+        //TODO returns the start time
+        return -1L;
+    }
 }

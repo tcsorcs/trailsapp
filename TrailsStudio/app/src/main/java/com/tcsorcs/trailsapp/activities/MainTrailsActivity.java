@@ -10,6 +10,7 @@ import com.tcsorcs.trailsapp.managers.DisplayManager;
 import com.tcsorcs.trailsapp.managers.DistanceManager;
 import com.tcsorcs.trailsapp.managers.GeneralManager;
 import com.tcsorcs.trailsapp.managers.InputManager;
+import com.tcsorcs.trailsapp.managers.SocialManager;
 import com.tcsorcs.trailsapp.managers.TrailAppDbManager;
 import com.tcsorcs.trailsapp.mapview.TouchImageView;
 import android.app.AlertDialog;
@@ -96,7 +97,7 @@ public class MainTrailsActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-
+        SocialManager.instance = new SocialManager();
 
 
         //check for incoming sms before splash screen, otherwise onNewIntent handles
