@@ -12,7 +12,7 @@ import com.tcsorcs.trailsapp.helpers.Location;
  *  Currently FUNCTIONAL but UNTESTED - DummyDatabaseHelper used in place of actual database helper
  *    smarterPathFinder and related helpers not tested thoroughly
  *  DNE = does not exist
- *  Updated 4/20/2015
+ *  Updated 4/27/2015
  *
  *  POTENTIAL PROBLEM AREAS:
  *  -collection type for path was changed from Stack to a LinkedList - if poll/pop were converted incorrectly, results will be wrong
@@ -23,7 +23,6 @@ import com.tcsorcs.trailsapp.helpers.Location;
  *  -RecentScannedTable - stores recent QR codes scanned (including time scanned)
  *
  *  TODO:
- *  -update pace stored in StatsTable
  *  -Add stuff to constructor to retrieve stored info in case app closed and reopenedd
  */
 
@@ -157,8 +156,14 @@ public class DistanceManager {
 		ArrayList<Segment> attachedSegments; //list of segments, returned from DB
 		Segment currentSegment = null; //current segment we're working with
 		boolean pointsAdjacent = false; //if two points are on the same segment
+        String sideOfRoad; //side of the road the path is - east, west, or cross
 
 		lastScan = DummyDatabaseHelper.getInstance().getLastLocation(); //look at most recent point from PathTable
+
+        sideOfRoad = DummyDatabaseHelper.getInstance().getSideOfRoad(currentScan); //current side of road
+        if (!sideOfRoad.equals(DummyDatabaseHelper.getInstance().getSideOfRoad(lastScan))){ //saves side of road or both
+            sideOfRoad = "cross";
+        }
 
 		//POSSIBLE ERROR LOCATION make sure adding the null for excluded point works
 		attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(currentScan, null); //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
@@ -216,10 +221,14 @@ public class DistanceManager {
 				 *   add them here
 				 */
 
-				//DEBUG - if something goes wrong, it's probably here!
-				tempDistance = (subSegment.getSegmentDistance() + shortestNode.nodeDistance);
-				subNode = new Node(subSegment.getOtherPoint(shortestNode.scanName), shortestNode, tempDistance, subSegment);//Segment.secondPoint is the point found attached, not the point given to search for
-				subPath.put(tempDistance, subNode); //add new node to possible path
+                //if on same side of road or road crosses the street, add subSegment to possible path
+                if ((sideOfRoad.equals(DummyDatabaseHelper.getInstance().getSideOfRoad(subSegment)) ||
+                        (sideOfRoad.equals("cross")))){
+                    //DEBUG - if something goes wrong, it's probably here!
+                    tempDistance = (subSegment.getSegmentDistance() + shortestNode.nodeDistance);
+                    subNode = new Node(subSegment.getOtherPoint(shortestNode.scanName), shortestNode, tempDistance, subSegment);//Segment.secondPoint is the point found attached, not the point given to search for
+                    subPath.put(tempDistance, subNode); //add new node to possible path
+                }
 			}
 
 			//all connected points should be in nodes, so must remove original node from subPath
@@ -269,6 +278,8 @@ public class DistanceManager {
      *
      * CURRENTLY, will base escape route on last QR code scanned, in future, will take actual
      *   GPS location as start point
+     *
+     *   Does NOT store things in the DB yet
      */
     public void stupidPressButtonToEscape(){
         //get last point scanned
