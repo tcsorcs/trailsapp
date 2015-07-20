@@ -9,12 +9,14 @@ import android.database.SQLException;
 import android.widget.Toast;
 
 import com.tcsorcs.trailsapp.helpers.Location;
+import com.tcsorcs.trailsapp.helpers.Segment;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLDataException;
+import java.util.ArrayList;
 
 /**
  * Created by Innovation on 3/3/2015.
@@ -171,5 +173,38 @@ public class TrailAppDbHelper extends SQLiteOpenHelper {
 
             }
         return location;
+    }
+    /**
+     * Returns all segments with searchPoint as an end point, but without excludeAPoint as an end point
+     *  Note that excludeAPoint can be null
+     *
+     * @param searchPoint each segment in list should contain this point
+     * @param excludeAPoint each segment in list should not contain this point, or null, if no points to be excluded
+     * @return all segments with searchPoint as an end point, but without excludeAPoint as an end point.
+     *         If no segments exist, return null.
+     *
+     * NOTE: if DB helper is not referenced statically, remove static declaration. Keep else.
+     */
+    public ArrayList<Segment> getSegmentsWithPoint(String searchPoint, String excludeAPoint) {
+
+        // Open up the database to be read from
+        SQLiteDatabase db = this.getReadableDatabase();
+
+
+
+        Cursor cursor = db.query(TrailAppDbContract.SegmentInformation.TABLE_NAME,
+                new String[]{TrailAppDbContract.SegmentInformation.COLUMN_NAME_SEGMENT_ID,
+                    TrailAppDbContract.SegmentInformation.COLUMN_NAME_POINT_A,
+                    TrailAppDbContract.SegmentInformation.COLUMN_NAME_POINT_B,
+                    TrailAppDbContract.SegmentInformation.COLUMN_NAME_SEGMENT_LENGTH,
+                    TrailAppDbContract.SegmentInformation.COLUMN_NAME_SEGMENT_TYPE,
+                    TrailAppDbContract.SegmentInformation.COLUMN_NAME_IS_ENTRANCE},
+                TrailAppDbContract.SegmentInformation.COLUMN_NAME_POINT_A + "=? or " +
+                        TrailAppDbContract.SegmentInformation.COLUMN_NAME_POINT_B + "=?",
+                new String[]{ searchPoint },null,null,null);
+
+
+
+        return null;
     }
 }
