@@ -172,6 +172,9 @@ public class TrailAppDbHelper extends SQLiteOpenHelper {
                         Integer.parseInt(cursor.getString(2)));
 
             }
+
+        cursor.close();
+
         return location;
     }
     /**
@@ -203,8 +206,23 @@ public class TrailAppDbHelper extends SQLiteOpenHelper {
                         TrailAppDbContract.SegmentInformation.COLUMN_NAME_POINT_B + "=?",
                 new String[]{ searchPoint },null,null,null);
 
+        ArrayList<Segment> segmentList = null;
 
+        if (cursor != null){
+            if(cursor.moveToFirst()){
+                while (!cursor.isAfterLast()){
+                    Segment mySegment = new Segment(cursor.getString(0), cursor.getString(1),
+                            cursor.getString(2), Double.parseDouble(cursor.getString(3)),
+                            cursor.getString(4), Boolean.parseBoolean(cursor.getString(5))
+                            );
+                    segmentList.add(mySegment);
+                    cursor.moveToNext();
+                }
+            }
+        }
 
-        return null;
+        cursor.close();
+
+        return segmentList;
     }
 }
