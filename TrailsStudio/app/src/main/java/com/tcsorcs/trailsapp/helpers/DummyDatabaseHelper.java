@@ -71,6 +71,40 @@ public class DummyDatabaseHelper {
         return null;
     }
 
+    /**
+     * Checks a segment and returns what side of the road it's on (east, west, cross)
+     * @param currentScan segment to check side of road from
+     * @return String with "east", "west" or "cross"
+     */
+    public String getSideOfRoad(String currentScan){
+        String sideOfRoad;
+        sideOfRoad = getSideOfRoad(getLocation(currentScan));
+
+        return sideOfRoad;
+    }
+
+    /**
+     * Checks a Location and returns what side of the road it's on (east, west)
+     * @param currentSegment Location to check side of road from
+     * @return String with "east", "west" or "cross"
+     */
+    public String getSideOfRoad(Segment currentSegment){
+        //TODO query database for Segment's side of road
+
+        return null;
+    }
+
+    /**
+     * Checks a Location and returns what side of the road it's on (east, west)
+     * @param currentLocation Location to check side of road from
+     * @return String with "east" or "west"
+     */
+    public String getSideOfRoad(Location currentLocation){
+        //TODO query database for Location's side of road
+
+        return null;
+    }
+
 
 
     /**
