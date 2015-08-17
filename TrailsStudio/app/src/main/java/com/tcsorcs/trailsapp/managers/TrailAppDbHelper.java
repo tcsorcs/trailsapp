@@ -162,14 +162,15 @@ public class TrailAppDbHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(TrailAppDbContract.Locations.TABLE_NAME,
                 new String[]{TrailAppDbContract.Locations.COLUMN_NAME_LOCATION_ID,
                         TrailAppDbContract.Locations.COLUMN_NAME_LOCATION_X,
-                        TrailAppDbContract.Locations.COLUMN_NAME_LOCATION_Y},
+                        TrailAppDbContract.Locations.COLUMN_NAME_LOCATION_Y,
+                        TrailAppDbContract.Locations.COLUMN_NAME_SIDE_OF_ROAD },
                 TrailAppDbContract.Locations.COLUMN_NAME_LOCATION_ID + "=?",
                 new String[]{ String.valueOf(currentScan)}, null , null, null);
         Location location=null;
         if(cursor != null)
             if( cursor.moveToFirst()){
                  location = new Location(cursor.getString(0), Integer.parseInt(cursor.getString(1)),
-                        Integer.parseInt(cursor.getString(2)));
+                        Integer.parseInt(cursor.getString(2)) , cursor.getString(3));
 
             }
 
