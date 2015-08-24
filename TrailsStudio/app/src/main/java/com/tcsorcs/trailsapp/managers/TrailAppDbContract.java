@@ -50,7 +50,6 @@ public class TrailAppDbContract {
         public static final String COLUMN_NAME_LOCATION_DESCRIPTION = "locationdescription";
         public static final String COLUMN_NAME_LOCATION_X = "locationx";
         public static final String COLUMN_NAME_LOCATION_Y = "locationy";
-        public static final String COLUMN_NAME_SIDE_OF_ROAD = "sideofroad";
     }
 
     public static abstract class StatsInformation implements BaseColumns {

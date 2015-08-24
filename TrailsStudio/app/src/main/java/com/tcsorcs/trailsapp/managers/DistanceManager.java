@@ -12,7 +12,7 @@ import com.tcsorcs.trailsapp.helpers.Location;
  *  Currently FUNCTIONAL but UNTESTED - DummyDatabaseHelper used in place of actual database helper
  *    smarterPathFinder and related helpers not tested thoroughly
  *  DNE = does not exist
- *  Updated 4/27/2015
+ *  Updated 8/24/2015
  *
  *  POTENTIAL PROBLEM AREAS:
  *  -collection type for path was changed from Stack to a LinkedList - if poll/pop were converted incorrectly, results will be wrong
