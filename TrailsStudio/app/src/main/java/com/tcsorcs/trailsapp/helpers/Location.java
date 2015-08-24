@@ -25,4 +25,11 @@ public class Location {
         this.y = y;
     }
 
+    public Location(String id, float x, float y) {
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        this.sideOfRoad = null;
+    }
+
 }

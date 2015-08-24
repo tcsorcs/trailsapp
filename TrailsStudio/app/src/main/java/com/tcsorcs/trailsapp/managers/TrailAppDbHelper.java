@@ -170,6 +170,7 @@ public class TrailAppDbHelper extends SQLiteOpenHelper {
         if(cursor != null)
             if( cursor.moveToFirst()){
 <<<<<<< HEAD
+<<<<<<< HEAD
                 location = new Location(cursor.getString(0), Integer.parseInt(cursor.getString(1)),
                         Integer.parseInt(cursor.getString(2)));
 =======
@@ -180,6 +181,11 @@ public class TrailAppDbHelper extends SQLiteOpenHelper {
                  location = new Location(cursor.getString(0), Integer.parseInt(cursor.getString(1)),
                         Integer.parseInt(cursor.getString(2)) , cursor.getString(3));
 >>>>>>> tcsorcs/master
+>>>>>>> tcsorcs/master
+=======
+
+                 location = new Location(cursor.getString(0), Integer.parseInt(cursor.getString(1)),
+                        Integer.parseInt(cursor.getString(2)) , cursor.getString(3));
 >>>>>>> tcsorcs/master
 
             }
