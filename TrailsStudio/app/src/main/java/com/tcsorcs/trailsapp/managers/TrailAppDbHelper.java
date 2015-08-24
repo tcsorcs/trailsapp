@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLDataException;
 import java.util.ArrayList;
+import java.util.ListIterator;
 
 /**
  * Created by Innovation on 3/3/2015.
@@ -44,7 +45,7 @@ public class TrailAppDbHelper extends SQLiteOpenHelper {
 
         boolean databaseExists=false;
         try{
-             databaseExists = checkDataBase();
+            databaseExists = checkDataBase();
 
         }catch (SQLDataException e){
             databaseExists = false;
@@ -169,8 +170,13 @@ public class TrailAppDbHelper extends SQLiteOpenHelper {
         Location location=null;
         if(cursor != null)
             if( cursor.moveToFirst()){
+<<<<<<< HEAD
+                location = new Location(cursor.getString(0), Integer.parseInt(cursor.getString(1)),
+                        Integer.parseInt(cursor.getString(2)));
+=======
                  location = new Location(cursor.getString(0), Integer.parseInt(cursor.getString(1)),
                         Integer.parseInt(cursor.getString(2)) , cursor.getString(3));
+>>>>>>> tcsorcs/master
 
             }
 
@@ -195,27 +201,26 @@ public class TrailAppDbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
 
-
         Cursor cursor = db.query(TrailAppDbContract.SegmentInformation.TABLE_NAME,
                 new String[]{TrailAppDbContract.SegmentInformation.COLUMN_NAME_SEGMENT_ID,
-                    TrailAppDbContract.SegmentInformation.COLUMN_NAME_POINT_A,
-                    TrailAppDbContract.SegmentInformation.COLUMN_NAME_POINT_B,
-                    TrailAppDbContract.SegmentInformation.COLUMN_NAME_SEGMENT_LENGTH,
-                    TrailAppDbContract.SegmentInformation.COLUMN_NAME_SEGMENT_TYPE,
-                    TrailAppDbContract.SegmentInformation.COLUMN_NAME_IS_ENTRANCE},
+                        TrailAppDbContract.SegmentInformation.COLUMN_NAME_POINT_A,
+                        TrailAppDbContract.SegmentInformation.COLUMN_NAME_POINT_B,
+                        TrailAppDbContract.SegmentInformation.COLUMN_NAME_SEGMENT_LENGTH,
+                        TrailAppDbContract.SegmentInformation.COLUMN_NAME_SEGMENT_TYPE,
+                        TrailAppDbContract.SegmentInformation.COLUMN_NAME_IS_ENTRANCE},
                 TrailAppDbContract.SegmentInformation.COLUMN_NAME_POINT_A + "=? or " +
                         TrailAppDbContract.SegmentInformation.COLUMN_NAME_POINT_B + "=?",
-                new String[]{ searchPoint },null,null,null);
+                new String[]{searchPoint}, null, null, null);
 
         ArrayList<Segment> segmentList = null;
 
-        if (cursor != null){
-            if(cursor.moveToFirst()){
-                while (!cursor.isAfterLast()){
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
                     Segment mySegment = new Segment(cursor.getString(0), cursor.getString(1),
                             cursor.getString(2), Double.parseDouble(cursor.getString(3)),
                             cursor.getString(4), Boolean.parseBoolean(cursor.getString(5))
-                            );
+                    );
                     segmentList.add(mySegment);
                     cursor.moveToNext();
                 }
@@ -224,6 +229,23 @@ public class TrailAppDbHelper extends SQLiteOpenHelper {
 
         cursor.close();
 
+        /*We have a list of all segments with searchPoint, now let's eliminate the entry
+         *  that also has excludeAPoint, if excludeAPoint is not null
+         */
+        if (excludeAPoint != null) {
+            ListIterator<Segment> segmentIterator = segmentList.listIterator();
+            Segment checkSegment;
+
+            while (segmentIterator.hasNext()) {
+                checkSegment = segmentIterator.next();
+                if (checkSegment.getFirstPoint().equals(excludeAPoint) ||
+                        checkSegment.getSecondPoint().equals(excludeAPoint)) {
+                    segmentIterator.remove();
+                }
+            }
+        }
+
         return segmentList;
     }
+
 }
