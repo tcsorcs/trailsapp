@@ -169,8 +169,18 @@ public class TrailAppDbHelper extends SQLiteOpenHelper {
         Location location=null;
         if(cursor != null)
             if( cursor.moveToFirst()){
+<<<<<<< HEAD
                 location = new Location(cursor.getString(0), Integer.parseInt(cursor.getString(1)),
                         Integer.parseInt(cursor.getString(2)));
+=======
+<<<<<<< HEAD
+                location = new Location(cursor.getString(0), Integer.parseInt(cursor.getString(1)),
+                        Integer.parseInt(cursor.getString(2)));
+=======
+                 location = new Location(cursor.getString(0), Integer.parseInt(cursor.getString(1)),
+                        Integer.parseInt(cursor.getString(2)) , cursor.getString(3));
+>>>>>>> tcsorcs/master
+>>>>>>> tcsorcs/master
 
             }
 
