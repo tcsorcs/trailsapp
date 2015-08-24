@@ -211,7 +211,7 @@ public class DisplayManager {
                 disableButtons();
                 float x = 1694f;
                 float y = 1850f;
-                Location loc=new Location("0",x,y);
+                Location loc=new Location("0",x,y,"");
                 drawMarker(loc, true, true);
             }
         });
@@ -257,7 +257,7 @@ public class DisplayManager {
 
                 float  x = 2181f;
                 float  y = 118f;
-                Location loc=new Location("0",x,y);
+                Location loc=new Location("0",x,y,"");
 
                 drawAchievementMarker(loc,true,true);
 
