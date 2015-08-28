@@ -12,7 +12,7 @@ import com.tcsorcs.trailsapp.helpers.Location;
  *  Currently FUNCTIONAL but UNTESTED - DummyDatabaseHelper used in place of actual database helper
  *    smarterPathFinder and related helpers not tested thoroughly
  *  DNE = does not exist
- *  Updated 8/24/2015
+ *  Updated 8/27/2015
  *
  *  POTENTIAL PROBLEM AREAS:
  *  -collection type for path was changed from Stack to a LinkedList - if poll/pop were converted incorrectly, results will be wrong
@@ -165,10 +165,12 @@ public class DistanceManager {
             sideOfRoad = "cross";
         }
 
-		//POSSIBLE ERROR LOCATION make sure adding the null for excluded point works
-		attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(currentScan, null); //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
+		//POSSIBLE ERROR LOCATION make sure adding the null for excluded point works - updated to
+        //  use TrailAppDbHelper through TrailAppDbManager
+		//attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(currentScan, null); //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
+        attachedSegments = TrailAppDbManager.getInstance().getDBHelper().getSegmentsWithPoint(currentScan, null); //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
 
-		//if something goes wrong and attachedSegments is null or is empty, skip gracefully (redundant if getSegmentsWithPoint succeeds)
+        //if something goes wrong and attachedSegments is null or is empty, skip gracefully (redundant if getSegmentsWithPoint succeeds)
 		if ((attachedSegments == null) ||
                 (attachedSegments.isEmpty())){
 			System.err.println("Segment list not created. Pathfinding cannot be done. Returning to processQRCode");
@@ -241,7 +243,8 @@ public class DistanceManager {
 			} else {
 				parentScanName = shortestNode.parent.scanName;
 			}
-			attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(shortestNode.scanName, parentScanName);//DNE //Tim
+            //updated from DummyDatabaseHelper
+			attachedSegments = TrailAppDbManager.getInstance().getDBHelper().getSegmentsWithPoint(shortestNode.scanName, parentScanName);//DNE //Tim
 		}//end while
 
 		/*
@@ -307,7 +310,8 @@ public class DistanceManager {
         String parentScanName;//name of parent for database query
         Double tempDistance; //temp storage for distance
 
-        attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(lastScan.getID(), null); //DNE //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
+        //updated from DummyDatabaseHelper
+        attachedSegments = TrailAppDbManager.getInstance().getDBHelper().getSegmentsWithPoint(lastScan.getID(), null); //DNE //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
 
         //if something goes wrong and attachedSegments is null or is empty, skip gracefully (redundant if getSegmentsWithPoint succeeds)
         if ((attachedSegments == null) ||
@@ -343,7 +347,8 @@ public class DistanceManager {
             } else {
                 parentScanName = shortestNode.parent.scanName;
             }
-            attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(shortestNode.scanName, parentScanName);//DNE //Tim
+            //Updated from DummyDatabaseHelper
+            attachedSegments = TrailAppDbManager.getInstance().getDBHelper().getSegmentsWithPoint(shortestNode.scanName, parentScanName);//DNE //Tim
         }//end while
 
         //display
