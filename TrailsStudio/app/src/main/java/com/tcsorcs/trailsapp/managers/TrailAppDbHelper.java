@@ -162,16 +162,20 @@ public class TrailAppDbHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(TrailAppDbContract.Locations.TABLE_NAME,
                 new String[]{TrailAppDbContract.Locations.COLUMN_NAME_LOCATION_ID,
                         TrailAppDbContract.Locations.COLUMN_NAME_LOCATION_X,
-                        TrailAppDbContract.Locations.COLUMN_NAME_LOCATION_Y},
+                        TrailAppDbContract.Locations.COLUMN_NAME_LOCATION_Y,
+                        TrailAppDbContract.Locations.COLUMN_NAME_SIDE_OF_ROAD },
                 TrailAppDbContract.Locations.COLUMN_NAME_LOCATION_ID + "=?",
                 new String[]{ String.valueOf(currentScan)}, null , null, null);
         Location location=null;
         if(cursor != null)
             if( cursor.moveToFirst()){
                  location = new Location(cursor.getString(0), Integer.parseInt(cursor.getString(1)),
-                        Integer.parseInt(cursor.getString(2)));
+                        Integer.parseInt(cursor.getString(2)) , cursor.getString(3));
 
             }
+
+        cursor.close();
+
         return location;
     }
     /**
@@ -203,8 +207,23 @@ public class TrailAppDbHelper extends SQLiteOpenHelper {
                         TrailAppDbContract.SegmentInformation.COLUMN_NAME_POINT_B + "=?",
                 new String[]{ searchPoint },null,null,null);
 
+        ArrayList<Segment> segmentList = null;
 
+        if (cursor != null){
+            if(cursor.moveToFirst()){
+                while (!cursor.isAfterLast()){
+                    Segment mySegment = new Segment(cursor.getString(0), cursor.getString(1),
+                            cursor.getString(2), Double.parseDouble(cursor.getString(3)),
+                            cursor.getString(4), Boolean.parseBoolean(cursor.getString(5))
+                            );
+                    segmentList.add(mySegment);
+                    cursor.moveToNext();
+                }
+            }
+        }
 
-        return null;
+        cursor.close();
+
+        return segmentList;
     }
 }
