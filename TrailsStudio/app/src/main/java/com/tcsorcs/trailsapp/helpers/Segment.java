@@ -29,8 +29,8 @@ public class Segment {
      * roadSide(String) - the side of road the segment is on - east, west or cross
      * entrance(boolean) - if a segment contains a point that is an entrance
      */
-    public Segment (int segId, String segName, String firstPoint, String secondPoint, double segmentDistance, String roadSide, boolean entrance){
-        segmentId = segId;
+    public Segment (String segName, String firstPoint, String secondPoint, double segmentDistance, String roadSide, boolean entrance){
+        segmentName = segName;
         pointA = firstPoint;
         pointB = secondPoint;
         distance = segmentDistance;
