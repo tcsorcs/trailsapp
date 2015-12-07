@@ -97,7 +97,7 @@ public class InputManager {
                         //Toast.makeText(DisplayManager.getInstance().main_activity.getApplicationContext(), "SMS: x="+xStr+" y="+yStr, Toast.LENGTH_LONG).show();
 
                         //draw sms shared location to map
-                        Location loc=new Location("0",xInt,yInt);
+                        Location loc=new Location("0",xInt,yInt,"");
                         DisplayManager.getInstance().drawMarker(loc,true,true);
 
                     }catch(NumberFormatException e){
