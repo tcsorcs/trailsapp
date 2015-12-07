@@ -10,7 +10,9 @@ import java.util.ArrayList;
 public class FitnessManager {
     private static FitnessManager ourInstance = new FitnessManager();
 
+
     private ArrayList<Goal> goalList = new ArrayList();
+    private Goal currentGoal;
 
     public static FitnessManager getInstance() {
         return ourInstance;
@@ -20,9 +22,13 @@ public class FitnessManager {
     }
 
 
-    public void setGoal(){
-        Goal g = new Goal();
-        goalList.add(g);
+    /** CREATE NEW GOAL
+     * Creates a new goal to begin editing
+     * New goal can be modified with mutators below
+     */
+    public void createNewGoal(){
+        Goal currentGoal = new Goal();
+
     }
 
 }
