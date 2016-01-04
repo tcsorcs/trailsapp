@@ -5,6 +5,7 @@ package com.tcsorcs.trailsapp.helpers;
  */
 public class Task {
 
+    private int taskID;
     private TaskType taskType;
     private float currAmount;
     private float totalAmount;
@@ -17,6 +18,10 @@ public class Task {
 
     // Tasks should be immutable once created, so no setters are provided.
     // Only access point is addAmount().
+    public int getTaskID() {
+        return taskID;
+    }
+
     public TaskType getTaskType() {
         return taskType;
     }
@@ -37,7 +42,8 @@ public class Task {
     /// Args:
     ///  o taskType:TaskType - The type of Task this object will hold
     ///  o totalAmount:float - The totalAmount of distance/pace/time for 100% completion
-    public Task(TaskType taskType, float totalAmount) {
+    public Task(TaskType taskType, float totalAmount, int taskID) {
+        this.taskID = taskID;
         this.taskType = taskType;
         this.currAmount = 0.0f;
         this.totalAmount = totalAmount;
@@ -47,7 +53,8 @@ public class Task {
     /// Copy constructor
     /// Args:
     ///  o toCopy:Task - Task object to copy info from
-    public Task(Task toCopy){
+    public Task(Task toCopy, int taskID){
+        this.taskID = taskID;
         this.taskType = toCopy.getTaskType();
         this.currAmount = 0.0f;
         this.totalAmount = toCopy.getTotalAmount();
