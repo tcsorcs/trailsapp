@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/AchievementDialogBackgroundView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+    <RelativeLayout
+        android:id="@+id/AchievementDialogView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/fitness_bar_background"
+        android:layout_centerVertical="true">
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="75dip"
+        android:layout_height="75dip"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        />
+
+
+    <TextView
+        android:id="@+id/achieveDialogTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/image"
+        android:layout_alignTop="@+id/image"
+        android:textSize="19sp"
+        android:textColor="@color/label_color"
+        />
+
+    <TextView
+        android:id="@+id/achieveDialogDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/image"
+        android:layout_below="@+id/achieveDialogTitle"
+        android:textColor="@color/label_color"
+        android:textSize="16sp"
+
+        />
+        </RelativeLayout>
+
+
+</RelativeLayout>

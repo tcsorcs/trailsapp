@@ -34,7 +34,6 @@ public class SplashScreenActivity extends Activity {
     }
 
 
-
     @Override
     public void onBackPressed() {
         Intent setIntent = new Intent(Intent.ACTION_MAIN);

@@ -11,6 +11,7 @@
     <color name="label_color">#FFFFFF</color>
     <color name="stats_values_color">#FFFFFF</color>
     <color name="action_bar_background">#66CCFF</color>
+    <color name="fitness_bar_background">#F00</color>
 
 
 </resources>
