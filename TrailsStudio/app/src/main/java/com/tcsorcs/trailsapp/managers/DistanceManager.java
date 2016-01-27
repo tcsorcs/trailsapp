@@ -12,7 +12,7 @@ import com.tcsorcs.trailsapp.helpers.Location;
  *  Currently FUNCTIONAL but UNTESTED - DummyDatabaseHelper used in place of actual database helper
  *    smarterPathFinder and related helpers not tested thoroughly
  *  DNE = does not exist
- *  Updated 8/27/2015
+ *  Updated 1/27/2016
  *
  *  POTENTIAL PROBLEM AREAS:
  *  -collection type for path was changed from Stack to a LinkedList - if poll/pop were converted incorrectly, results will be wrong
@@ -50,7 +50,7 @@ public class DistanceManager {
 	public void processQRCodes(String locationName) {
 		//I see a QR code - is either first or not first
         if (DummyDatabaseHelper.getInstance().getPathTableSize() < 1){//first, don't pathfind
-            DummyDatabaseHelper.getInstance().addLocationToPath(DummyDatabaseHelper.getInstance().getLocation(locationName));
+            DummyDatabaseHelper.getInstance().addLocationToPath(TrailAppDbManager.getInstance().getDBHelper().getLocation(locationName));
         }
 		else { //not first, need to pathfind
 			smarterPathFinder(locationName);
@@ -185,7 +185,7 @@ public class DistanceManager {
 
 		//if on same segment, we know our next segment, yay!
 		if(pointsAdjacent){
-			DummyDatabaseHelper.getInstance().addLocationToPath(DummyDatabaseHelper.getInstance().getLocation(currentScan));
+			DummyDatabaseHelper.getInstance().addLocationToPath(TrailAppDbManager.getInstance().getDBHelper().getLocation(currentScan));
 			updateDistancePace(DummyDatabaseHelper.getInstance().getDistance() + currentSegment.getSegmentDistance());//if not initialized, will not be hit
 			DisplayManager.getInstance().drawSegment(currentSegment);//display segment
 			return;
@@ -269,7 +269,7 @@ public class DistanceManager {
 			segmentsList.add(currentNode.segment);
 
 			currentNode = currentNode.parent;
-            DummyDatabaseHelper.getInstance().addLocationToPath(DummyDatabaseHelper.getInstance().getLocation(currentNode.scanName));
+            DummyDatabaseHelper.getInstance().addLocationToPath(TrailAppDbManager.getInstance().getDBHelper().getLocation(currentNode.scanName));
 		}
 
 		//display stuff
