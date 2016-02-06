@@ -6,6 +6,7 @@ import java.util.ArrayList;
  * TEMPORARY
  * Fakes database - includes methods and variables to be implemented by actual database helper AND
  *   information to fake database returns
+ *   Updated 1/27/2016
  *
  *   Singleton
  *
@@ -23,7 +24,7 @@ public class DummyDatabaseHelper {
     public static DummyDatabaseHelper instance = new DummyDatabaseHelper();
 
 
-    /**
+    /** implemented in TrailAppDbHelper
      * Returns all segments with searchPoint as an end point, but without excludeAPoint as an end point
      *  Note that excludeAPoint can be null
      *
@@ -59,7 +60,7 @@ public class DummyDatabaseHelper {
         return null;
     }
 
-    /**
+    /** TrailAppDbHelper
      *
      * @param currentScan string representing current scan location example: "l21", "execent","l19" etc...
      * @return Location object with x,y coordinates for this scan
