@@ -203,7 +203,7 @@ public class DisplayManager {
         // DEV MODE MARKER BUTTONS
 
         Button markerButton = (Button) main_activity
-                .findViewById(R.id.M1);
+                .findViewById(R.id.M1); //ExceEnt
         markerButton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -329,7 +329,7 @@ public class DisplayManager {
         });
 
         markerButton = (Button) main_activity
-                .findViewById(R.id.M2);
+                .findViewById(R.id.M2); //L21
         markerButton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -348,7 +348,7 @@ public class DisplayManager {
 
 
         markerButton = (Button) main_activity
-                .findViewById(R.id.M3);
+                .findViewById(R.id.M3); //L20
         markerButton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -367,7 +367,7 @@ public class DisplayManager {
         });
 
         markerButton = (Button) main_activity
-                .findViewById(R.id.M4);
+                .findViewById(R.id.M4); //L19
         markerButton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -383,7 +383,7 @@ public class DisplayManager {
         });
 
         markerButton = (Button) main_activity
-                .findViewById(R.id.M5);
+                .findViewById(R.id.M5); //L18
         markerButton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -398,7 +398,7 @@ public class DisplayManager {
         });
 
         markerButton = (Button) main_activity
-                .findViewById(R.id.M6);
+                .findViewById(R.id.M6); //DepeEnt
         markerButton.setOnClickListener(new OnClickListener() {
 
             @Override
