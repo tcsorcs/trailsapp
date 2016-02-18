@@ -40,6 +40,10 @@ import com.tcsorcs.trailsapp.mapview.TouchImageView;
 import com.tcsorcs.trailsapp.mapview.TouchImageView.DoubleTapZoom;
 import com.tcsorcs.trailsapp.services.OnTrailsService;
 
+/*
+ *
+ * Pathfinder testing in progress - I'll be hijacking all the M buttons but returning them to a stable state before comitting, so please DON'T DELETE COMMENTED CODE! I still need it.  - Sarah, Feb 17
+ */
 public class DisplayManager {
 
     public static DisplayManager getInstance() {
@@ -180,7 +184,7 @@ public class DisplayManager {
                     String url = "scan://scan?callback=com.tcsorcs.trailsapp://tcstrails";
                     Intent i = new Intent(Intent.ACTION_VIEW);
                     i.setData(Uri.parse(url));
-                    main_activity.startActivity(i);
+                    main_activity.startActivity(i); //Getting error "android.content.ActivityNotFoundException: No Activity found to handle Intent" when this is called
 
                 } else {
                     //if app is not installed, go to installation page in market
@@ -209,6 +213,14 @@ public class DisplayManager {
             @Override
             public void onClick(View arg0) {
                 disableButtons();
+
+                /* for pathfinder test - in progress
+                * commented code works - passes correctly through InputManager and hits Distance manager
+                //fake-o url but data gets to Distance Manager correctly
+                String url = "com.tcsorcs.trailsapp://halp?type=loc&data=ExceEnt";
+                InputManager.getInstance().inputQRC(Uri.parse(url));
+                */
+
                 float x = 1694f;
                 float y = 1850f;
                 Location loc=new Location("0",x,y,"");

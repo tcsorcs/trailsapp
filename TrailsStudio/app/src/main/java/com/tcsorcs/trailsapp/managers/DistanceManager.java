@@ -11,8 +11,9 @@ import com.tcsorcs.trailsapp.helpers.Location;
  *
  *  Currently FUNCTIONAL but UNTESTED - DummyDatabaseHelper used in place of actual database helper
  *    smarterPathFinder and related helpers not tested thoroughly
+ *  Smoke test 1: 2/17/2016 - info passed from DisplayManager -> InputManager -> here but lookup issues occured. Nothing crashed though...
  *  DNE = does not exist
- *  Updated 1/27/2016
+ *  Updated 2/17/2016
  *
  *  POTENTIAL PROBLEM AREAS:
  *  -collection type for path was changed from Stack to a LinkedList - if poll/pop were converted incorrectly, results will be wrong
@@ -48,6 +49,7 @@ public class DistanceManager {
      * @param locationName String name of location
      */
 	public void processQRCodes(String locationName) {
+		System.out.println("@DistanceManager.processQRCodes with locationName as "+locationName);//if we got here, the temp button callbacks are at least working
 		//I see a QR code - is either first or not first
         if (DummyDatabaseHelper.getInstance().getPathTableSize() < 1){//first, don't pathfind
             DummyDatabaseHelper.getInstance().addLocationToPath(TrailAppDbManager.getInstance().getDBHelper().getLocation(locationName));
