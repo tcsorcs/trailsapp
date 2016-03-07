@@ -21,6 +21,11 @@ import java.util.ListIterator;
 
 /**
  * Created by Innovation on 3/3/2015.
+ *
+ * TODO:
+ * -debug  getSegmentsWithPoint(String searchPoint, String excludeAPoint) - currently crashes where indicated
+ *
+ * -comments added for debugging - Sarah, March 6, 16
  */
 public class TrailAppDbHelper extends SQLiteOpenHelper {
 	// IF you change the database schema, you must increment the database version.
@@ -196,6 +201,7 @@ public class TrailAppDbHelper extends SQLiteOpenHelper {
 		// Open up the database to be read from
 		SQLiteDatabase db = this.getReadableDatabase();
 
+		System.out.println("@TrailAppDbHelper.getSegmentsWithPoint have gotten database? "+(db!=null));//DeBug
 
 		Cursor cursor = db.query(TrailAppDbContract.SegmentInformation.TABLE_NAME,
 				new String[]{TrailAppDbContract.SegmentInformation.COLUMN_NAME_SEGMENT_ID,
@@ -208,22 +214,34 @@ public class TrailAppDbHelper extends SQLiteOpenHelper {
 						TrailAppDbContract.SegmentInformation.COLUMN_NAME_POINT_B + "=?",
 								new String[]{searchPoint}, null, null, null);
 
-		ArrayList<Segment> segmentList = null;
+		System.out.println("@TrailAppDbHelper.getSegmentsWithPoint before segmentList declaration.");//DeBug
+
+		ArrayList<Segment> segmentList = new ArrayList<Segment>();//null;
+		Segment mySegment = null;
 
 		if (cursor != null) {
+			System.out.println("@TrailAppDbHelper.getSegmentsWithPoint cursor 1");//DeBug
 			if (cursor.moveToFirst()) {
+				System.out.println("@TrailAppDbHelper.getSegmentsWithPoint cursor 2");//DeBug
 				while (!cursor.isAfterLast()) {
-					Segment mySegment = new Segment(cursor.getString(0), cursor.getString(1),
+					System.out.println("@TrailAppDbHelper.getSegmentsWithPoint cursor 3");//DeBug
+					 mySegment = new Segment(cursor.getString(0), cursor.getString(1),
 							cursor.getString(2), Double.parseDouble(cursor.getString(3)),
 							cursor.getString(4), Boolean.parseBoolean(cursor.getString(5))
 							);
+					System.out.println("@TrailAppDbHelper.getSegmentsWithPoint cursor 4");//DeBug
+					System.out.println("@TrailAppDbHelper.getSegmentsWithPoint mySegment is not null " + (mySegment != null));//DeBug//CRASHES HERE
 					segmentList.add(mySegment);
+					System.out.println("@TrailAppDbHelper.getSegmentsWithPoint cursor 5");//DeBug
 					cursor.moveToNext();
+					System.out.println("@TrailAppDbHelper.getSegmentsWithPoint cursor 6");//DeBug
 				}
 			}
 		}
 
 		cursor.close();
+
+		System.out.println("@TrailAppDbHelper.getSegmentsWithPoint is segmentList not null? " + (segmentList != null));//DeBug
 
 		/*We have a list of all segments with searchPoint, now let's eliminate the entry
 		 *  that also has excludeAPoint, if excludeAPoint is not null
