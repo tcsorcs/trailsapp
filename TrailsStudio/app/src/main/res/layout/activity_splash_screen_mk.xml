@@ -3,16 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/highlighted_text_material_light"
+    android:background="@color/splash_bg"
     tools:context="com.tcsorcs.trailsapp.activities.SplashScreenActivity" >
 
     <TextView
-        android:id="@+id/TCSTrailsTitle"
+        android:id="@+id/TCSTrailsTitleTop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:text="@string/splash_screen_title_mk"
+        android:text="@string/splash_screen_title_top_mk"
         android:textSize="31sp"
+        android:textColor="@color/WHITE"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:gravity="center"
@@ -24,9 +25,30 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:src="@drawable/tcs_milford"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true" />
+
+    <TextView
+        android:id="@+id/TCSTrailsTitleBot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/splash_screen_title_bot_mk"
+        android:textSize="31sp"
+        android:textColor="@color/WHITE"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="60dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/TCSTrailsTitleBot2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/splash_screen_title_bot_2_mk"
+        android:textSize="24sp"
+        android:textColor="@color/WHITE"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp" />
 
 </RelativeLayout>

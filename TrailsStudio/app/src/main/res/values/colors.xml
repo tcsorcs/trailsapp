@@ -2,6 +2,7 @@
 <resources>
     <color name="RED">#f00</color>
     <color name="GREEN">#ff83ff2e</color>
+    <color name="WHITE">#FFF</color>
 
 
     <color name="main_background_color">#000066</color>
@@ -12,6 +13,7 @@
     <color name="stats_values_color">#FFFFFF</color>
     <color name="action_bar_background">#66CCFF</color>
     <color name="fitness_bar_background">#F00</color>
+    <color name="splash_bg">#597CB2</color>
 
 
 </resources>

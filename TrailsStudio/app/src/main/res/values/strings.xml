@@ -77,6 +77,8 @@
     <string name="hello_world">Hello world!</string>
 
     <!-- Mike's testing strings -->
-    <string name="splash_screen_title_mk">TCS Seven Hills Park\nLeadership Trail</string>
+    <string name="splash_screen_title_top_mk">Seven Hills Park\nLeadership Trail</string>
+    <string name="splash_screen_title_bot_mk">Tata Consultancy Services</string>
+    <string name="splash_screen_title_bot_2_mk">Experience Certainty</string>
 
 </resources>
