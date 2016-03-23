@@ -41,8 +41,9 @@ INSERT INTO "locations" ( _id , locationname , locationdescription , locationx ,
 INSERT INTO "locations" ( _id , locationname , locationdescription , locationx , locationy, sideofroad ) VALUES ( "EnthEnt" , "___" , "___" , 2285 , 1880 , "east" );
 INSERT INTO "locations" ( _id , locationname , locationdescription , locationx , locationy, sideofroad ) VALUES ( "EnduEnt" , "___" , "___" , 2167 , 2060 , "west" );
 INSERT INTO "locations" ( _id , locationname , locationdescription , locationx , locationy, sideofroad ) VALUES ( "CourEnt" , "___" , "___" , 1939 , 2170 , "west" );
-INSERT INTO "locations" ( _id , locationname , locationdescription , locationx , locationy, sideofroad ) VALUES ( "ExecEnt" , "___" , "___" , 1534 , 1963 , "west" );
+INSERT INTO "locations" ( _id , locationname , locationdescription , locationx , locationy, sideofroad ) VALUES ( "ExceEnt" , "___" , "___" , 1534 , 1963 , "west" );
 INSERT INTO "locations" ( _id , locationname , locationdescription , locationx , locationy, sideofroad ) VALUES ( "DepeEnt" , "___" , "___" , 1724 , 1651 , "west" );
 INSERT INTO "locations" ( _id , locationname , locationdescription , locationx , locationy, sideofroad ) VALUES ( "LoyaEnt" , "___" , "___" , 2259 , 1449 , "west" );
 INSERT INTO "locations" ( _id , locationname , locationdescription , locationx , locationy, sideofroad ) VALUES ( "RespEnt" , "___" , "___" , 2474 , 1004 , "west" );
 INSERT INTO "locations" ( _id , locationname , locationdescription , locationx , locationy, sideofroad ) VALUES ( "JudgEnt" , "___" , "___" , 2348 , 585 , "west" );
+INSERT INTO "locations" ( _id , locationname , locationdescription , locationx , locationy, sideofroad ) VALUES ( "LeadEnt" , "___" , "___" , 2123 , 250 , "west" );
