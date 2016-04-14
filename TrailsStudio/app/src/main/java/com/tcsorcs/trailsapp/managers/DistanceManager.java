@@ -177,6 +177,7 @@ public class DistanceManager {
         sideOfRoad = DummyDatabaseHelper.getInstance().getSideOfRoad(currentScan); //current side of road
 
 		System.out.println("@DistanceManager.smarterPathFinder checking side of road retrieval works: " + DummyDatabaseHelper.getInstance().getSideOfRoad(currentScan));//DeBug//working
+		System.out.println("@DistanceManager.smarterPathFinder checking previous scan side of road works: " + DummyDatabaseHelper.getInstance().getSideOfRoad(lastScan));//DeBug//working
 
 		if (!sideOfRoad.equals(DummyDatabaseHelper.getInstance().getSideOfRoad(lastScan))){ //saves side of road or both
             sideOfRoad = "cross";
@@ -191,7 +192,7 @@ public class DistanceManager {
 		//attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(currentScan, null); //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
         attachedSegments = TrailAppDbManager.getInstance().getDBHelper().getSegmentsWithPoint(currentScan, null); //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
 
-		System.out.println("@DistanceManager.smarterPathFinder segments" + TrailAppDbManager.getInstance().getDBHelper().getSegmentsWithPoint(currentScan, null));//DeBug
+		System.out.println("@DistanceManager.smarterPathFinder segments" + attachedSegments);//DeBug
 
         //if something goes wrong and attachedSegments is null or is empty, skip gracefully (redundant if getSegmentsWithPoint succeeds)
 		if ((attachedSegments == null) ||
@@ -213,8 +214,11 @@ public class DistanceManager {
 		if(pointsAdjacent){
 			System.out.println("@DistanceManager.smarterPathFinder loc 4");//DeBug
 			DummyDatabaseHelper.getInstance().addLocationToPath(TrailAppDbManager.getInstance().getDBHelper().getLocation(currentScan));
+			System.out.println("@DistanceManager.smarterPathFinder loc 5");//DeBug
 			updateDistancePace(DummyDatabaseHelper.getInstance().getDistance() + currentSegment.getSegmentDistance());//if not initialized, will not be hit
+			System.out.println("@DistanceManager.smarterPathFinder current setment is "+currentSegment.getSegmentName());//DeBug
 			DisplayManager.getInstance().drawSegment(currentSegment);//display segment
+			System.out.println("@DistanceManager.smarterPathFinder loc 6");//DeBug
 			return;
 		}
 		// if points are not adjacent, pathfind

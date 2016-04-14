@@ -202,6 +202,7 @@ public class TrailAppDbHelper extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getReadableDatabase();
 
 		System.out.println("@TrailAppDbHelper.getSegmentsWithPoint have gotten database? "+(db!=null));//DeBug
+		System.out.println("@TrailAppDbHelper.getSegmentsWithPoint searchPoint "+searchPoint);
 
 		Cursor cursor = db.query(TrailAppDbContract.SegmentInformation.TABLE_NAME,
 				new String[]{TrailAppDbContract.SegmentInformation.COLUMN_NAME_SEGMENT_ID,
@@ -214,27 +215,20 @@ public class TrailAppDbHelper extends SQLiteOpenHelper {
 						TrailAppDbContract.SegmentInformation.COLUMN_NAME_POINT_B + "=?",
 								new String[]{searchPoint}, null, null, null);
 
-		System.out.println("@TrailAppDbHelper.getSegmentsWithPoint before segmentList declaration.");//DeBug
 
 		ArrayList<Segment> segmentList = new ArrayList<Segment>();//null;
 		Segment mySegment = null;
 
 		if (cursor != null) {
-			System.out.println("@TrailAppDbHelper.getSegmentsWithPoint cursor 1");//DeBug
 			if (cursor.moveToFirst()) {
-				System.out.println("@TrailAppDbHelper.getSegmentsWithPoint cursor 2");//DeBug
 				while (!cursor.isAfterLast()) {
-					System.out.println("@TrailAppDbHelper.getSegmentsWithPoint cursor 3");//DeBug
 					 mySegment = new Segment(cursor.getString(0), cursor.getString(1),
 							cursor.getString(2), Double.parseDouble(cursor.getString(3)),
 							cursor.getString(4), Boolean.parseBoolean(cursor.getString(5))
 							);
-					System.out.println("@TrailAppDbHelper.getSegmentsWithPoint cursor 4");//DeBug
 					System.out.println("@TrailAppDbHelper.getSegmentsWithPoint mySegment is not null " + (mySegment != null));//DeBug//CRASHES HERE
 					segmentList.add(mySegment);
-					System.out.println("@TrailAppDbHelper.getSegmentsWithPoint cursor 5");//DeBug
 					cursor.moveToNext();
-					System.out.println("@TrailAppDbHelper.getSegmentsWithPoint cursor 6");//DeBug
 				}
 			}
 		}
@@ -242,6 +236,9 @@ public class TrailAppDbHelper extends SQLiteOpenHelper {
 		cursor.close();
 
 		System.out.println("@TrailAppDbHelper.getSegmentsWithPoint is segmentList not null? " + (segmentList != null));//DeBug
+		for (Segment s: segmentList) {
+			System.out.println("@TrailAppDbHelper.getSegmentsWithPoint searched for " + searchPoint + " is on " + s.getSegmentName());
+		}//debug
 
 		/*We have a list of all segments with searchPoint, now let's eliminate the entry
 		 *  that also has excludeAPoint, if excludeAPoint is not null
