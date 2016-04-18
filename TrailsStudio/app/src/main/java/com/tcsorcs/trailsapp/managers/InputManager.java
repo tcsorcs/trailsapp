@@ -69,9 +69,10 @@ public class InputManager {
                         Toast.makeText(DisplayManager.getInstance().main_activity.getApplicationContext(), "Unable to find Location in DB: "+locationName, Toast.LENGTH_LONG).show();
                     }
 
-                    //TODO hook up distance manager
+                    //TODO hook up distance manager - testing in progress - Sarah Mar 6
                     //passing l21, l20, exceent, or whatever the scan data string is on to distance manager
-                    //DistanceManager.getInstance().processQRCodes(locationName);
+                   // DistanceManager.getInstance().processQRCodes(locationName); //uncomment to debug/run distance manager - currently crashes when pathfinding - debugging in progress - Sarah, April 13, 16
+                    System.out.println("@InputManager after DistanceManager completed");//DeBug
 
                 }else{
                     //invalid location name in data parameter

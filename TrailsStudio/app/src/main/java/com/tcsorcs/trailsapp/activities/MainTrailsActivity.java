@@ -105,9 +105,6 @@ public class MainTrailsActivity extends ActionBarActivity
         //incoming sms since activity is already created
         Uri uri = getIntent().getData();
         parseScanData(uri);
-
-
-
     }
 
 

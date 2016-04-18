@@ -40,6 +40,10 @@ import com.tcsorcs.trailsapp.mapview.TouchImageView;
 import com.tcsorcs.trailsapp.mapview.TouchImageView.DoubleTapZoom;
 import com.tcsorcs.trailsapp.services.OnTrailsService;
 
+/*
+ *
+ * Pathfinder testing in progress - I'll be hijacking all the M buttons but returning them to a stable state before comitting, so please DON'T DELETE COMMENTED CODE! I still need it.  - Sarah, Mar 6
+ */
 public class DisplayManager {
 
     public static DisplayManager getInstance() {
@@ -180,7 +184,7 @@ public class DisplayManager {
                     String url = "scan://scan?callback=com.tcsorcs.trailsapp://tcstrails";
                     Intent i = new Intent(Intent.ACTION_VIEW);
                     i.setData(Uri.parse(url));
-                    main_activity.startActivity(i);
+                    main_activity.startActivity(i); //Getting error "android.content.ActivityNotFoundException: No Activity found to handle Intent" when this is called
 
                 } else {
                     //if app is not installed, go to installation page in market
@@ -203,12 +207,21 @@ public class DisplayManager {
         // DEV MODE MARKER BUTTONS
 
         Button markerButton = (Button) main_activity
-                .findViewById(R.id.M1);
+                .findViewById(R.id.M1); //ExceEnt
         markerButton.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
                 disableButtons();
+
+                /* for pathfinder test - in progress - WARNING! ExceEnt is not in the database (checked Mar 6)
+                * commented code works - passes correctly through InputManager and hits Distance manager
+                //fake-o url but data gets to Distance Manager correctly
+
+                String url = "com.tcsorcs.trailsapp://halp?type=loc&data=ExceEnt";
+                InputManager.getInstance().inputQRC(Uri.parse(url));
+                */
+
                 float x = 1694f;
                 float y = 1850f;
                 Location loc=new Location("0",x,y,"");
@@ -329,7 +342,7 @@ public class DisplayManager {
         });
 
         markerButton = (Button) main_activity
-                .findViewById(R.id.M2);
+                .findViewById(R.id.M2); //L21
         markerButton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -337,6 +350,12 @@ public class DisplayManager {
                 disableButtons();
                 // Toast.makeText(main_activity.getApplicationContext(), "click", Toast.LENGTH_LONG).show();
 
+                /* for pathfinder test - in progress
+                * commented code works - passes correctly through InputManager and hits Distance manager
+                //fake-o url but data gets to Distance Manager correctly
+                */
+                String url = "com.tcsorcs.trailsapp://halp?type=loc&data=L21";
+                InputManager.getInstance().inputQRC(Uri.parse(url));
 
                 float x = 1534f;
                 float y = 1963f;
@@ -348,7 +367,7 @@ public class DisplayManager {
 
 
         markerButton = (Button) main_activity
-                .findViewById(R.id.M3);
+                .findViewById(R.id.M3); //L20
         markerButton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -357,7 +376,12 @@ public class DisplayManager {
 
                 // Toast.makeText(main_activity.getApplicationContext(), "click", Toast.LENGTH_LONG).show();
 
-
+                /* for pathfinder test - in progress
+                * commented code works - passes correctly through InputManager and hits Distance manager
+                //fake-o url but data gets to Distance Manager correctly
+                */
+                String url = "com.tcsorcs.trailsapp://halp?type=loc&data=L20";
+                InputManager.getInstance().inputQRC(Uri.parse(url));
 
                 float x = 1473f;
                 float y = 1826f;
@@ -367,7 +391,7 @@ public class DisplayManager {
         });
 
         markerButton = (Button) main_activity
-                .findViewById(R.id.M4);
+                .findViewById(R.id.M4); //L19
         markerButton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -375,6 +399,14 @@ public class DisplayManager {
                 disableButtons();
 
                 // Toast.makeText(main_activity.getApplicationContext(), "click", Toast.LENGTH_LONG).show();
+
+                /* for pathfinder test - in progress
+                * commented code works - passes correctly through InputManager and hits Distance manager
+                //fake-o url but data gets to Distance Manager correctly
+                */
+                String url = "com.tcsorcs.trailsapp://halp?type=loc&data=L19";
+                InputManager.getInstance().inputQRC(Uri.parse(url));
+
                 float x = 1434f;
                 float y = 1784f;
                 Location loc=new Location("0",x,y);
@@ -383,13 +415,21 @@ public class DisplayManager {
         });
 
         markerButton = (Button) main_activity
-                .findViewById(R.id.M5);
+                .findViewById(R.id.M5); //L18
         markerButton.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
                 disableButtons();
                 // Toast.makeText(main_activity.getApplicationContext(), "click", Toast.LENGTH_LONG).show();
+
+                /* for pathfinder test - in progress
+                * commented code works - passes correctly through InputManager and hits Distance manager
+                //fake-o url but data gets to Distance Manager correctly
+                */
+                String url = "com.tcsorcs.trailsapp://halp?type=loc&data=L18";
+                InputManager.getInstance().inputQRC(Uri.parse(url));
+
                 float x = 1703f;
                 float y = 1602f;
                 Location loc=new Location("0",x,y);
@@ -398,13 +438,21 @@ public class DisplayManager {
         });
 
         markerButton = (Button) main_activity
-                .findViewById(R.id.M6);
+                .findViewById(R.id.M6); //DepeEnt
         markerButton.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
                 disableButtons();
                 // Toast.makeText(main_activity.getApplicationContext(), "click", Toast.LENGTH_LONG).show();
+
+                /* for pathfinder test - in progress
+                * commented code works - passes correctly through InputManager and hits Distance manager
+                //fake-o url but data gets to Distance Manager correctly
+                */
+                String url = "com.tcsorcs.trailsapp://halp?type=loc&data=DepeEnt";
+                InputManager.getInstance().inputQRC(Uri.parse(url));
+
                 float x = 1724f;
                 float y = 1651f;
                 Location loc=new Location("0",x,y);
@@ -674,19 +722,19 @@ public class DisplayManager {
         //get x and y of where to draw segment on trails map
 
         if(inDevMode){
-            if(segmentName.equals("execent_l21")){
+            if(segmentName.equals("ExecEnt_L21")){
                 topLeftX=(int)segGraphicS1.getTopLeftX();
                 topLeftY=(int)segGraphicS1.getTopLeftY();
-            }else if(segmentName.equals("l20_l21")){
+            }else if(segmentName.equals("L20_L21")){
                 topLeftX=(int)segGraphicS2.getTopLeftX();
                 topLeftY=(int)segGraphicS2.getTopLeftY();
-            }else if(segmentName.equals("l19_l20")){
+            }else if(segmentName.equals("L19_L20")){
                 topLeftX=(int)segGraphicS3.getTopLeftX();
                 topLeftY=(int)segGraphicS3.getTopLeftY();
-            }else if(segmentName.equals("l18_l19")){
+            }else if(segmentName.equals("L18_L19")){
                 topLeftX=(int)segGraphicS4.getTopLeftX();
                 topLeftY=(int)segGraphicS4.getTopLeftY();
-            }else if(segmentName.equals("depeent_l18")){
+            }else if(segmentName.equals("DepeEnt_L18")){
                 topLeftX=(int)segGraphicS5.getTopLeftX();
                 topLeftY=(int)segGraphicS5.getTopLeftY();
             }
@@ -697,9 +745,13 @@ public class DisplayManager {
             topLeftY= (int)segGraphic.getTopLeftY();
         }
 
+        //Segments are stored with upper and lowercase names in DB, but drawables are all lowercase - can this be changed
+        segmentName = segmentName.toLowerCase();
+        System.out.println("@DisplayManager.drawSegment segmentName is "+segmentName);//DeBug
 
         //look up segement in our drawables folder by graphics file name without extension
         int resId  = main_activity.getResources().getIdentifier(segmentName, "drawable", main_activity.getPackageName());
+        //int resId  = main_activity.getResources().getIdentifier(segmentName, "drawable-nodpi-v4", main_activity.getPackageName());
 
         Drawable d = main_activity.getResources().getDrawable(resId);
 

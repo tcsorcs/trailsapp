@@ -11,8 +11,9 @@ import com.tcsorcs.trailsapp.helpers.Location;
  *
  *  Currently FUNCTIONAL but UNTESTED - DummyDatabaseHelper used in place of actual database helper
  *    smarterPathFinder and related helpers not tested thoroughly
+ *  Smoke test 1: 2/17/2016 - info passed from DisplayManager -> InputManager -> here but lookup issues occured. Nothing crashed though...
  *  DNE = does not exist
- *  Updated 8/27/2015
+ *  Updated 3/6/2016
  *
  *  POTENTIAL PROBLEM AREAS:
  *  -collection type for path was changed from Stack to a LinkedList - if poll/pop were converted incorrectly, results will be wrong
@@ -24,6 +25,9 @@ import com.tcsorcs.trailsapp.helpers.Location;
  *
  *  TODO:
  *  -Add stuff to constructor to retrieve stored info in case app closed and reopenedd
+ *
+ *  TOFIX:
+ *  -pathfinder crashing
  */
 
 public class DistanceManager {
@@ -48,11 +52,21 @@ public class DistanceManager {
      * @param locationName String name of location
      */
 	public void processQRCodes(String locationName) {
-		//I see a QR code - is either first or not first
+		System.out.println("@DistanceManager.processQRCodes with locationName as "+locationName);//DeBug/if we got here, the temp button callbacks are at least working
+		System.out.println("@DistanceManager.processQRCodes location from database " + TrailAppDbManager.getInstance().getDBHelper().getLocation(locationName).getID());//DeBug/are we getting the location? yes
+
+		//I see a QR code - is either first, same as last or not first
         if (DummyDatabaseHelper.getInstance().getPathTableSize() < 1){//first, don't pathfind
-            DummyDatabaseHelper.getInstance().addLocationToPath(DummyDatabaseHelper.getInstance().getLocation(locationName));
-        }
+            DummyDatabaseHelper.getInstance().addLocationToPath(TrailAppDbManager.getInstance().getDBHelper().getLocation(locationName));
+			System.out.println("@DistanceManager.processQRCodes locationName as " + locationName + " is the first location seen");//DeBug
+			System.out.println("@DistanceManager.processQRCodes checking first location was added " + DummyDatabaseHelper.getInstance().getLastLocation().getID());//DeBug/check that location was stored
+		}
+		else if (DummyDatabaseHelper.getInstance().getLastLocation().getID().equals(TrailAppDbManager.getInstance().getDBHelper().getLocation(locationName).getID())){ //if last location seen == location just scanned NOTE: locations returned are not same object, so compare ids
+			System.out.println("@DistanceManager.processQRCodes locationName as " + locationName + " is same as previous location");//DeBug
+			//do nothing
+		}
 		else { //not first, need to pathfind
+			System.out.println("@DistanceManager.processQRCodes locationName as " + locationName + " is not first");//DeBug
 			smarterPathFinder(locationName);
 		}
 	}
@@ -161,14 +175,24 @@ public class DistanceManager {
 		lastScan = DummyDatabaseHelper.getInstance().getLastLocation(); //look at most recent point from PathTable
 
         sideOfRoad = DummyDatabaseHelper.getInstance().getSideOfRoad(currentScan); //current side of road
-        if (!sideOfRoad.equals(DummyDatabaseHelper.getInstance().getSideOfRoad(lastScan))){ //saves side of road or both
+
+		System.out.println("@DistanceManager.smarterPathFinder checking side of road retrieval works: " + DummyDatabaseHelper.getInstance().getSideOfRoad(currentScan));//DeBug//working
+		System.out.println("@DistanceManager.smarterPathFinder checking previous scan side of road works: " + DummyDatabaseHelper.getInstance().getSideOfRoad(lastScan));//DeBug//working
+
+		if (!sideOfRoad.equals(DummyDatabaseHelper.getInstance().getSideOfRoad(lastScan))){ //saves side of road or both
             sideOfRoad = "cross";
         }
+
+		System.out.println("@DistanceManager.smarterPathFinder checking sideOfRoad var " + sideOfRoad);//DeBug
+
+		System.out.println("@DistanceManager.smarterPathFinder segments" + TrailAppDbManager.getInstance().getDBHelper().getSegmentsWithPoint(currentScan, null));//DeBug
 
 		//POSSIBLE ERROR LOCATION make sure adding the null for excluded point works - updated to
         //  use TrailAppDbHelper through TrailAppDbManager
 		//attachedSegments = DummyDatabaseHelper.getInstance().getSegmentsWithPoint(currentScan, null); //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
         attachedSegments = TrailAppDbManager.getInstance().getDBHelper().getSegmentsWithPoint(currentScan, null); //Query DB //segments with currentScan //if nothing found MUST return an empty array list, not null
+
+		System.out.println("@DistanceManager.smarterPathFinder segments" + attachedSegments);//DeBug
 
         //if something goes wrong and attachedSegments is null or is empty, skip gracefully (redundant if getSegmentsWithPoint succeeds)
 		if ((attachedSegments == null) ||
@@ -179,15 +203,22 @@ public class DistanceManager {
 
 		//checks if last 2 points scanned are on the same segment
 		for (int i = 0; i < attachedSegments.size() && !pointsAdjacent; i++){
+			System.out.println("@DistanceManager.smarterPathFinder loc 2");//DeBug
 			currentSegment = attachedSegments.get(i);
 			pointsAdjacent = currentSegment.segmentHasPoints(lastScan.getID(), currentScan);
 		}
 
+		System.out.println("@DistanceManager.smarterPathFinder loc 3");//DeBug
+
 		//if on same segment, we know our next segment, yay!
 		if(pointsAdjacent){
-			DummyDatabaseHelper.getInstance().addLocationToPath(DummyDatabaseHelper.getInstance().getLocation(currentScan));
+			System.out.println("@DistanceManager.smarterPathFinder loc 4");//DeBug
+			DummyDatabaseHelper.getInstance().addLocationToPath(TrailAppDbManager.getInstance().getDBHelper().getLocation(currentScan));
+			System.out.println("@DistanceManager.smarterPathFinder loc 5");//DeBug
 			updateDistancePace(DummyDatabaseHelper.getInstance().getDistance() + currentSegment.getSegmentDistance());//if not initialized, will not be hit
+			System.out.println("@DistanceManager.smarterPathFinder current setment is "+currentSegment.getSegmentName());//DeBug
 			DisplayManager.getInstance().drawSegment(currentSegment);//display segment
+			System.out.println("@DistanceManager.smarterPathFinder loc 6");//DeBug
 			return;
 		}
 		// if points are not adjacent, pathfind
@@ -269,7 +300,7 @@ public class DistanceManager {
 			segmentsList.add(currentNode.segment);
 
 			currentNode = currentNode.parent;
-            DummyDatabaseHelper.getInstance().addLocationToPath(DummyDatabaseHelper.getInstance().getLocation(currentNode.scanName));
+            DummyDatabaseHelper.getInstance().addLocationToPath(TrailAppDbManager.getInstance().getDBHelper().getLocation(currentNode.scanName));
 		}
 
 		//display stuff

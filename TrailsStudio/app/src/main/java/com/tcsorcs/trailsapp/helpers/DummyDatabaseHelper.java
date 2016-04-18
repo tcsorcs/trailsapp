@@ -6,6 +6,7 @@ import java.util.ArrayList;
  * TEMPORARY
  * Fakes database - includes methods and variables to be implemented by actual database helper AND
  *   information to fake database returns
+ *   Updated 2/17/2016
  *
  *   Singleton
  *
@@ -22,8 +23,11 @@ public class DummyDatabaseHelper {
 
     public static DummyDatabaseHelper instance = new DummyDatabaseHelper();
 
+    //for testing purposes only!
+    private static int pathTableSize = 0;
+    private static ArrayList<Location> thePath = new ArrayList<Location>();
 
-    /**
+    /** implemented in TrailAppDbHelper
      * Returns all segments with searchPoint as an end point, but without excludeAPoint as an end point
      *  Note that excludeAPoint can be null
      *
@@ -59,7 +63,7 @@ public class DummyDatabaseHelper {
         return null;
     }
 
-    /**
+    /** TrailAppDbHelper
      *
      * @param currentScan string representing current scan location example: "l21", "execent","l19" etc...
      * @return Location object with x,y coordinates for this scan
@@ -77,10 +81,13 @@ public class DummyDatabaseHelper {
      * @return String with "east", "west" or "cross"
      */
     public String getSideOfRoad(String currentScan){
+        /* will test later
         String sideOfRoad;
         sideOfRoad = getSideOfRoad(getLocation(currentScan));
 
         return sideOfRoad;
+        */
+        return "left";//temporary to use for simple button testing
     }
 
     /**
@@ -181,6 +188,8 @@ public class DummyDatabaseHelper {
      */
     public void addLocationToPath(Location newLocation){
         //TODO add Location to PathTable
+        thePath.add(newLocation);
+        pathTableSize+=1;
     }
 
     /**
@@ -190,14 +199,12 @@ public class DummyDatabaseHelper {
      */
     public Integer getPathTableSize(){
         //TODO returns number of entries in the PathTable
-        return 0;
+        return pathTableSize;
     }
-
 
     public Location getLastLocation(){
         //TODO returns last location stored in PathTable
-
-        return null;
+        return thePath.get(pathTableSize - 1);
     }
 
     /**
@@ -216,7 +223,7 @@ public class DummyDatabaseHelper {
      */
     public Double getDistance(){
         //TODO returns the current distance
-        return -1.1;
+        return 0.0;
     }
 
     /**
@@ -235,7 +242,7 @@ public class DummyDatabaseHelper {
      */
     public Double getPace(){
         //TODO returns the current pace
-        return -1.1;
+        return 0.0;
     }
 
     /**
@@ -245,6 +252,6 @@ public class DummyDatabaseHelper {
      */
     public Long getStartTime(){
         //TODO returns the start time
-        return -1L;
+        return 0L;
     }
 }
