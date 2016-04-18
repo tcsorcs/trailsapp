@@ -722,19 +722,19 @@ public class DisplayManager {
         //get x and y of where to draw segment on trails map
 
         if(inDevMode){
-            if(segmentName.equals("execent_l21")){
+            if(segmentName.equals("ExecEnt_L21")){
                 topLeftX=(int)segGraphicS1.getTopLeftX();
                 topLeftY=(int)segGraphicS1.getTopLeftY();
-            }else if(segmentName.equals("l20_l21")){
+            }else if(segmentName.equals("L20_L21")){
                 topLeftX=(int)segGraphicS2.getTopLeftX();
                 topLeftY=(int)segGraphicS2.getTopLeftY();
-            }else if(segmentName.equals("l19_l20")){
+            }else if(segmentName.equals("L19_L20")){
                 topLeftX=(int)segGraphicS3.getTopLeftX();
                 topLeftY=(int)segGraphicS3.getTopLeftY();
-            }else if(segmentName.equals("l18_l19")){
+            }else if(segmentName.equals("L18_L19")){
                 topLeftX=(int)segGraphicS4.getTopLeftX();
                 topLeftY=(int)segGraphicS4.getTopLeftY();
-            }else if(segmentName.equals("depeent_l18")){
+            }else if(segmentName.equals("DepeEnt_L18")){
                 topLeftX=(int)segGraphicS5.getTopLeftX();
                 topLeftY=(int)segGraphicS5.getTopLeftY();
             }
@@ -745,9 +745,13 @@ public class DisplayManager {
             topLeftY= (int)segGraphic.getTopLeftY();
         }
 
+        //Segments are stored with upper and lowercase names in DB, but drawables are all lowercase - can this be changed
+        segmentName = segmentName.toLowerCase();
+        System.out.println("@DisplayManager.drawSegment segmentName is "+segmentName);//DeBug
 
         //look up segement in our drawables folder by graphics file name without extension
         int resId  = main_activity.getResources().getIdentifier(segmentName, "drawable", main_activity.getPackageName());
+        //int resId  = main_activity.getResources().getIdentifier(segmentName, "drawable-nodpi-v4", main_activity.getPackageName());
 
         Drawable d = main_activity.getResources().getDrawable(resId);
 
