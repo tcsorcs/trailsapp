@@ -561,6 +561,7 @@ public class DisplayManager {
      * if currently gathering pace, time, distance from Display manager- remove
      * runnables that are updating these to save system resources when our
      * activity is not in view
+     * TODO: Move this and associated methods to GeneralManager
      */
     public void stopGatheringTime() {
 

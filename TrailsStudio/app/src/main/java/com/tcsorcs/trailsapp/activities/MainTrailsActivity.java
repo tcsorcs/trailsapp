@@ -54,8 +54,8 @@ public class MainTrailsActivity extends ActionBarActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         setContentView(R.layout.activity_main_trails);
+        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
 
 
         GeneralManager.getInstance().main_activity = this;
@@ -126,6 +126,7 @@ public class MainTrailsActivity extends ActionBarActivity
                 }
                 fm.popBackStack();
             } else {
+                //TODO: Prompt user with quit confirmation, then close trails service when returning to home
                 // go to home screen when the back button is pressed with no fragments on stack
                 Intent setIntent = new Intent(Intent.ACTION_MAIN);
                 setIntent.addCategory(Intent.CATEGORY_HOME);
